@@ -1,0 +1,21 @@
+#version 400 core
+
+layout(vertices = 3) out;
+
+in vec3 position_v[];
+
+out vec3 position_tc[];
+
+#define ID gl_InvocationID
+
+void main()
+{
+    position_tc[ID] = position_v[ID];
+
+    if (ID == 0) {
+        gl_TessLevelInner[0] = 5;
+        gl_TessLevelOuter[0] = 5;
+        gl_TessLevelOuter[1] = 5;
+        gl_TessLevelOuter[2] = 5;
+    }
+}

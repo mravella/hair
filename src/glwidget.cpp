@@ -17,7 +17,6 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
 
 GLWidget::~GLWidget()
 {
-    m_triangle.destroy();
 }
 
 void GLWidget::initializeGL()
@@ -30,25 +29,12 @@ void GLWidget::initializeGL()
     // Initialize shader programs.
     m_basicProgram = ResourceLoader::createBasicShaderProgram(
                 ":/shaders/basic.vert", ":/shaders/basic.frag");
-    m_fullProgram = ResourceLoader::createFullShaderProgram(
-                ":/shaders/full.vert",
-                ":/shaders/full.frag",
-                ":/shaders/full.geom",
-                ":/shaders/full.tcs",
-                ":/shaders/full.tes");
-    glPatchParameteri(GL_PATCH_VERTICES, 3);
+    m_fullProgram = ResourceLoader::createTessShaderProgram(
+                ":/shaders/full.vert", ":/shaders/full.frag", //":/shaders/full.geom",
+                ":/shaders/full.tcs", ":/shaders/full.tes");
 
-    // Initialize triangle.
-    GLfloat triangleData[] = {-.5f, -.5f, 0.f,  // position 1
-                               0.f,  0.f, 1.f,  // normal 1
-                              +.5f, -.5f, 0.f,  // position 2
-                               0.f,  0.f, 1.f,  // normal 2
-                               0.f,  .5f, 0.f,  // position 3
-                               0.f,  0.f, 1.f}; // normal 3
-    m_triangle.create();
-    m_triangle.setVertexData(triangleData, sizeof(triangleData), 3);
-    m_triangle.setAttribute(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), 0);
-    m_triangle.setAttribute(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), 3*sizeof(float));
+    m_hairPatch.init();
+    glPatchParameteri(GL_PATCH_VERTICES, 4);
 
     ErrorChecker::printGLErrors("end of initializeGL");
 }
@@ -74,13 +60,13 @@ void GLWidget::paintGL()
     glm::mat4 view = glm::lookAt(eye, center, up);
     glm::mat4 model(1.f);
 
-    glUseProgram(m_basicProgram);
+    glUseProgram(m_fullProgram);
     glUniformMatrix4fv(glGetUniformLocation(m_basicProgram, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
     glUniformMatrix4fv(glGetUniformLocation(m_basicProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(m_basicProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
     glUniform3f(glGetUniformLocation(m_basicProgram, "color"), 0.f, 1.f, 1.f);
 
-    m_triangle.draw(GL_TRIANGLES);
+    m_hairPatch.draw();
 
     glUseProgram(0);
 }

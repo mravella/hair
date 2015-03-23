@@ -5,7 +5,7 @@
 #include <QTimer>
 #include <glu.h>
 #include "sphere.h"
-#include "openglshape.h"
+#include "hairpatch.h"
 
 class GLWidget : public QGLWidget
 {
@@ -24,7 +24,7 @@ protected slots:
     void tick();
 
 private:
-    OpenGLShape m_triangle;
+    HairPatch m_hairPatch;
 
     /** ID for the basic shader program (just vertex and fragmnet shader). */
     GLuint m_basicProgram;

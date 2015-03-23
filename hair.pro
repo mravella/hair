@@ -14,7 +14,8 @@ SOURCES += \
     src/glwidget.cpp \
     src/resourceloader.cpp \
     src/openglshape.cpp \
-    src/errorchecker.cpp
+    src/errorchecker.cpp \
+    src/hairpatch.cpp
 
 
 HEADERS += \
@@ -23,7 +24,8 @@ HEADERS += \
     src/resourceloader.h \
     src/sphere.h \
     src/openglshape.h \
-    src/errorchecker.h
+    src/errorchecker.h \
+    src/hairpatch.h
 
 FORMS += src/mainwindow.ui
 

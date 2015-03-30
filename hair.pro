@@ -5,8 +5,8 @@ TEMPLATE = app
 
 unix:!macx: LIBS += -lGLU
 
-INCLUDEPATH += src glm
-DEPENDPATH += src glm
+INCLUDEPATH += src glm src/mike
+DEPENDPATH += src glm src/mike
 
 SOURCES += \
     src/mainwindow.cpp \
@@ -15,7 +15,9 @@ SOURCES += \
     src/resourceloader.cpp \
     src/openglshape.cpp \
     src/errorchecker.cpp \
-    src/hairpatch.cpp
+    src/hairpatch.cpp \
+    src/mike/hair.cpp \
+    src/mike/simulation.cpp \
 
 
 HEADERS += \
@@ -25,7 +27,11 @@ HEADERS += \
     src/sphere.h \
     src/openglshape.h \
     src/errorchecker.h \
-    src/hairpatch.h
+    src/hairpatch.h \
+    src/hairCommon.h \
+    src/mike/hair.h \
+    src/mike/simulation.h \
+
 
 FORMS += src/mainwindow.ui
 

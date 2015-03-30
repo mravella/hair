@@ -17,11 +17,11 @@
 #include <vector>
 
 #define GLM_FORCE_RADIANS
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/constants.hpp>
+#include "glm/glm.hpp"             // glm::vec*, mat*, and basic glm functions
+#include "glm/gtx/string_cast.hpp" // glm::to_string
+#include "glm/gtx/transform.hpp"   // glm::translate, scale, rotate
+#include "glm/gtc/type_ptr.hpp"    // glm::value_ptr
+#include "glm/gtc/constants.hpp"
 
 // glu.h in different location on macs
 #ifdef __APPLE__

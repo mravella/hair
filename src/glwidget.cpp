@@ -1,11 +1,7 @@
 #include "glwidget.h"
 #include "resourceloader.h"
 #include "errorchecker.h"
-
-#define GLM_FORCE_RADIANS
-#include "glm/glm.hpp"            // glm::vec*, mat*, and basic glm functions
-#include "glm/gtx/transform.hpp"  // glm::translate, scale, rotate
-#include "glm/gtc/type_ptr.hpp"   // glm::value_ptr
+#include "hairCommon.h"
 
 GLWidget::GLWidget(QGLFormat format, QWidget *parent)
     : QGLWidget(format, parent), m_timer(this), m_fps(60.f), m_increment(0)

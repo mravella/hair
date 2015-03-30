@@ -34,7 +34,6 @@ void GLWidget::initializeGL()
                 ":/shaders/full.tcs", ":/shaders/full.tes");
 
     m_hairPatch.init();
-    glPatchParameteri(GL_PATCH_VERTICES, 4);
 
     ErrorChecker::printGLErrors("end of initializeGL");
 }
@@ -47,28 +46,36 @@ void GLWidget::paintGL()
 
     float time = m_increment++ / (float) m_fps;      // Time in seconds.
 
-    float fieldOfViewY = 0.8f;                       // Vertical field of view angle, in radians.
-    float aspectRatio = (float)width() / height();   // Aspect ratio of the window.
-    float nearClipPlane = 0.1f;                      // Near clipping plane.
-    float farClipPlane = 100.f;                      // Far clipping plane.
-    glm::vec3 eye = glm::vec3(0.f, 0.f, 4.f);        // Camera position.
-    glm::vec3 center = glm::vec3(0.f, 0.f, 0.f);     // Where camera is looking.
-    glm::vec3 up = glm::vec3(0.f, 1.f, 0.f);         // Up direction.
-
     // Model, view, and projection matrices
-    glm::mat4 proj = glm::perspective(fieldOfViewY, aspectRatio, nearClipPlane, farClipPlane);
-    glm::mat4 view = glm::lookAt(eye, center, up);
+    glm::mat4 proj = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+    glm::mat4 view = glm::lookAt(
+                glm::vec3(0.f, 0.f, 4.f),  // eye
+                glm::vec3(0.f, 0.f, 0.f),  // center
+                glm::vec3(0.f, 1.f, 0.f)); // up
     glm::mat4 model(1.f);
 
+    // Generates an array of 50 hair vertex positions, which are sent to the shaders below.
+    int numVertices = 50;
+    GLfloat hairData[3 * numVertices];
+    HairPatch::testHairData(hairData, numVertices, time);
+
     glUseProgram(m_fullProgram);
-    glUniformMatrix4fv(glGetUniformLocation(m_basicProgram, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
-    glUniformMatrix4fv(glGetUniformLocation(m_basicProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(m_basicProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
-    glUniform3f(glGetUniformLocation(m_basicProgram, "color"), 0.f, 1.f, 1.f);
+    glUniformMatrix4fv(glGetUniformLocation(m_fullProgram, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
+    glUniformMatrix4fv(glGetUniformLocation(m_fullProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(glGetUniformLocation(m_fullProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
+    glUniform3f(glGetUniformLocation(m_fullProgram, "color"), .6f, .4f, .3f);
+    glUniform3fv(glGetUniformLocation(m_fullProgram, "vertexData"), numVertices, hairData);
+    glUniform1i(glGetUniformLocation(m_fullProgram, "numHairSegments"), numVertices + 1);
+    glUniform1i(glGetUniformLocation(m_fullProgram, "numPatchHairs"), 20);
 
     m_hairPatch.draw();
 
     glUseProgram(0);
+}
+
+void GLWidget::resizeGL(int w, int h)
+{
+    glViewport(0, 0, w, h);
 }
 
 /** Repaints the canvas. Called 60 times per second. */

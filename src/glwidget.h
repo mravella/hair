@@ -18,6 +18,7 @@ public:
 protected:
     void initializeGL();
     void paintGL();
+    void resizeGL(int w, int h);
 
 protected slots:
     /** Repaints the canvas. Called 60 times per second by m_timer. */

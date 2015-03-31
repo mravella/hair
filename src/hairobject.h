@@ -3,6 +3,7 @@
 
 #include "QList"
 #include "hairCommon.h"
+#include "shaderprogram.h"
 
 class Hair;
 class Simulation;
@@ -13,7 +14,7 @@ public:
     HairObject(int _numGuideHairs, Simulation *_simulation);
 
     void update(float _time);
-    void paint(GLuint _program);
+    void paint(ShaderProgram &program);
 
 public:
     QList<Hair*> m_guideHairs;

@@ -25,13 +25,7 @@ void GLWidget::initializeGL()
     glEnable(GL_CULL_FACE);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    // Initialize shader programs.
-    m_basicProgram = ResourceLoader::createBasicShaderProgram(
-                ":/shaders/basic.vert", ":/shaders/basic.frag");
-    m_fullProgram = ResourceLoader::createTessShaderProgram(
-                ":/shaders/full.vert", ":/shaders/full.frag", //":/shaders/full.geom",
-                ":/shaders/full.tcs", ":/shaders/full.tes");
-
+    m_program.create();
     m_testSimulation = new Simulation();
     m_hairObject = new HairObject(1, m_testSimulation);
 
@@ -47,27 +41,18 @@ void GLWidget::paintGL()
 
     float time = m_increment++ / (float) m_fps;      // Time in seconds.
 
-    // Model, view, and projection matrices
-    glm::mat4 proj = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
-    glm::mat4 view = glm::lookAt(
+    m_testSimulation->update(time);
+    m_hairObject->update(time);
+
+    m_program.bind();
+    m_program.uniforms.projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+    m_program.uniforms.view = glm::lookAt(
                 glm::vec3(0.f, 0.f, 4.f),  // eye
                 glm::vec3(0.f, 0.f, 0.f),  // center
                 glm::vec3(0.f, 1.f, 0.f)); // up
-    glm::mat4 model(1.f);
-
-
-    glUseProgram(m_fullProgram);
-    glUniformMatrix4fv(glGetUniformLocation(m_fullProgram, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
-    glUniformMatrix4fv(glGetUniformLocation(m_fullProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(glGetUniformLocation(m_fullProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-
-    m_testSimulation->update(time);
-    m_hairObject->update(time);
-    m_hairObject->paint(m_fullProgram);
-
-
-    glUseProgram(0);
+    m_program.uniforms.model = glm::mat4(1.f);
+    m_hairObject->paint(m_program);
+    m_program.unbind();
 }
 
 void GLWidget::resizeGL(int w, int h)

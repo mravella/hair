@@ -10,6 +10,7 @@
 #endif
 #include "sphere.h"
 #include "hairpatch.h"
+#include "shaderprogram.h"
 
 class HairObject;
 class Simulation;
@@ -35,12 +36,7 @@ private:
     HairObject *m_hairObject;
     Simulation *m_testSimulation;
 
-
-    /** ID for the basic shader program (just vertex and fragmnet shader). */
-    GLuint m_basicProgram;
-
-    /** ID for the full shader program (vertex, tessellation, geometry, and fragmnet shaders). */
-    GLuint m_fullProgram;
+    ShaderProgram m_program;
 
     QTimer m_timer; /** Timer calls tick() 60 times per second. */
     float m_fps;

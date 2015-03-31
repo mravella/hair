@@ -53,20 +53,19 @@ void Hair::update(float time)
 
 }
 
-void Hair::paint(GLuint _program)
+void Hair::paint(ShaderProgram &_program)
 {
+    _program.uniforms.color = glm::vec3(.6f, .4f, .3f);
+    _program.uniforms.numGroupHairs = 20;
+    _program.uniforms.numHairVertices = MIN(m_vertices.size(), MAX_HAIR_VERTICES);
 
-    GLfloat _data[3*m_vertices.size()];
-    for (int i = 0; i < m_vertices.size(); i++){
-        _data[3*i] = m_vertices.at(i)->position.x;
-        _data[3*i+1] = m_vertices.at(i)->position.y;
-        _data[3*i+2] = m_vertices.at(i)->position.z;
+    for (int i = 0; i < _program.uniforms.numHairVertices; i++){
+        _program.uniforms.vertexData[3*i] = m_vertices.at(i)->position.x;
+        _program.uniforms.vertexData[3*i+1] = m_vertices.at(i)->position.y;
+        _program.uniforms.vertexData[3*i+2] = m_vertices.at(i)->position.z;
     }
 
-    glUniform3f(glGetUniformLocation(_program, "color"), .6f, .4f, .3f);
-    glUniform3fv(glGetUniformLocation(_program, "vertexData"), m_vertices.size(), _data);
-    glUniform1i(glGetUniformLocation(_program, "numHairSegments"), m_vertices.size()+1);
-    glUniform1i(glGetUniformLocation(_program, "numPatchHairs"), 20);
+    _program.setUniforms();
 
     glPatchParameteri(GL_PATCH_VERTICES, 4);
     m_patch.draw(GL_PATCHES);

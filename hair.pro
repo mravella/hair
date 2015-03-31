@@ -16,8 +16,10 @@ SOURCES += \
     src/openglshape.cpp \
     src/errorchecker.cpp \
     src/hairpatch.cpp \
+    src/hairobject.cpp \
     src/mike/hair.cpp \
     src/mike/simulation.cpp \
+    src/shaderprogram.cpp
 
 
 HEADERS += \
@@ -28,9 +30,11 @@ HEADERS += \
     src/openglshape.h \
     src/errorchecker.h \
     src/hairpatch.h \
+    src/hairobject.h \
     src/hairCommon.h \
     src/mike/hair.h \
     src/mike/simulation.h \
+    src/shaderprogram.h
 
 
 FORMS += src/mainwindow.ui

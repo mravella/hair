@@ -27,9 +27,9 @@ void HairObject::update(float _time){
     }
 }
 
-void HairObject::paint(GLuint _program){
+void HairObject::paint(ShaderProgram &program){
     for (int i = 0; i < m_guideHairs.size(); i++)
     {
-        m_guideHairs.at(i)->paint(_program);
+        m_guideHairs.at(i)->paint(program);
     }
 }

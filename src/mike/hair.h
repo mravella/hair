@@ -4,6 +4,7 @@
 #include "hairCommon.h"
 
 #include "openglshape.h"
+#include "shaderprogram.h"
 
 
 class Hair
@@ -14,7 +15,7 @@ public:
     virtual ~Hair();
 
     void update(float time);
-    void paint(GLuint _program);
+    void paint(ShaderProgram &_program);
 
 
 public:

@@ -3,6 +3,8 @@
 
 #include "hairCommon.h"
 
+class HairObject;
+
 class Simulation
 {
 public:
@@ -10,7 +12,23 @@ public:
 
     virtual ~Simulation();
 
+    void update(float _time);
+    void simulate(HairObject *_object);
+
 private:
+    void calculateExternalForces(HairObject *_object);
+    void calculateConstraintForces(HairObject *_object);
+
+    void integrate(HairObject *_object);
+
+
+public:
+    QList<glm::vec3> m_externalForces;
+
+
+
+private:
+    float m_time;
 
 };
 

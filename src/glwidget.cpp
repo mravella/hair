@@ -3,6 +3,9 @@
 #include "errorchecker.h"
 #include "hairCommon.h"
 
+#include "hairobject.h"
+#include "simulation.h"
+
 GLWidget::GLWidget(QGLFormat format, QWidget *parent)
     : QGLWidget(format, parent), m_timer(this), m_fps(60.f), m_increment(0)
 {
@@ -29,7 +32,9 @@ void GLWidget::initializeGL()
                 ":/shaders/full.vert", ":/shaders/full.frag", //":/shaders/full.geom",
                 ":/shaders/full.tcs", ":/shaders/full.tes");
 
-    m_hairPatch.init();
+    m_testSimulation = new Simulation();
+    m_hairObject = new HairObject(1, m_testSimulation);
+
 
     ErrorChecker::printGLErrors("end of initializeGL");
 }
@@ -50,21 +55,17 @@ void GLWidget::paintGL()
                 glm::vec3(0.f, 1.f, 0.f)); // up
     glm::mat4 model(1.f);
 
-    // Generates an array of 50 hair vertex positions, which are sent to the shaders below.
-    int numVertices = 50;
-    GLfloat hairData[3 * numVertices];
-    HairPatch::testHairData(hairData, numVertices, time);
 
     glUseProgram(m_fullProgram);
     glUniformMatrix4fv(glGetUniformLocation(m_fullProgram, "projection"), 1, GL_FALSE, glm::value_ptr(proj));
     glUniformMatrix4fv(glGetUniformLocation(m_fullProgram, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(glGetUniformLocation(m_fullProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
-    glUniform3f(glGetUniformLocation(m_fullProgram, "color"), .6f, .4f, .3f);
-    glUniform3fv(glGetUniformLocation(m_fullProgram, "vertexData"), numVertices, hairData);
-    glUniform1i(glGetUniformLocation(m_fullProgram, "numHairSegments"), numVertices + 1);
-    glUniform1i(glGetUniformLocation(m_fullProgram, "numPatchHairs"), 20);
 
-    m_hairPatch.draw();
+
+    m_testSimulation->update(time);
+    m_hairObject->update(time);
+    m_hairObject->paint(m_fullProgram);
+
 
     glUseProgram(0);
 }

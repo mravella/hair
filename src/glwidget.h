@@ -11,6 +11,9 @@
 #include "sphere.h"
 #include "hairpatch.h"
 
+class HairObject;
+class Simulation;
+
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
@@ -29,7 +32,9 @@ protected slots:
     void tick();
 
 private:
-    HairPatch m_hairPatch;
+    HairObject *m_hairObject;
+    Simulation *m_testSimulation;
+
 
     /** ID for the basic shader program (just vertex and fragmnet shader). */
     GLuint m_basicProgram;

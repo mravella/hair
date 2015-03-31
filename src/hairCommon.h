@@ -70,6 +70,29 @@ struct HairVertex
 };
 
 
+struct Joint
+{
+    glm::vec3 position;
+    glm::vec3 linearForce;
+    glm::vec3 angularForce;
+    glm::vec3 constraintForce;
+
+    Joint()
+    {
+        position = glm::vec3(0.);
+        linearForce = glm::vec3(0.);
+        angularForce = glm::vec3(0.);
+        constraintForce = glm::vec3(0.);
+    }
+    Joint(glm::vec3 _position)
+    {
+        position = _position;
+        linearForce = glm::vec3(0.);
+        angularForce = glm::vec3(0.);
+        constraintForce = glm::vec3(0.);
+    }
+};
+
 // ----------------------
 // Deallocation Utilities
 // ----------------------

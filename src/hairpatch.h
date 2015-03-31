@@ -3,6 +3,8 @@
 
 #include "openglshape.h"
 
+class Hair;
+
 class HairPatch
 {
 public:
@@ -13,12 +15,11 @@ public:
 
     void draw();
 
-    static void testHairData(GLfloat *data, int numVertices, float time);
+    void testHairData(GLfloat *data, int numVertices, float time);
 
 private:
     OpenGLShape m_patch;
 
-    GLuint m_fullProgram;
 };
 
 #endif // HAIRPATCH_H

@@ -17,28 +17,60 @@ Hair::Hair(int numSegments, double length, glm::vec3 location)
 
     m_numSegments = numSegments;
     m_length = length;
-    m_vertices = new HairVertex[numSegments + 1];
 
     // TEMPORARY: Add all vertices directly below m_location
-    double stepSize = (double) numSegments / length;
+    double stepSize = (double) length / numSegments;
     for (int i = 0; i < numSegments + 1; ++i)
     {
-        m_vertices[i] = HairVertex(glm::vec3(location.x, location.y + stepSize * i, location.z));
+        m_vertices.append(new HairVertex(glm::vec3(location.x, location.y - stepSize * i, location.z)));
+
+        if (i != 0) // joints are halfway between vertices
+        {
+            glm::vec3 _pos = (m_vertices.at(i)->position + m_vertices.at(i-1)->position)/2.0f;
+            m_joints.append(new Joint(_pos));
+        }
     }
+
+
+    GLfloat data[] = {-.5, +.5, 0,
+                      +.5, +.5, 0,
+                      -.5, -.5, 0,
+                      +.5, -.5, 0};
+    m_patch.create();
+    m_patch.setVertexData(data, sizeof(data), 4);
+    m_patch.setAttribute(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
 }
 
 Hair::~Hair()
 {
-    delete m_vertices;
+    m_patch.destroy();
 }
 
-int Hair::getNumSegments(){ return m_numSegments;}
 
-double Hair::getLength(){ return m_length;}
+void Hair::update(float time)
+{
 
-HairVertex Hair::getVertexAt(int i){ return m_vertices[i];}
+}
 
-HairVertex* Hair::getVertices() { return m_vertices;}
+void Hair::paint(GLuint _program)
+{
 
+    GLfloat _data[3*m_vertices.size()];
+    for (int i = 0; i < m_vertices.size(); i++){
+        _data[3*i] = m_vertices.at(i)->position.x;
+        _data[3*i+1] = m_vertices.at(i)->position.y;
+        _data[3*i+2] = m_vertices.at(i)->position.z;
+    }
+
+    glUniform3f(glGetUniformLocation(_program, "color"), .6f, .4f, .3f);
+    glUniform3fv(glGetUniformLocation(_program, "vertexData"), m_vertices.size(), _data);
+    glUniform1i(glGetUniformLocation(_program, "numHairSegments"), m_vertices.size()+1);
+    glUniform1i(glGetUniformLocation(_program, "numPatchHairs"), 20);
+
+    glPatchParameteri(GL_PATCH_VERTICES, 4);
+    m_patch.draw(GL_PATCHES);
+
+}
 
 

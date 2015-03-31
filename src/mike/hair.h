@@ -19,7 +19,7 @@ public:
     // Returns the location of the hair vertex at index i
     HairVertex getVertexAt(int i);
 
-    // Returns QVector of all the vertices making up the hair
+    // Returns array of all the vertices making up the hair
     HairVertex* getVertices();
 
 

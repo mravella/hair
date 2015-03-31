@@ -58,11 +58,8 @@ void Hair::paint(ShaderProgram &_program)
     _program.uniforms.color = glm::vec3(.6f, .4f, .3f);
     _program.uniforms.numGroupHairs = 20;
     _program.uniforms.numHairVertices = MIN(m_vertices.size(), MAX_HAIR_VERTICES);
-
     for (int i = 0; i < _program.uniforms.numHairVertices; i++){
-        _program.uniforms.vertexData[3*i] = m_vertices.at(i)->position.x;
-        _program.uniforms.vertexData[3*i+1] = m_vertices.at(i)->position.y;
-        _program.uniforms.vertexData[3*i+2] = m_vertices.at(i)->position.z;
+        _program.uniforms.vertexData[i] = m_vertices.at(i)->position;
     }
 
     _program.setUniforms();

@@ -42,6 +42,6 @@ void ShaderProgram::setUniforms()
     glUniformMatrix4fv(m_uniformLocs["projection"], 1, GL_FALSE, glm::value_ptr(uniforms.projection));
     glUniform1i(m_uniformLocs["numPatchHairs"], uniforms.numGroupHairs);
     glUniform1i(m_uniformLocs["numHairSegments"], uniforms.numHairVertices-1);
-    glUniform3fv(m_uniformLocs["vertexData"], uniforms.numHairVertices, &uniforms.vertexData[0]);
+    glUniform3fv(m_uniformLocs["vertexData"], uniforms.numHairVertices, &uniforms.vertexData[0][0]);
     glUniform3fv(m_uniformLocs["color"], 1, glm::value_ptr(uniforms.color));
 }

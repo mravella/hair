@@ -11,7 +11,7 @@ struct Uniforms {
     glm::mat4 model, view, projection;
     int numGroupHairs;
     int numHairVertices;
-    GLfloat vertexData[MAX_HAIR_VERTICES];
+    glm::vec3 vertexData[MAX_HAIR_VERTICES];
     float hairGroupWidth;
     glm::vec3 color;
 };

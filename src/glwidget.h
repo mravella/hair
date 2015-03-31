@@ -3,7 +3,11 @@
 #include "GL/glew.h"
 #include <QGLWidget>
 #include <QTimer>
+#ifdef __APPLE__
 #include <glu.h>
+#else
+#include <GL/glu.h>
+#endif
 #include "sphere.h"
 #include "hairpatch.h"
 

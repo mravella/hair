@@ -15,7 +15,7 @@ uniform mat4 model, view, projection;
 uniform vec3 vertexData[MAX_VERTICES];
 uniform int numHairSegments;
 
-#define tess_x clamp(gl_TessCoord.x, 0, 1 - 1e-4)
+#define tess_x clamp(gl_TessCoord.x, 0.0, 1 - 1e-4)
 #define tess_y gl_TessCoord.y
 
 float rand( vec2 p )

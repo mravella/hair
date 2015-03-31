@@ -13,10 +13,6 @@ HairPatch::~HairPatch()
 
 void HairPatch::init()
 {
-    m_fullProgram = ResourceLoader::createTessShaderProgram(
-                ":/shaders/full.vert", ":/shaders/full.frag", //":/shaders/full.geom",
-                ":/shaders/full.tcs", ":/shaders/full.tes");
-
     GLfloat data[] = {-.5, +.5, 0,
                       +.5, +.5, 0,
                       -.5, -.5, 0,

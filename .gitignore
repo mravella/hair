@@ -1,1 +1,8 @@
 *.user*
+*.o
+moc_*
+ui_mainwindow.h
+Makefile
+qrc_*.cpp
+hair
+

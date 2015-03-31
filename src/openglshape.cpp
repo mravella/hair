@@ -1,5 +1,6 @@
 #include "openglshape.h"
 #include <iostream>
+#include <stdio.h>
 
 void OpenGLShape::create()
 {

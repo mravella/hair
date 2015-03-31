@@ -1,6 +1,7 @@
 #include "errorchecker.h"
 
 #include "GL/glew.h"
+#include <stdio.h>
 
 void ErrorChecker::printGLErrors(std::string prefix)
 {

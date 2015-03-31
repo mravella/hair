@@ -1,4 +1,5 @@
 #include "resourceloader.h"
+#include "errorchecker.h"
 #include <QFile>
 #include <QTextStream>
 
@@ -158,4 +159,10 @@ void ResourceLoader::initializeGlew()
     GLenum err = glewInit();
     if (GLEW_OK != err) fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
     fprintf(stdout, "Using GLEW %s\n", glewGetString(GLEW_VERSION));
-}
+
+    // Check OpenGL errors but ignore GL_INVALID_ENUM, which is caused by glewExperimental.
+    while ((err = glGetError()) != GL_NO_ERROR)
+    {
+        if (err == GL_INVALID_ENUM) continue;
+        printf("OpenGL error in ResourceLoader::initializeGlew(): %d\n", err);
+    }}

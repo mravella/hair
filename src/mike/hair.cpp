@@ -7,13 +7,15 @@
  */
 
 
-Hair::Hair(int numSegments, double length, glm::vec3 location)
+Hair::Hair(int numSegments, double length, glm::vec3 location, glm::vec3 dir)
 {
     if (numSegments < 2)
         cerr << "Number of hair segments should be at least 2" << endl;
 
     if (length <= 0)
         cerr << "Hair length should be positive" << endl;
+
+    dir = glm::normalize(dir);
 
     m_numSegments = numSegments;
     m_length = length;
@@ -22,7 +24,7 @@ Hair::Hair(int numSegments, double length, glm::vec3 location)
     double stepSize = (double) length / numSegments;
     for (int i = 0; i < numSegments + 1; ++i)
     {
-        m_vertices.append(new HairVertex(glm::vec3(location.x, location.y - stepSize * i, location.z)));
+        m_vertices.append(new HairVertex(glm::vec3(location.x, location.y, location.z) + dir * (float) (stepSize * i)));
 
         if (i != 0) // joints are halfway between vertices
         {

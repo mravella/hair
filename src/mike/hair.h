@@ -10,7 +10,7 @@
 class Hair
 {
 public:
-    Hair(int numSegments, double length, glm::vec3 location);
+    Hair(int numSegments, double length, glm::vec3 location, glm::vec3 dir);
 
     virtual ~Hair();
 

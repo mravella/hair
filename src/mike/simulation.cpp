@@ -11,6 +11,14 @@
 #include "hairobject.h"
 #include "mike/hair.h"
 
+#define W_0 1.0
+#define M   1.0
+#define G   9.8
+#define B   0.3
+#define A   1.0
+#define K   1.0
+#define R   1.0
+
 Simulation::Simulation()
 {
     m_time = 0;

@@ -15,7 +15,11 @@ public:
     void update(float _time);
     void simulate(HairObject *_object);
 
+
 private:
+    void sinDerp(HairObject *_object);
+
+
     void calculateExternalForces(HairObject *_object);
     void calculateConstraintForces(HairObject *_object);
 

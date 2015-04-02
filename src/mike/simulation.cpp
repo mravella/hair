@@ -30,12 +30,35 @@ void Simulation::update(float _time){
 
 void Simulation::simulate(HairObject *_object)
 {
+    bool __BMONTELL_MODE__ = true;
 
-    calculateExternalForces(_object);
-    calculateConstraintForces(_object);
+    if (__BMONTELL_MODE__){
 
-    integrate(_object);
+        sinDerp(_object);
 
+    } else {
+
+        calculateExternalForces(_object);
+        calculateConstraintForces(_object);
+
+        integrate(_object);
+
+    }
+
+}
+
+void Simulation::sinDerp(HairObject *_object){
+    for (int i = 0; i < _object->m_guideHairs.size(); i++){
+        int _numVertices = _object->m_guideHairs.at(i)->m_vertices.size();
+
+        for (int j = 0; j < _numVertices; j++){
+            HairVertex *_vert = _object->m_guideHairs.at(i)->m_vertices.at(j);
+
+            _vert->position.x = 0.05 * sin(8 * (m_time + (float)j / _numVertices));
+            _vert->position.y = -1 + 2.f * j / _numVertices;
+
+        }
+    }
 }
 
 
@@ -105,7 +128,7 @@ void Simulation::integrate(HairObject *_object)
             float theta = acos(CLAMP(glm::dot(glm::vec3(0.0, -1.0, 0.0), glm::normalize(rodVector)), -1.0, 1.0));
             cout << "Theta " << theta + 0.0 << endl;
 
-             /**
+            /**
              * I * a = sum of torques
              * I * a = gravity torque + friction torque
              * gravity = -R * m * g * sin(theta)
@@ -116,8 +139,8 @@ void Simulation::integrate(HairObject *_object)
              **/
 
             float thetaPrimePrime = -G / rodLength * sin(theta);
-//                                     - B * vert->omega
-//                                     / (MASS * rodLength * rodLength);
+            //                                     - B * vert->omega
+            //                                     / (MASS * rodLength * rodLength);
             
             cout << "Theta prime prime " << thetaPrimePrime + 0.0 << endl;
 
@@ -132,7 +155,6 @@ void Simulation::integrate(HairObject *_object)
             vert->position.x = pivotVert->position.x + rodLength * cos(theta);
             vert->position.y = pivotVert->position.y + rodLength * sin(theta);
 
-//            _vert->position.x = 0.05 * sin(8 * (m_time + (float)j / numVerts));
         }
     }
 }

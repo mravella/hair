@@ -55,7 +55,7 @@ void Simulation::sinDerp(HairObject *_object){
             HairVertex *_vert = _object->m_guideHairs.at(i)->m_vertices.at(j);
 
             _vert->position.x = 0.05 * sin(8 * (m_time + (float)j / _numVertices));
-            _vert->position.y = -1 + 2.f * j / _numVertices;
+            _vert->position.y = -1 + 2.f * j / (_numVertices-1);
 
         }
     }

@@ -48,7 +48,7 @@ float noiseWithOctaves( in vec2 p )
 void main()
 {
     // Get vertex position from uniform data array.
-    vec3 pos = vertexData[int(tess_x * (numHairSegments-1))];
+    vec3 pos = vertexData[int(tess_x * (numHairSegments+1))];
 
     pos.x += PATCH_WIDTH * (tess_y - 0.5); // Offset each hair.
     pos.x += NOISE_AMPLITUDE * noiseWithOctaves(gl_TessCoord.xy); // Apply noise to offset position.

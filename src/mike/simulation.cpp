@@ -30,7 +30,7 @@ void Simulation::update(float _time){
 
 void Simulation::simulate(HairObject *_object)
 {
-    bool __BMONTELL_MODE__ = true;
+    bool __BMONTELL_MODE__ = false;
 
     if (__BMONTELL_MODE__){
 
@@ -100,18 +100,15 @@ void Simulation::integrate(HairObject *_object)
 {
     for (int i = 0; i < _object->m_guideHairs.size(); i++)
     {
-        // calculate acceleration
-
-        // calculate velocity
-
-        // calculate position
         float numVerts = _object->m_guideHairs.at(i)->m_vertices.size();
         for (int j = 1; j < numVerts; j++){
+
+            double timeStep = .05;
 
             HairVertex *vert = _object->m_guideHairs.at(i)->m_vertices.at(j);
             HairVertex *pivotVert = _object->m_guideHairs.at(i)->m_vertices.at(j-1);
             
-            cout << "j " << j << ", "<< glm::to_string(vert->position) << ", "<< glm::to_string(pivotVert->position) << endl;
+            //            cout << "j " << j << ", "<< glm::to_string(vert->position) << ", "<< glm::to_string(pivotVert->position) << endl;
 
             // Treat previous vertex at pendulum pivot, so rod length is length between two vertices
             glm::vec3 rodVector = vert->position - pivotVert->position;
@@ -138,19 +135,58 @@ void Simulation::integrate(HairObject *_object)
              * a = -g / R * sin(theta) - b * w / (m * R^2)
              **/
 
-            float thetaPrimePrime = -G / rodLength * sin(theta);
-            //                                     - B * vert->omega
-            //                                     / (MASS * rodLength * rodLength);
-            
-            cout << "Theta prime prime " << thetaPrimePrime + 0.0 << endl;
+            bool useEuler = false;
 
-            // How do I get the timestep?
-            float thetaPrime = vert->omega + thetaPrimePrime * 0.5;
-            vert->omega = thetaPrime;
-            cout << "Theta prime " << thetaPrime + 0.0 << endl;
+            if (!useEuler){
+                auto calcOmegaDot = [this, rodLength](double _theta, double _omega) {
 
-            theta = theta + thetaPrime * 0.01;
-            cout << "Theta " << theta + 0.0 << endl;
+                    return -G / rodLength * sin(_theta);
+
+                };
+
+                {
+                    double k1 = calcOmegaDot(theta, vert->omega);
+                    double k2 = calcOmegaDot(theta + .5*timeStep*k1, vert->omega + .5*timeStep*k1);
+                    double k3 = calcOmegaDot(theta + .5*timeStep*k2, vert->omega + .5*timeStep*k2);
+                    double k4 = calcOmegaDot(theta + timeStep*k3, vert->omega + timeStep*k3);
+
+                    vert->omega = vert->omega + timeStep/6. * (k1 + 2*k2 + 2*k3 + k4);
+                }
+
+
+                auto calcThetaDot = [this, rodLength](double _theta, double _omega) {
+
+                    return _omega;
+
+                };
+
+                {
+                    double k1 = calcThetaDot(theta, vert->omega);
+                    double k2 = calcThetaDot(theta + .5*timeStep*k1, vert->omega + .5*timeStep*k1);
+                    double k3 = calcThetaDot(theta + .5*timeStep*k2, vert->omega + .5*timeStep*k2);
+                    double k4 = calcThetaDot(theta + timeStep*k3, vert->omega + timeStep*k3);
+
+                    theta = theta + timeStep/6. * (k1 + 2*k2 + 2*k3 + k4);
+                }
+
+
+            } else {
+                // EULER
+                float thetaPrimePrime = -G / rodLength * sin(theta);
+                //                                     - B * vert->omega
+                //                                     / (MASS * rodLength * rodLength);
+
+                cout << "Theta prime prime " << thetaPrimePrime + 0.0 << endl;
+
+                // How do I get the timestep?
+                float thetaPrime = vert->omega + thetaPrimePrime * timeStep;
+                vert->omega = thetaPrime;
+                cout << "Theta prime " << thetaPrime + 0.0 << endl;
+
+                theta = theta + thetaPrime * timeStep;
+                cout << "Theta " << theta + 0.0 << endl;
+
+            }
 
             vert->position.x = pivotVert->position.x + rodLength * cos(theta);
             vert->position.y = pivotVert->position.y + rodLength * sin(theta);

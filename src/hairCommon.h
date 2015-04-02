@@ -48,6 +48,7 @@ struct HairVertex
     glm::vec3 acceleration;
     double    theta;
     double    omega;
+    double    segLen;
 
     HairVertex(void)
     {
@@ -55,6 +56,8 @@ struct HairVertex
         velocity = glm::vec3(0.0);
         acceleration = glm::vec3(0.0);
         omega = 0.0;
+        theta = 0.0;
+        segLen = 0.0;
     }
 
     HairVertex(glm::vec3 x)
@@ -63,6 +66,8 @@ struct HairVertex
         velocity = glm::vec3(0.0);
         acceleration = glm::vec3(0.0);
         omega = 0.0;
+        theta = 0.0;
+        segLen = 0.0;
     }
 
     HairVertex(glm::vec3 x, glm::vec3 v, glm::vec3 a)
@@ -71,6 +76,8 @@ struct HairVertex
         velocity = v;
         acceleration = a;
         omega = 0.0;
+        theta = 0.0;
+        segLen = 0.0;
     }
 };
 

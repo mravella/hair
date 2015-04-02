@@ -18,8 +18,6 @@
 #define EULER false
 #define __BMONTELL_MODE__ false
 
-double oldTheta = 1.570;
-
 Simulation::Simulation()
 {
     m_time = 0;
@@ -105,14 +103,12 @@ void Simulation::integrate(HairObject *_object)
     for (int i = 0; i < _object->m_guideHairs.size(); i++)
     {
         float numVerts = _object->m_guideHairs.at(i)->m_vertices.size();
-//        for (int j = 1; j < numVerts; j++){
+        for (int j = 1; j < numVerts; j++){
 
             double timeStep = .02;
 
-//            HairVertex *vert = _object->m_guideHairs.at(i)->m_vertices.at(j);
-            HairVertex *vert = _object->m_guideHairs.at(i)->m_vertices.at(1);
-//            HairVertex *pivotVert = _object->m_guideHairs.at(i)->m_vertices.at(j-1);
-            HairVertex *pivotVert = _object->m_guideHairs.at(i)->m_vertices.at(0);
+            HairVertex *vert = _object->m_guideHairs.at(i)->m_vertices.at(j);
+            HairVertex *pivotVert = _object->m_guideHairs.at(i)->m_vertices.at(j-1);
             
             cout << /*"j " << j <<*/ ", "<< glm::to_string(vert->position) << ", "<< glm::to_string(pivotVert->position) << endl;
 
@@ -127,11 +123,8 @@ void Simulation::integrate(HairObject *_object)
             float I = MASS * rodLength * rodLength;
             cout << "Moment of inertia " << I + 0.0 << endl;
 
-            // Theta is dot of down vector and rod vector
-            float theta = acos(CLAMP(glm::dot(glm::vec3(0.0, -1.0, 0.0), glm::normalize(rodVector)), -1.0, 1.0));
-            theta = oldTheta;
-            cout << "Theta " << theta + 0.0 << endl;
-
+            // Variables to update
+            float theta = vert->theta;
             float omega = vert->omega;
 
             /**
@@ -198,15 +191,11 @@ void Simulation::integrate(HairObject *_object)
 
             }
 
+            vert->theta = theta;
+            _object->m_guideHairs.at(i)->m_vertices.at(j)->position.x = _object->m_guideHairs.at(i)->m_vertices.at(j-1)->position.x + rodLength * sin(theta);
+            _object->m_guideHairs.at(i)->m_vertices.at(j)->position.y = _object->m_guideHairs.at(i)->m_vertices.at(j-1)->position.y + rodLength * cos(theta);
 
-            double translateX = rodLength * sin(theta) - sin(oldTheta);
-            double translateY = rodLength * cos(theta) + cos(oldTheta);
-            oldTheta = theta;
-            _object->m_guideHairs.at(i)->m_vertices.at(1)->position.x = _object->m_guideHairs.at(i)->m_vertices.at(0)->position.x + rodLength * sin(theta);
-            _object->m_guideHairs.at(i)->m_vertices.at(1)->position.y = _object->m_guideHairs.at(i)->m_vertices.at(0)->position.y + rodLength * cos(theta);
-
-
-//        }
+        }
     }
 }
 

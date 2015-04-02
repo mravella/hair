@@ -24,7 +24,14 @@ Hair::Hair(int numSegments, double length, glm::vec3 location, glm::vec3 dir)
     double stepSize = (double) length / numSegments;
     for (int i = 0; i < numSegments + 1; ++i)
     {
-        m_vertices.append(new HairVertex(glm::vec3(location.x, location.y, location.z) + dir * (float) (stepSize * i)));
+        HairVertex *newVert = new HairVertex(glm::vec3(location.x, location.y, location.z) + dir * (float) (stepSize * i));
+        if (i > 0)
+        {
+            HairVertex *oldVert = m_vertices.at(i - 1);
+            newVert->theta = acos(CLAMP(glm::dot(oldVert->position - newVert->position, glm::vec3(0, -1, 0)), -1.0, 1.0));
+        }
+        newVert->segLen = stepSize;
+        m_vertices.append(newVert);
         cout << glm::to_string(m_vertices.last()->position) << endl;
         
     }

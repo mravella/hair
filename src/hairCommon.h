@@ -46,12 +46,15 @@ struct HairVertex
     glm::vec3 position;
     glm::vec3 velocity;
     glm::vec3 acceleration;
+    double    theta;
+    double    omega;
 
     HairVertex(void)
     {
         position = glm::vec3(0.0);
         velocity = glm::vec3(0.0);
         acceleration = glm::vec3(0.0);
+        omega = 0.0;
     }
 
     HairVertex(glm::vec3 x)
@@ -59,6 +62,7 @@ struct HairVertex
         position = x;
         velocity = glm::vec3(0.0);
         acceleration = glm::vec3(0.0);
+        omega = 0.0;
     }
 
     HairVertex(glm::vec3 x, glm::vec3 v, glm::vec3 a)
@@ -66,6 +70,7 @@ struct HairVertex
         position = x;
         velocity = v;
         acceleration = a;
+        omega = 0.0;
     }
 };
 
@@ -175,6 +180,13 @@ struct Joint
 #define ABS(x) ({                   \
    register typeof(x) ___tx = (x);  \
    (___tx >= 0 ? ___tx : -___tx);   \
+})
+
+#define CLAMP(x, y, z) ({           \
+    double _x_ = (x);    \
+    double _y_ = (y);    \
+    double _z_ = (z);    \
+    (std::min(_y_, std::max(_x_, _z_))); \
 })
 
 #ifndef M_PI

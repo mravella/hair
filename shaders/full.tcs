@@ -16,7 +16,8 @@ void main()
     position_tc[ID] = position_v[ID];
 
     if (ID == 0) {
-        gl_TessLevelOuter[0] = numPatchHairs;
+        //gl_TessLevelOuter[0] = numPatchHairs;
+        gl_TessLevelOuter[0] = 1;
         gl_TessLevelOuter[1] = numHairSegments;
     }
 }

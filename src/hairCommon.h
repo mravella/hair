@@ -186,7 +186,7 @@ struct Joint
     double _x_ = (x);    \
     double _y_ = (y);    \
     double _z_ = (z);    \
-    (std::min(_y_, std::max(_x_, _z_))); \
+    (std::max(_y_, std::min(_x_, _z_))); \
 })
 
 #ifndef M_PI

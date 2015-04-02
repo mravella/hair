@@ -11,7 +11,7 @@
 #include "hairobject.h"
 #include "mike/hair.h"
 
-#define G   9.8f
+#define G   -9.8f
 #define B   0.3f
 #define MASS 1.0f
 
@@ -84,10 +84,11 @@ void Simulation::integrate(HairObject *_object)
         // calculate position
         float numVerts = _object->m_guideHairs.at(i)->m_vertices.size();
         for (int j = 1; j < numVerts; j++){
-            cout << "j " << j + 0 << endl;
 
             HairVertex *vert = _object->m_guideHairs.at(i)->m_vertices.at(j);
             HairVertex *pivotVert = _object->m_guideHairs.at(i)->m_vertices.at(j-1);
+            
+            cout << "j " << j << ", "<< glm::to_string(vert->position) << ", "<< glm::to_string(pivotVert->position) << endl;
 
             // Treat previous vertex at pendulum pivot, so rod length is length between two vertices
             glm::vec3 rodVector = vert->position - pivotVert->position;
@@ -101,7 +102,7 @@ void Simulation::integrate(HairObject *_object)
             cout << "Moment of inertia " << I + 0.0 << endl;
 
             // Theta is dot of down vector and rod vector
-            float theta = acos(CLAMP(glm::dot(glm::vec3(0.0, -1.0, 0.0), rodVector), -1.0, 1.0));
+            float theta = acos(CLAMP(glm::dot(glm::vec3(0.0, -1.0, 0.0), glm::normalize(rodVector)), -1.0, 1.0));
             cout << "Theta " << theta + 0.0 << endl;
 
              /**
@@ -114,20 +115,21 @@ void Simulation::integrate(HairObject *_object)
              * a = -g / R * sin(theta) - b * w / (m * R^2)
              **/
 
-            float thetaPrimePrime = -G / rodLength * sin(theta)
-                                     - B * vert->omega
-                                     / (MASS * rodLength * rodLength);
+            float thetaPrimePrime = -G / rodLength * sin(theta);
+//                                     - B * vert->omega
+//                                     / (MASS * rodLength * rodLength);
+            
             cout << "Theta prime prime " << thetaPrimePrime + 0.0 << endl;
 
             // How do I get the timestep?
-            float thetaPrime = vert->omega + thetaPrimePrime * 0.01;
+            float thetaPrime = vert->omega + thetaPrimePrime * 0.5;
             vert->omega = thetaPrime;
             cout << "Theta prime " << thetaPrime + 0.0 << endl;
 
             theta = theta + thetaPrime * 0.01;
             cout << "Theta " << theta + 0.0 << endl;
 
-            vert->position.x = pivotVert->position.x + rodLength * sin(theta);
+            vert->position.x = pivotVert->position.x + rodLength * cos(theta);
             vert->position.y = pivotVert->position.y + rodLength * sin(theta);
 
 //            _vert->position.x = 0.05 * sin(8 * (m_time + (float)j / numVerts));

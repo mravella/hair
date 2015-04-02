@@ -20,7 +20,6 @@ public:
 
 public:
     QList<HairVertex*> m_vertices;
-    QList<Joint*> m_joints;
 
     OpenGLShape m_patch;
     int m_numSegments;

@@ -27,11 +27,6 @@ Hair::Hair(int numSegments, double length, glm::vec3 location, glm::vec3 dir)
         m_vertices.append(new HairVertex(glm::vec3(location.x, location.y, location.z) + dir * (float) (stepSize * i)));
         cout << glm::to_string(m_vertices.last()->position) << endl;
         
-        if (i != 0) // joints are halfway between vertices
-        {
-            glm::vec3 _pos = (m_vertices.at(i)->position + m_vertices.at(i-1)->position)/2.0f;
-            m_joints.append(new Joint(_pos));
-        }
     }
 
 

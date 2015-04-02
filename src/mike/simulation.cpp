@@ -12,8 +12,13 @@
 #include "mike/hair.h"
 
 #define G   -9.8f
-#define B   0.3f
+#define B   0.1f
 #define MASS 1.0f
+
+#define EULER false
+#define __BMONTELL_MODE__ false
+
+double oldTheta = 1.570;
 
 Simulation::Simulation()
 {
@@ -30,7 +35,6 @@ void Simulation::update(float _time){
 
 void Simulation::simulate(HairObject *_object)
 {
-    bool __BMONTELL_MODE__ = false;
 
     if (__BMONTELL_MODE__){
 
@@ -68,15 +72,15 @@ void Simulation::calculateExternalForces(HairObject *_object)
 {
     for (int i = 0; i < _object->m_guideHairs.size(); i++)
     {
-        for (int j = 0; j < _object->m_guideHairs.at(i)->m_joints.size(); j++)
-        {
-            Joint *_joint = _object->m_guideHairs.at(i)->m_joints.at(j);
+//        for (int j = 0; j < _object->m_guideHairs.at(i)->m_joints.size(); j++)
+//        {
+//            Joint *_joint = _object->m_guideHairs.at(i)->m_joints.at(j);
             // calculate linear force
-            _joint->linearForce = glm::vec3(0, 0, 0);
+//            _joint->linearForce = glm::vec3(0, 0, 0);
 
             // calculate angular force
-            _joint->angularForce = glm::vec3(0, 0, 0);
-        }
+//            _joint->angularForce = glm::vec3(0, 0, 0);
+//        }
     }
 }
 
@@ -85,11 +89,11 @@ void Simulation::calculateExternalForces(HairObject *_object)
 void Simulation::calculateConstraintForces(HairObject *_object){
     for (int i = 0; i < _object->m_guideHairs.size(); i++)
     {
-        for (int j = 0; j < _object->m_guideHairs.at(i)->m_joints.size(); j++)
-        {
-            Joint *_joint = _object->m_guideHairs.at(i)->m_joints.at(j);
-            _joint->constraintForce = glm::vec3(0, 0, 0);
-        }
+//        for (int j = 0; j < _object->m_guideHairs.at(i)->m_joints.size(); j++)
+//        {
+//            Joint *_joint = _object->m_guideHairs.at(i)->m_joints.at(j);
+//            _joint->constraintForce = glm::vec3(0, 0, 0);
+//        }
     }
 }
 
@@ -101,14 +105,16 @@ void Simulation::integrate(HairObject *_object)
     for (int i = 0; i < _object->m_guideHairs.size(); i++)
     {
         float numVerts = _object->m_guideHairs.at(i)->m_vertices.size();
-        for (int j = 1; j < numVerts; j++){
+//        for (int j = 1; j < numVerts; j++){
 
-            double timeStep = .05;
+            double timeStep = .02;
 
-            HairVertex *vert = _object->m_guideHairs.at(i)->m_vertices.at(j);
-            HairVertex *pivotVert = _object->m_guideHairs.at(i)->m_vertices.at(j-1);
+//            HairVertex *vert = _object->m_guideHairs.at(i)->m_vertices.at(j);
+            HairVertex *vert = _object->m_guideHairs.at(i)->m_vertices.at(1);
+//            HairVertex *pivotVert = _object->m_guideHairs.at(i)->m_vertices.at(j-1);
+            HairVertex *pivotVert = _object->m_guideHairs.at(i)->m_vertices.at(0);
             
-            //            cout << "j " << j << ", "<< glm::to_string(vert->position) << ", "<< glm::to_string(pivotVert->position) << endl;
+            cout << /*"j " << j <<*/ ", "<< glm::to_string(vert->position) << ", "<< glm::to_string(pivotVert->position) << endl;
 
             // Treat previous vertex at pendulum pivot, so rod length is length between two vertices
             glm::vec3 rodVector = vert->position - pivotVert->position;
@@ -123,7 +129,10 @@ void Simulation::integrate(HairObject *_object)
 
             // Theta is dot of down vector and rod vector
             float theta = acos(CLAMP(glm::dot(glm::vec3(0.0, -1.0, 0.0), glm::normalize(rodVector)), -1.0, 1.0));
+            theta = oldTheta;
             cout << "Theta " << theta + 0.0 << endl;
+
+            float omega = vert->omega;
 
             /**
              * I * a = sum of torques
@@ -135,12 +144,10 @@ void Simulation::integrate(HairObject *_object)
              * a = -g / R * sin(theta) - b * w / (m * R^2)
              **/
 
-            bool useEuler = false;
+            if (!EULER){
+                auto calcOmegaDot = [this, rodLength, omega, I](double _theta, double _omega) {
 
-            if (!useEuler){
-                auto calcOmegaDot = [this, rodLength](double _theta, double _omega) {
-
-                    return -G / rodLength * sin(_theta);
+                    return (-G / rodLength) * sin(_theta) - B * omega / I;
 
                 };
 
@@ -151,6 +158,7 @@ void Simulation::integrate(HairObject *_object)
                     double k4 = calcOmegaDot(theta + timeStep*k3, vert->omega + timeStep*k3);
 
                     vert->omega = vert->omega + timeStep/6. * (k1 + 2*k2 + 2*k3 + k4);
+                    cout << "Omega " << vert->omega << endl;
                 }
 
 
@@ -166,7 +174,9 @@ void Simulation::integrate(HairObject *_object)
                     double k3 = calcThetaDot(theta + .5*timeStep*k2, vert->omega + .5*timeStep*k2);
                     double k4 = calcThetaDot(theta + timeStep*k3, vert->omega + timeStep*k3);
 
+                    cout << "Delta Theta " << timeStep/6. * (k1 + 2*k2 + 2*k3 + k4) << endl;
                     theta = theta + timeStep/6. * (k1 + 2*k2 + 2*k3 + k4);
+                    cout << "Theta New " << theta << endl;
                 }
 
 
@@ -188,10 +198,15 @@ void Simulation::integrate(HairObject *_object)
 
             }
 
-            vert->position.x = pivotVert->position.x + rodLength * cos(theta);
-            vert->position.y = pivotVert->position.y + rodLength * sin(theta);
 
-        }
+            double translateX = rodLength * sin(theta) - sin(oldTheta);
+            double translateY = rodLength * cos(theta) + cos(oldTheta);
+            oldTheta = theta;
+            _object->m_guideHairs.at(i)->m_vertices.at(1)->position.x = _object->m_guideHairs.at(i)->m_vertices.at(0)->position.x + rodLength * sin(theta);
+            _object->m_guideHairs.at(i)->m_vertices.at(1)->position.y = _object->m_guideHairs.at(i)->m_vertices.at(0)->position.y + rodLength * cos(theta);
+
+
+//        }
     }
 }
 

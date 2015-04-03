@@ -3,7 +3,7 @@
 layout(vertices = 4) out;
 
 uniform int numPatchHairs;
-uniform int numHairSegments;
+uniform int numSplineVertices;
 
 in vec3 position_v[];
 
@@ -16,8 +16,7 @@ void main()
     position_tc[ID] = position_v[ID];
 
     if (ID == 0) {
-        //gl_TessLevelOuter[0] = numPatchHairs;
-        gl_TessLevelOuter[0] = 1;
-        gl_TessLevelOuter[1] = numHairSegments;
+        gl_TessLevelOuter[0] = numPatchHairs;
+        gl_TessLevelOuter[1] = numSplineVertices - 1;
     }
 }

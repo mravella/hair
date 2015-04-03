@@ -6,3 +6,5 @@ Makefile
 qrc_*.cpp
 hair
 
+
+*.stash

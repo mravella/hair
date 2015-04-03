@@ -17,6 +17,7 @@
 
 #define EULER false
 #define __BMONTELL_MODE__ false
+#define TIMESTEP 0.01
 
 Simulation::Simulation()
 {
@@ -88,70 +89,56 @@ void Simulation::integrate(HairObject *_object)
         float numVerts = _object->m_guideHairs.at(i)->m_vertices.size();
         for (int j = 1; j < numVerts; j++){
 
-            double timeStep = .02;
-
+            // Get relevant vertices
             HairVertex *vert = _object->m_guideHairs.at(i)->m_vertices.at(j);
             HairVertex *pivotVert = _object->m_guideHairs.at(i)->m_vertices.at(j-1);
 
-            cout << /*"j " << j <<*/ ", "<< glm::to_string(vert->position) << ", "<< glm::to_string(pivotVert->position) << endl;
-
             // Treat previous vertex at pendulum pivot, so rod length is length between two vertices
             glm::vec3 rodVector = vert->position - pivotVert->position;
-            cout << "Rod vector " << glm::to_string(rodVector) << endl;
 
+            // Rod length is useful for moment of inertia
             float rodLength = glm::length(rodVector);
-            cout << "Rod length " << rodLength + 0.0 << endl;
 
             // Moment of inertia for point mass is mR^2
             float I = MASS * rodLength * rodLength;
-            cout << "Moment of inertia " << I + 0.0 << endl;
 
             // Variables to update
             float theta = vert->theta;
             float omega = vert->omega;
 
-            /**
-             * I * a = sum of torques
-             * I * a = gravity torque + friction torque
-             * gravity = -R * m * g * sin(theta)
-             * friction = -b * w (where b is damping constant and w is angular velocity)
-             * I * a = -R * m * g * sin(theta) - b * w
-             * m * R^2 * a = -R * m * g * sin(theta) - b * w
-             * a = -g / R * sin(theta) - b * w / (m * R^2)
-             **/
-
             if (!EULER)
             {
+                // Computes angular acceleration of a vertex
                 auto omegaDot = [rodLength, omega, I](double theta, double omega) {
 
                     return (-G / rodLength) * sin(theta) - B * omega / I;
 
                 };
 
+                // Computes angular velocity of a vertex
                 auto thetaDot = [](double theta, double omega) {
 
                     return omega;
 
                 };
 
-                omega = omega + Integrator::rk4(omegaDot, theta, omega, timeStep);
-                theta = theta + Integrator::rk4(thetaDot, theta, omega, timeStep);
+                // Integrate forward
+                omega = omega + Integrator::rk4(omegaDot, theta, omega, TIMESTEP);
+                theta = theta + Integrator::rk4(thetaDot, theta, omega, TIMESTEP);
 
             }
             else
             {
                 float thetaPrimePrime = -G / rodLength * sin(theta);
-                cout << "Theta prime prime " << thetaPrimePrime + 0.0 << endl;
 
-                float thetaPrime = vert->omega + thetaPrimePrime * timeStep;
+                float thetaPrime = vert->omega + thetaPrimePrime * TIMESTEP;
                 vert->omega = thetaPrime;
-                cout << "Theta prime " << thetaPrime + 0.0 << endl;
 
-                theta = theta + thetaPrime * timeStep;
-                cout << "Theta " << theta + 0.0 << endl;
+                theta = theta + thetaPrime * TIMESTEP;
 
             }
 
+            // Store values and update positions
             vert->theta = theta;
             vert->omega = omega;
             vert->position.x = pivotVert->position.x + rodLength * sin(theta);
@@ -168,60 +155,76 @@ void Simulation::integrate2(HairObject *_object)
         float numVerts = _object->m_guideHairs.at(i)->m_vertices.size();
         for (int j = 2; j < numVerts; j++){
 
-            double timeStep = .01;
-
+            // Relevant vertices
             HairVertex *pivot = _object->m_guideHairs.at(i)->m_vertices.at(j - 2);
             HairVertex *v1    = _object->m_guideHairs.at(i)->m_vertices.at(j - 1);
             HairVertex *v2    = _object->m_guideHairs.at(i)->m_vertices.at(j);
 
+            // Vector from one vertex to the vertex above it
             glm::vec3 rodVector1 = v1->position - pivot->position;
             glm::vec3 rodVector2 = v2->position - v1->position;
 
+            // Pendula lengths
             float l1 = glm::length(rodVector1);
             float l2 = glm::length(rodVector2);
 
+            // Store theta and omega so we can use them later
             float theta1 = v1->theta;
             float theta2 = v2->theta;
             float omega1 = v1->omega;
             float omega2 = v2->omega;
 
-            float m1 = 10.0;
+            // TODO: These will be stored on vertices eventually
+            float m1 = 1.0;
             float m2 = 1.0;
 
+            // Calculates angular acceleration for v1
             auto omega1Dot = [l1, l2, theta2, omega2, m1, m2](double theta1, double omega1)
             {
+                //TODO: refactor this
+                double deltaTheta = theta1 - theta2;
+                double capitalM = m2 / (m1 + m2);
+                double littleL = l2 / l1;
+                double wSquared = G / l1;
 
-                return ((-G * (2.0 * m1 + m2) * sin(theta1))
-                        - (m2 * G * sin(theta1 - 2.0 * theta2))
-                        - (2.0 * sin(theta1 - theta2) * m2 * (omega2 * omega2 * l2 + omega1 * omega1 * l1 * cos(theta1 - theta2))))
+                return (wSquared * littleL * (-sin(theta1) + capitalM * cos(deltaTheta) * sin(theta2))
+                        - capitalM * littleL * (omega1 * omega1 * cos(deltaTheta) + littleL * omega2 * omega2) * sin(deltaTheta))
                         /
-                        (l1 * (2.0 * m1 + m2 - m2 * cos(2.0 * theta1 - 2.0 * theta2))) - 0.05 * omega1 / (m1 * l1 * l1);
+                        (littleL - capitalM * littleL * cos(deltaTheta) * cos(deltaTheta));
 
             };
 
+            // Calculates angular acceleration for v2
             auto omega2Dot = [l1, l2, theta1, omega1, m1, m2](double theta2, double omega2)
             {
+                // TODO: refactor this
+                double deltaTheta = theta1 - theta2;
+                double capitalM = m2 / (m1 + m2);
+                double littleL = l2 / l1;
+                double wSquared = G / l1;
 
-                return ((2.0 * sin(theta1 - theta2) * (omega1 * omega1 * l1 * (m1 + m2)))
-                        + (G * (m1 + m2) * cos(theta1))
-                        + (omega2 * omega2 * l2 * m2 * cos(theta1 - theta2)))
+                return (wSquared * cos(deltaTheta) * sin(theta1) - wSquared* sin(theta2)
+                        + (omega1 * omega1 + capitalM * littleL * omega2 * omega2 * cos(deltaTheta)) * sin(deltaTheta))
                         /
-                        (l2 * (2.0 * m1 + m2 - m2 * cos(2.0 * theta1 - 2.0 * theta2))) - 0.05 * omega2 / (m2 * l2 * l2);
+                        (littleL - capitalM * littleL * cos(deltaTheta) * cos(deltaTheta));
 
             };
 
 
+            // Calculates angular velocity of v1 and v2
             auto thetaDot = [](double theta, double omega) {
 
                 return omega;
 
             };
 
-            v1->omega = omega1 + Integrator::rk4(omega1Dot, theta1, omega1, timeStep);
-            v2->omega = omega2 + Integrator::rk4(omega2Dot, theta2, omega2, timeStep);
-            v1->theta = theta1 + Integrator::rk4(thetaDot,  theta1, omega1, timeStep);
-            v2->theta = theta2 + Integrator::rk4(thetaDot,  theta2, omega2, timeStep);
+            // Integrate forward
+            v1->omega = omega1 + Integrator::rk4(omega1Dot, theta1, omega1, TIMESTEP);
+            v2->omega = omega2 + Integrator::rk4(omega2Dot, theta2, omega2, TIMESTEP);
+            v1->theta = theta1 + Integrator::rk4(thetaDot,  theta1, omega1, TIMESTEP);
+            v2->theta = theta2 + Integrator::rk4(thetaDot,  theta2, omega2, TIMESTEP);
 
+            // Update grid position based on angular position
             v1->position.x = pivot->position.x + l1 * sin(v1->theta);
             v1->position.y = pivot->position.y + l1 * cos(v1->theta);
             v2->position.x = v1->position.x    + l2 * sin(v2->theta);

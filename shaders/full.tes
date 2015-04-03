@@ -4,7 +4,6 @@ layout(isolines) in;
 
 in vec3 position_tc[];
 
-const float PATCH_WIDTH = 1; // Width of the patch as a whole
 const int MAX_VERTICES = 64; // Max number of hair vertices
 
 // Constants for applying noise to vertex positions.
@@ -14,6 +13,7 @@ const float NOISE_AMPLITUDE = 0.04;
 uniform mat4 model, view, projection;
 uniform vec3 vertexData[MAX_VERTICES];
 uniform int numHairSegments;
+uniform float groupWidth;
 
 #define tess_x clamp(gl_TessCoord.x, 0.0, 1 - 1e-4)
 #define tess_y gl_TessCoord.y
@@ -50,7 +50,7 @@ void main()
     // Get vertex position from uniform data array.
     vec3 pos = vertexData[int(tess_x * (numHairSegments+1))];
 
-    pos.x += PATCH_WIDTH * (tess_y - 0.5); // Offset each hair.
+    pos.x += groupWidth * (tess_y - 0.5); // Offset each hair.
     pos.x += NOISE_AMPLITUDE * noiseWithOctaves(gl_TessCoord.xy); // Apply noise to offset position.
 
     gl_Position = projection * view * model * vec4(pos, 1);

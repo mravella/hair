@@ -61,7 +61,8 @@ void Hair::update(float time)
 void Hair::paint(ShaderProgram &_program)
 {
     _program.uniforms.color = glm::vec3(.6f, .4f, .3f);
-    _program.uniforms.numGroupHairs = 20;
+    _program.uniforms.numGroupHairs = 1;
+    _program.uniforms.hairGroupWidth = 0.1;
     _program.uniforms.numHairVertices = MIN(m_vertices.size(), MAX_HAIR_VERTICES);
     for (int i = 0; i < _program.uniforms.numHairVertices; i++){
         _program.uniforms.vertexData[i] = m_vertices.at(i)->position;

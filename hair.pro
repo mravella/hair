@@ -27,7 +27,8 @@ SOURCES += \
     src/hairobject.cpp \
     src/mike/hair.cpp \
     src/mike/simulation.cpp \
-    src/shaderprogram.cpp
+    src/shaderprogram.cpp \
+    src/mike/integrator.cpp
 
 
 HEADERS += \
@@ -42,7 +43,8 @@ HEADERS += \
     src/hairCommon.h \
     src/mike/hair.h \
     src/mike/simulation.h \
-    src/shaderprogram.h
+    src/shaderprogram.h \
+    src/mike/integrator.h
 
 
 FORMS += src/mainwindow.ui

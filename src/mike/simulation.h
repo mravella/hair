@@ -2,6 +2,7 @@
 #define SIMULATION_H
 
 #include "hairCommon.h"
+#include "integrator.h"
 
 class HairObject;
 

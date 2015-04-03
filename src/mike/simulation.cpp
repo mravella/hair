@@ -109,7 +109,7 @@ void Simulation::integrate(HairObject *_object)
 
             HairVertex *vert = _object->m_guideHairs.at(i)->m_vertices.at(j);
             HairVertex *pivotVert = _object->m_guideHairs.at(i)->m_vertices.at(j-1);
-            
+
             cout << /*"j " << j <<*/ ", "<< glm::to_string(vert->position) << ", "<< glm::to_string(pivotVert->position) << endl;
 
             // Treat previous vertex at pendulum pivot, so rod length is length between two vertices
@@ -138,46 +138,24 @@ void Simulation::integrate(HairObject *_object)
              **/
 
             if (!EULER){
-                auto calcOmegaDot = [this, rodLength, omega, I](double _theta, double _omega) {
+                auto omegaDot = [this, rodLength, omega, I](double theta, double omega) {
 
-                    return (-G / rodLength) * sin(_theta) - B * omega / I;
-
-                };
-
-                {
-                    double k1 = calcOmegaDot(theta, vert->omega);
-                    double k2 = calcOmegaDot(theta + .5*timeStep*k1, vert->omega + .5*timeStep*k1);
-                    double k3 = calcOmegaDot(theta + .5*timeStep*k2, vert->omega + .5*timeStep*k2);
-                    double k4 = calcOmegaDot(theta + timeStep*k3, vert->omega + timeStep*k3);
-
-                    vert->omega = vert->omega + timeStep/6. * (k1 + 2*k2 + 2*k3 + k4);
-                    cout << "Omega " << vert->omega << endl;
-                }
-
-
-                auto calcThetaDot = [this, rodLength](double _theta, double _omega) {
-
-                    return _omega;
+                    return (-G / rodLength) * sin(theta) - B * omega / I;
 
                 };
+                vert->omega = vert->omega + Integrator::rk4(omegaDot, theta, vert->omega, timeStep);
 
-                {
-                    double k1 = calcThetaDot(theta, vert->omega);
-                    double k2 = calcThetaDot(theta + .5*timeStep*k1, vert->omega + .5*timeStep*k1);
-                    double k3 = calcThetaDot(theta + .5*timeStep*k2, vert->omega + .5*timeStep*k2);
-                    double k4 = calcThetaDot(theta + timeStep*k3, vert->omega + timeStep*k3);
+                auto thetaDot = [this, rodLength](double theta, double omega) {
 
-                    cout << "Delta Theta " << timeStep/6. * (k1 + 2*k2 + 2*k3 + k4) << endl;
-                    theta = theta + timeStep/6. * (k1 + 2*k2 + 2*k3 + k4);
-                    cout << "Theta New " << theta << endl;
-                }
+                    return omega;
+
+                };
+                theta = theta + Integrator::rk4(thetaDot, theta, vert->omega, timeStep);
 
 
             } else {
                 // EULER
                 float thetaPrimePrime = -G / rodLength * sin(theta);
-                //                                     - B * vert->omega
-                //                                     / (MASS * rodLength * rodLength);
 
                 cout << "Theta prime prime " << thetaPrimePrime + 0.0 << endl;
 

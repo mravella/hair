@@ -4,12 +4,18 @@
 #include <vector>
 
 ShaderProgram::ShaderProgram()
-{ }
+{
+    // Default uniform values.
+    uniforms.numGroupHairs = 1;
+    uniforms.hairGroupWidth = 0.1f;
+    uniforms.hairRadius = 0.004f;
+    uniforms.color = glm::vec3(.6f, .4f, .3f);
+}
 
 void ShaderProgram::create()
 {
-    m_id = ResourceLoader::createTessShaderProgram(
-                ":/shaders/full.vert", ":/shaders/full.frag", //":/shaders/full.geom",
+    m_id = ResourceLoader::createFullShaderProgram(
+                ":/shaders/full.vert", ":/shaders/full.frag", ":/shaders/full.geom",
                 ":/shaders/full.tcs", ":/shaders/full.tes");
 
     std::vector<GLchar const *> uniformNames;
@@ -21,6 +27,7 @@ void ShaderProgram::create()
     uniformNames.push_back("numSplineVertices");
     uniformNames.push_back("vertexData");
     uniformNames.push_back("groupWidth");
+    uniformNames.push_back("hairRadius");
     uniformNames.push_back("color");
 
     for (unsigned int i = 0; i < uniformNames.size(); i++)
@@ -47,5 +54,6 @@ void ShaderProgram::setUniforms()
     glUniform1i(m_uniformLocs["numSplineVertices"], uniforms.numSplineVertices);
     glUniform3fv(m_uniformLocs["vertexData"], uniforms.numHairVertices, &uniforms.vertexData[0][0]);
     glUniform1f(m_uniformLocs["groupWidth"], uniforms.hairGroupWidth);
+    glUniform1f(m_uniformLocs["hairRadius"], uniforms.hairRadius);
     glUniform3fv(m_uniformLocs["color"], 1, glm::value_ptr(uniforms.color));
 }

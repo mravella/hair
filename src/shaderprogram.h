@@ -9,11 +9,26 @@
 
 struct Uniforms {
     glm::mat4 model, view, projection;
-    int numGroupHairs;
+
+    // Number of vertices in the current guide hair.
     int numHairVertices;
-    int numSplineVertices;
+
+    // Vertex position data for the current guide hair.
     glm::vec3 vertexData[MAX_HAIR_VERTICES];
+
+    // Number of duplicates rendered with single-hair interpolation for each guide hair.
+    int numGroupHairs;
+
+    // Number of vertices rendered with a spline.
+    int numSplineVertices;
+
+    // Defines the width that a hair group is spread across.
     float hairGroupWidth;
+
+    // The radius of a single hair.
+    float hairRadius;
+
+    // Hair color.
     glm::vec3 color;
 };
 

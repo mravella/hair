@@ -65,7 +65,7 @@ vec3 evaluateSpline()
     vec3 m1 = (p2 - p0) / 2.0;
     vec3 m2 = (p1 - p3) / 2.0;
 
-    return mix(p1 + m1 * t, p2 + m2 * (1-t), t);
+    return mix(p1 + m1 * t, p2 + m2 * (1-t), smoothstep(0.0, 1.0, t));
 }
 
 void main()

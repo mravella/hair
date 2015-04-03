@@ -12,7 +12,7 @@
 #include "mike/hair.h"
 
 #define G   -9.8f
-#define B   0.1f
+#define B   0.3f
 #define MASS 1.0f
 
 #define EULER false
@@ -190,7 +190,7 @@ void Simulation::integrate2(HairObject *_object)
                 return (wSquared * littleL * (-sin(theta1) + capitalM * cos(deltaTheta) * sin(theta2))
                         - capitalM * littleL * (omega1 * omega1 * cos(deltaTheta) + littleL * omega2 * omega2) * sin(deltaTheta))
                         /
-                        (littleL - capitalM * littleL * cos(deltaTheta) * cos(deltaTheta));
+                        (littleL - capitalM * littleL * cos(deltaTheta) * cos(deltaTheta)) - B * omega1 / (m1 * l1 * l1);
 
             };
 
@@ -206,7 +206,7 @@ void Simulation::integrate2(HairObject *_object)
                 return (wSquared * cos(deltaTheta) * sin(theta1) - wSquared* sin(theta2)
                         + (omega1 * omega1 + capitalM * littleL * omega2 * omega2 * cos(deltaTheta)) * sin(deltaTheta))
                         /
-                        (littleL - capitalM * littleL * cos(deltaTheta) * cos(deltaTheta));
+                        (littleL - capitalM * littleL * cos(deltaTheta) * cos(deltaTheta)) - B * omega2 / (m2 * l2 * l2);
 
             };
 

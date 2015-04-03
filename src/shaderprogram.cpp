@@ -18,6 +18,7 @@ void ShaderProgram::create()
     uniformNames.push_back("projection");
     uniformNames.push_back("numPatchHairs");
     uniformNames.push_back("numHairSegments");
+    uniformNames.push_back("numSplineVertices");
     uniformNames.push_back("vertexData");
     uniformNames.push_back("groupWidth");
     uniformNames.push_back("color");
@@ -43,6 +44,7 @@ void ShaderProgram::setUniforms()
     glUniformMatrix4fv(m_uniformLocs["projection"], 1, GL_FALSE, glm::value_ptr(uniforms.projection));
     glUniform1i(m_uniformLocs["numPatchHairs"], uniforms.numGroupHairs);
     glUniform1i(m_uniformLocs["numHairSegments"], uniforms.numHairVertices-1);
+    glUniform1i(m_uniformLocs["numSplineVertices"], uniforms.numSplineVertices);
     glUniform3fv(m_uniformLocs["vertexData"], uniforms.numHairVertices, &uniforms.vertexData[0][0]);
     glUniform1f(m_uniformLocs["groupWidth"], uniforms.hairGroupWidth);
     glUniform3fv(m_uniformLocs["color"], 1, glm::value_ptr(uniforms.color));

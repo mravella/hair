@@ -43,7 +43,7 @@ void Simulation::simulate(HairObject *_object)
         calculateExternalForces(_object);
         calculateConstraintForces(_object);
 
-        integrate(_object);
+        integrate2(_object);
 
     }
 
@@ -68,31 +68,14 @@ void Simulation::sinDerp(HairObject *_object){
 // Calculate linear & angular forces for each joint, for each external force included in the simulation
 void Simulation::calculateExternalForces(HairObject *_object)
 {
-    for (int i = 0; i < _object->m_guideHairs.size(); i++)
-    {
-//        for (int j = 0; j < _object->m_guideHairs.at(i)->m_joints.size(); j++)
-//        {
-//            Joint *_joint = _object->m_guideHairs.at(i)->m_joints.at(j);
-            // calculate linear force
-//            _joint->linearForce = glm::vec3(0, 0, 0);
 
-            // calculate angular force
-//            _joint->angularForce = glm::vec3(0, 0, 0);
-//        }
-    }
 }
 
 // TODO:
 // Calculate forces for maintaining position constraints
-void Simulation::calculateConstraintForces(HairObject *_object){
-    for (int i = 0; i < _object->m_guideHairs.size(); i++)
-    {
-//        for (int j = 0; j < _object->m_guideHairs.at(i)->m_joints.size(); j++)
-//        {
-//            Joint *_joint = _object->m_guideHairs.at(i)->m_joints.at(j);
-//            _joint->constraintForce = glm::vec3(0, 0, 0);
-//        }
-    }
+void Simulation::calculateConstraintForces(HairObject *_object)
+{
+
 }
 
 
@@ -137,29 +120,29 @@ void Simulation::integrate(HairObject *_object)
              * a = -g / R * sin(theta) - b * w / (m * R^2)
              **/
 
-            if (!EULER){
-                auto omegaDot = [this, rodLength, omega, I](double theta, double omega) {
+            if (!EULER)
+            {
+                auto omegaDot = [rodLength, omega, I](double theta, double omega) {
 
                     return (-G / rodLength) * sin(theta) - B * omega / I;
 
                 };
-                vert->omega = vert->omega + Integrator::rk4(omegaDot, theta, vert->omega, timeStep);
 
-                auto thetaDot = [this, rodLength](double theta, double omega) {
+                auto thetaDot = [](double theta, double omega) {
 
                     return omega;
 
                 };
-                theta = theta + Integrator::rk4(thetaDot, theta, vert->omega, timeStep);
 
+                omega = omega + Integrator::rk4(omegaDot, theta, omega, timeStep);
+                theta = theta + Integrator::rk4(thetaDot, theta, omega, timeStep);
 
-            } else {
-                // EULER
+            }
+            else
+            {
                 float thetaPrimePrime = -G / rodLength * sin(theta);
-
                 cout << "Theta prime prime " << thetaPrimePrime + 0.0 << endl;
 
-                // How do I get the timestep?
                 float thetaPrime = vert->omega + thetaPrimePrime * timeStep;
                 vert->omega = thetaPrime;
                 cout << "Theta prime " << thetaPrime + 0.0 << endl;
@@ -170,11 +153,81 @@ void Simulation::integrate(HairObject *_object)
             }
 
             vert->theta = theta;
-            _object->m_guideHairs.at(i)->m_vertices.at(j)->position.x = _object->m_guideHairs.at(i)->m_vertices.at(j-1)->position.x + rodLength * sin(theta);
-            _object->m_guideHairs.at(i)->m_vertices.at(j)->position.y = _object->m_guideHairs.at(i)->m_vertices.at(j-1)->position.y + rodLength * cos(theta);
+            vert->omega = omega;
+            vert->position.x = pivotVert->position.x + rodLength * sin(theta);
+            vert->position.y = pivotVert->position.y + rodLength * cos(theta);
 
         }
     }
 }
 
+void Simulation::integrate2(HairObject *_object)
+{
+    for (int i = 0; i < _object->m_guideHairs.size(); i++)
+    {
+        float numVerts = _object->m_guideHairs.at(i)->m_vertices.size();
+        for (int j = 2; j < numVerts; j++){
+
+            double timeStep = .01;
+
+            HairVertex *pivot = _object->m_guideHairs.at(i)->m_vertices.at(j - 2);
+            HairVertex *v1    = _object->m_guideHairs.at(i)->m_vertices.at(j - 1);
+            HairVertex *v2    = _object->m_guideHairs.at(i)->m_vertices.at(j);
+
+            glm::vec3 rodVector1 = v1->position - pivot->position;
+            glm::vec3 rodVector2 = v2->position - v1->position;
+
+            float l1 = glm::length(rodVector1);
+            float l2 = glm::length(rodVector2);
+
+            float theta1 = v1->theta;
+            float theta2 = v2->theta;
+            float omega1 = v1->omega;
+            float omega2 = v2->omega;
+
+            float m1 = 10.0;
+            float m2 = 1.0;
+
+            auto omega1Dot = [l1, l2, theta2, omega2, m1, m2](double theta1, double omega1)
+            {
+
+                return ((-G * (2.0 * m1 + m2) * sin(theta1))
+                        - (m2 * G * sin(theta1 - 2.0 * theta2))
+                        - (2.0 * sin(theta1 - theta2) * m2 * (omega2 * omega2 * l2 + omega1 * omega1 * l1 * cos(theta1 - theta2))))
+                        /
+                        (l1 * (2.0 * m1 + m2 - m2 * cos(2.0 * theta1 - 2.0 * theta2))) - 0.05 * omega1 / (m1 * l1 * l1);
+
+            };
+
+            auto omega2Dot = [l1, l2, theta1, omega1, m1, m2](double theta2, double omega2)
+            {
+
+                return ((2.0 * sin(theta1 - theta2) * (omega1 * omega1 * l1 * (m1 + m2)))
+                        + (G * (m1 + m2) * cos(theta1))
+                        + (omega2 * omega2 * l2 * m2 * cos(theta1 - theta2)))
+                        /
+                        (l2 * (2.0 * m1 + m2 - m2 * cos(2.0 * theta1 - 2.0 * theta2))) - 0.05 * omega2 / (m2 * l2 * l2);
+
+            };
+
+
+            auto thetaDot = [](double theta, double omega) {
+
+                return omega;
+
+            };
+
+            v1->omega = omega1 + Integrator::rk4(omega1Dot, theta1, omega1, timeStep);
+            v2->omega = omega2 + Integrator::rk4(omega2Dot, theta2, omega2, timeStep);
+            v1->theta = theta1 + Integrator::rk4(thetaDot,  theta1, omega1, timeStep);
+            v2->theta = theta2 + Integrator::rk4(thetaDot,  theta2, omega2, timeStep);
+
+            v1->position.x = pivot->position.x + l1 * sin(v1->theta);
+            v1->position.y = pivot->position.y + l1 * cos(v1->theta);
+            v2->position.x = v1->position.x    + l2 * sin(v2->theta);
+            v2->position.y = v1->position.y    + l2 * cos(v2->theta);
+
+        }
+    }
+}
 

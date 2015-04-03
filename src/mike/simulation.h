@@ -25,6 +25,7 @@ private:
     void calculateConstraintForces(HairObject *_object);
 
     void integrate(HairObject *_object);
+    void integrate2(HairObject *_object);
 
 
 public:

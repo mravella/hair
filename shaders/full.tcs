@@ -17,6 +17,6 @@ void main()
 
     if (ID == 0) {
         gl_TessLevelOuter[0] = numPatchHairs;
-        gl_TessLevelOuter[1] = numSplineVertices;
+        gl_TessLevelOuter[1] = numSplineVertices - 1;
     }
 }

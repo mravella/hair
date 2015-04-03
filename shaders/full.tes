@@ -5,6 +5,7 @@ layout(isolines) in;
 in vec3 position_tc[];
 
 out vec3 tangent_te;
+out float tessx_te;
 
 const int MAX_VERTICES = 64; // Max number of hair vertices
 
@@ -85,6 +86,7 @@ void main()
     vec3 prevPos = evaluateSpline(gl_TessCoord.x - 1.0 / (numSplineVertices - 1));
     vec3 nextPos = evaluateSpline(gl_TessCoord.x + 1.0 / (numSplineVertices - 1));
     tangent_te = (view * model * vec4(nextPos - prevPos, 0)).xyz;
+    tessx_te = gl_TessCoord.x;
 
     gl_Position = view * model * vec4(pos, 1);
 }

@@ -28,6 +28,10 @@ struct Uniforms {
     // The radius of a single hair.
     float hairRadius;
 
+    // Exponent used for tapering the hair. The higher the exponent, the closer to the end the
+    // tapering occurs.
+    float taperExponent;
+
     // Hair color.
     glm::vec3 color;
 };

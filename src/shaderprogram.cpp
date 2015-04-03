@@ -9,6 +9,7 @@ ShaderProgram::ShaderProgram()
     uniforms.numGroupHairs = 1;
     uniforms.hairGroupWidth = 0.1f;
     uniforms.hairRadius = 0.004f;
+    uniforms.taperExponent = 5.0;
     uniforms.color = glm::vec3(.6f, .4f, .3f);
 }
 
@@ -28,6 +29,7 @@ void ShaderProgram::create()
     uniformNames.push_back("vertexData");
     uniformNames.push_back("groupWidth");
     uniformNames.push_back("hairRadius");
+    uniformNames.push_back("taperExponent");
     uniformNames.push_back("color");
 
     for (unsigned int i = 0; i < uniformNames.size(); i++)
@@ -55,5 +57,6 @@ void ShaderProgram::setUniforms()
     glUniform3fv(m_uniformLocs["vertexData"], uniforms.numHairVertices, &uniforms.vertexData[0][0]);
     glUniform1f(m_uniformLocs["groupWidth"], uniforms.hairGroupWidth);
     glUniform1f(m_uniformLocs["hairRadius"], uniforms.hairRadius);
+    glUniform1f(m_uniformLocs["taperExponent"], uniforms.taperExponent);
     glUniform3fv(m_uniformLocs["color"], 1, glm::value_ptr(uniforms.color));
 }

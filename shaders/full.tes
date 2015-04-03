@@ -71,9 +71,12 @@ vec3 evaluateSpline()
 void main()
 {
     vec3 pos = evaluateSpline();
-
     pos.x += groupWidth * (gl_TessCoord.y - 0.5); // Offset each hair.
-    pos.x += NOISE_AMPLITUDE * noiseWithOctaves(gl_TessCoord.xy); // Apply noise to offset position.
+
+    // Apply noise to offset position.
+    pos.x += NOISE_AMPLITUDE * noiseWithOctaves(gl_TessCoord.xy);
+    pos.y += NOISE_AMPLITUDE * noiseWithOctaves(gl_TessCoord.xy + 1);
+    pos.z += NOISE_AMPLITUDE * noiseWithOctaves(gl_TessCoord.xy + 2);
 
     gl_Position = projection * view * model * vec4(pos, 1);
 }

@@ -2,8 +2,6 @@
 
 layout(isolines) in;
 
-in vec3 position_tc[];
-
 out vec3 tangent_te;
 out float tessx_te;
 

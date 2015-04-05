@@ -1,6 +1,6 @@
 #version 400 core
 
-uniform vec3 color;
+in vec3 color;
 
 out vec3 fragColor;
 

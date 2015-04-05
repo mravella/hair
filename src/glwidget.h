@@ -8,6 +8,7 @@
 #include "hairpatch.h"
 #include "shaderprogram.h"
 
+class ObjMesh;
 class HairObject;
 class Simulation;
 
@@ -31,10 +32,12 @@ protected slots:
     void tick();
 
 private:
+    ObjMesh *m_mesh;
     HairObject *m_hairObject;
     Simulation *m_testSimulation;
 
-    ShaderProgram m_program;
+    GLuint m_meshProgramID;
+    ShaderProgram m_hairProgram;
 
     QLabel *m_fpsLabel;
 

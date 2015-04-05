@@ -12,7 +12,23 @@ HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
     }
 
     m_simulation = _simulation;
+}
 
+HairObject::HairObject(ObjMesh *_mesh, Simulation *_simulation)
+{
+    std::vector<Triangle> &triangles = _mesh->triangles;
+    for (int i = 0; i < triangles.size(); i++)
+    {
+        Triangle t = triangles[i];
+        glm::vec3 pos = (t.v1 + t.v2 + t.v3) / 3.f;
+        glm::vec3 normal = (t.n1 + t.n2 + t.n3) / 3.f;
+
+        // TODO: Don't set the z component to 0 when the sim works in 3D.
+        normal.z = 0.f; normal = glm::normalize(normal);
+
+        m_guideHairs.append(new Hair(2, 2, pos, normal));
+    }
+    m_simulation = _simulation;
 }
 
 void HairObject::update(float _time){

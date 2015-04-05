@@ -32,6 +32,9 @@ struct Uniforms {
     // tapering occurs.
     float taperExponent;
 
+    // Controls mount of noise in interpolated hairs. Should probably be in range [0, 0.1]
+    float noiseAmplitude;
+
     // Hair color.
     glm::vec3 color;
 };

@@ -9,13 +9,13 @@ const int MAX_VERTICES = 64; // Max number of hair vertices
 
 // Constants for applying noise to vertex positions.
 const int NOISE_OCTAVES = 3;
-const float NOISE_AMPLITUDE = 0.03;
 
 uniform mat4 model, view, projection;
 uniform vec3 vertexData[MAX_VERTICES];
 uniform int numHairSegments;
 uniform int numSplineVertices;
 uniform float groupWidth;
+uniform float noiseAmplitude;
 
 float rand( vec2 p )
 {
@@ -76,9 +76,9 @@ vec3 shiftedSpline(in vec2 tessCoord)
     pos.x += groupWidth * (tessCoord.y - 0.5); // Offset each hair.
 
     // Apply noise to offset position.
-    pos.x += NOISE_AMPLITUDE * noiseWithOctaves(tessCoord.xy);
-    pos.y += NOISE_AMPLITUDE * noiseWithOctaves(tessCoord.xy + 1);
-    pos.z += NOISE_AMPLITUDE * noiseWithOctaves(tessCoord.xy + 2);
+    pos.x += noiseAmplitude * noiseWithOctaves(tessCoord.xy);
+    pos.y += noiseAmplitude * noiseWithOctaves(tessCoord.xy + 1);
+    pos.z += noiseAmplitude * noiseWithOctaves(tessCoord.xy + 2);
     return pos;
 }
 

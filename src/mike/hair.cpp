@@ -66,10 +66,11 @@ void Hair::paint(ShaderProgram &_program)
     }
 
     _program.uniforms.color = glm::vec3(.6f, .4f, .3f);
-    _program.uniforms.numGroupHairs = 10;
+    _program.uniforms.numGroupHairs = 15;
     _program.uniforms.hairGroupWidth = 0.2;
     _program.uniforms.hairRadius = 0.005f;
-    _program.uniforms.numSplineVertices = 20;//_program.uniforms.numHairVertices;
+    _program.uniforms.noiseAmplitude = 0.03f;
+    _program.uniforms.numSplineVertices = 20;
 
     _program.setUniforms();
 

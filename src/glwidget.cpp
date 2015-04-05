@@ -2,16 +2,19 @@
 #include "resourceloader.h"
 #include "errorchecker.h"
 #include "hairCommon.h"
+#include <ctime>
+#include <chrono>
+#include <QLabel>
 
 #include "hairobject.h"
 #include "simulation.h"
 
 GLWidget::GLWidget(QGLFormat format, QWidget *parent)
-    : QGLWidget(format, parent), m_timer(this), m_fps(60.f), m_increment(0)
+    : QGLWidget(format, parent), m_timer(this), m_targetFPS(60.f), m_increment(0)
 {
     // Set up 60 FPS draw loop.
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
-    m_timer.start(1000.0f / m_fps);
+    m_timer.start(1000.0f / m_targetFPS);
 }
 
 GLWidget::~GLWidget()
@@ -29,7 +32,6 @@ void GLWidget::initializeGL()
     m_testSimulation = new Simulation();
     m_hairObject = new HairObject(1, m_testSimulation);
 
-
     ErrorChecker::printGLErrors("end of initializeGL");
 }
 
@@ -37,9 +39,16 @@ void GLWidget::paintGL()
 {
     ErrorChecker::printGLErrors("start of paintGL");
 
+    int updateFrequency = 10;
+    if (m_increment % updateFrequency == 0) {
+        int fps = updateFrequency * 1000.0 / m_clock.elapsed();
+        m_fpsLabel->setText(QString::number(fps, 'f', 1) + " FPS");
+        m_clock.restart();
+    }
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    float time = m_increment++ / (float) m_fps;      // Time in seconds.
+    float time = m_increment++ / (float) m_targetFPS;      // Time in seconds.
 
     m_testSimulation->update(time);
     m_hairObject->update(time);
@@ -51,9 +60,13 @@ void GLWidget::paintGL()
                 glm::vec3(0.f, 0.f, 0.f),  // center
                 glm::vec3(0.f, 1.f, 0.f)); // up
     m_program.uniforms.model = glm::mat4(1.f);
-            //glm::rotate(time, glm::vec3(0, 0, 1));
     m_hairObject->paint(m_program);
     m_program.unbind();
+}
+
+void GLWidget::setFPSLabel(QLabel *label)
+{
+    m_fpsLabel = label;
 }
 
 void GLWidget::resizeGL(int w, int h)

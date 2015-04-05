@@ -6,6 +6,9 @@ layout(triangle_strip, max_vertices=4) out;
 in vec3 tangent_te[]; // Per-vertex, eye-space tangent vector.
 in float tessx_te[];
 
+out vec4 position_g;
+out vec3 tangent_g;
+
 uniform mat4 projection;
 uniform float hairRadius;
 uniform float taperExponent;
@@ -23,9 +26,14 @@ void main() {
         // Taper hair so it is thinner at end.
         offset *= (1 - pow(tessx_te[i], taperExponent));
 
-        gl_Position = projection * (position + offset);
+        tangent_g = tangent_te[i];
+        
+        position_g = (position + offset);
+        gl_Position = projection * position_g;
         EmitVertex();
-        gl_Position = projection * (position - offset);
+        
+        position_g = (position - offset);
+        gl_Position = projection * position_g;
         EmitVertex();
     }
 }

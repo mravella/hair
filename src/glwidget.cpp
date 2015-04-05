@@ -51,6 +51,7 @@ void GLWidget::paintGL()
                 glm::vec3(0.f, 0.f, 0.f),  // center
                 glm::vec3(0.f, 1.f, 0.f)); // up
     m_program.uniforms.model = glm::mat4(1.f);
+            //glm::rotate(time, glm::vec3(0, 0, 1));
     m_hairObject->paint(m_program);
     m_program.unbind();
 }

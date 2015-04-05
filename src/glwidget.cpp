@@ -43,7 +43,7 @@ void GLWidget::initializeGL()
 #if _USE_MESH_
     m_mesh = new ObjMesh();
     m_mesh->init(":/models/sphere.obj");
-    m_hairObject = new HairObject(m_mesh, m_testSimulation);
+    m_hairObject = new HairObject(m_mesh, ":/images/lower.png", m_testSimulation);
 #else
     m_hairObject = new HairObject(1, m_testSimulation);
 #endif

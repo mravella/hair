@@ -14,18 +14,24 @@ HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
     m_simulation = _simulation;
 }
 
-HairObject::HairObject(ObjMesh *_mesh, Simulation *_simulation)
+HairObject::HairObject(ObjMesh *_mesh, const char * _hairGrowthMap, Simulation *_simulation)
 {
-    std::vector<Triangle> &triangles = _mesh->triangles;
-    for (int i = 0; i < triangles.size(); i++)
+    QImage image(_hairGrowthMap);
+    std::cout << QColor(image.pixel(0,0)).value() << std::endl;
+    for (int i = 0; i < _mesh->triangles.size(); i++)
     {
-        Triangle t = triangles[i];
+        Triangle t = _mesh->triangles[i];
+
+        // If hair growth map is black, skip this triangle.
+        glm::vec2 uv = (t.uv1 + t.uv2 + t.uv3) / 3.f;
+        QColor hairGrowth = QColor(image.pixel(uv.x * image.width(), (1 - uv.y) * image.height()));
+        if (hairGrowth.value() == 0) continue;
+
         glm::vec3 pos = (t.v1 + t.v2 + t.v3) / 3.f;
         glm::vec3 normal = (t.n1 + t.n2 + t.n3) / 3.f;
 
         // TODO: Don't set the z component to 0 when the sim works in 3D.
         normal.z = 0.f; normal = glm::normalize(normal);
-
         m_guideHairs.append(new Hair(2, 2, pos, normal));
     }
     m_simulation = _simulation;

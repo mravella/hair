@@ -66,7 +66,8 @@ OTHER_FILES += \
 
 RESOURCES += \
     shaders/shaders.qrc \
-    models/models.qrc
+    models/models.qrc \
+    images/images.qrc
 
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unknown-pragmas
 

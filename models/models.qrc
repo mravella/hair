@@ -2,5 +2,6 @@
     <qresource prefix="/models">
         <file>cube.obj</file>
         <file>sphere.obj</file>
+        <file>head.obj</file>
     </qresource>
 </RCC>

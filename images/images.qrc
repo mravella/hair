@@ -3,5 +3,6 @@
         <file>upper.png</file>
         <file>lower.png</file>
         <file>white.jpg</file>
+        <file>headHair.jpg</file>
     </qresource>
 </RCC>

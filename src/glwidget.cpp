@@ -59,6 +59,8 @@ void GLWidget::paintGL()
                 glm::vec3(0.f, 0.f, 4.f),  // eye
                 glm::vec3(0.f, 0.f, 0.f),  // center
                 glm::vec3(0.f, 1.f, 0.f)); // up
+    m_program.setGlobalUniforms();
+
     m_program.uniforms.model = glm::mat4(1.f);
     m_hairObject->paint(m_program);
     m_program.unbind();

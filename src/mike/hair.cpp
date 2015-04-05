@@ -1,4 +1,5 @@
 #include "hair.h"
+#include "errorchecker.h"
 
 /*
  * @file hair.cpp
@@ -64,15 +65,7 @@ void Hair::paint(ShaderProgram &_program)
     for (int i = 0; i < _program.uniforms.numHairVertices; i++){
         _program.uniforms.vertexData[i] = m_vertices.at(i)->position;
     }
-
-    _program.uniforms.color = glm::vec3(.6f, .4f, .3f);
-    _program.uniforms.numGroupHairs = 15;
-    _program.uniforms.hairGroupWidth = 0.2;
-    _program.uniforms.hairRadius = 0.005f;
-    _program.uniforms.noiseAmplitude = 0.03f;
-    _program.uniforms.numSplineVertices = 20;
-
-    _program.setUniforms();
+    _program.setPerGuideHairUniforms();
 
     glPatchParameteri(GL_PATCH_VERTICES, 4);
     m_patch.draw(GL_PATCHES);

@@ -50,9 +50,14 @@ public:
 
     void unbind();
 
-    // Sends all the uniforms to the shader program. Should be called after binding and before
-    // drawing.
-    void setUniforms();
+    // Sends all global uniforms to the shader program.
+    void setGlobalUniforms();
+
+    // Sends all hair object-specific uniforms to the shader program.
+    void setPerHairObjectUniforms();
+
+    // Sends all guide hair-specific uniforms to the shader program.
+    void setPerGuideHairUniforms();
 
     Uniforms uniforms;
 

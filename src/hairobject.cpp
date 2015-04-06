@@ -9,24 +9,33 @@ HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
     
     m_numGuideHairs = _numGuideHairs;
     
-    m_color = glm::vec3(.6f, .4f, .3f);
-    m_numGroupHairs = 15;
-    m_hairGroupWidth = 0.2;
-    m_hairRadius = 0.005f;
-    m_noiseAmplitude = 0.03f;
-    m_numSplineVertices = 20;
+    for (int i = 0; i < m_numGuideHairs; i++)
+    {
+        m_guideHairs.append(new Hair(3, 1, glm::vec3(i + 0.25, 1, 0), glm::vec3(1, 0, 0)));
+    }
     
+    setAttributes();
+
+    m_simulation = _simulation;
+}
+
+HairObject::HairObject(HairObject *_oldObject, Simulation *_simulation)
+{
+    
+    m_numGuideHairs = _oldObject->m_numGuideHairs;
     
     for (int i = 0; i < m_numGuideHairs; i++)
     {
         m_guideHairs.append(new Hair(3, 1, glm::vec3(i + 0.25, 1, 0), glm::vec3(1, 0, 0)));
     }
+    
+    setAttributes(_oldObject);
 
     m_simulation = _simulation;
 }
 
 
-HairObject::HairObject(ObjMesh *_mesh, const char * _hairGrowthMap, Simulation *_simulation)
+HairObject::HairObject(ObjMesh *_mesh, const char * _hairGrowthMap, Simulation *_simulation, HairObject *_oldObject)
 {
     QImage image(_hairGrowthMap);
     std::cout << QColor(image.pixel(0,0)).value() << std::endl;
@@ -44,9 +53,29 @@ HairObject::HairObject(ObjMesh *_mesh, const char * _hairGrowthMap, Simulation *
 
         // TODO: Don't set the z component to 0 when the sim works in 3D.
         normal.z = 0.f; normal = glm::normalize(normal);
-        m_guideHairs.append(new Hair(2, 2, pos, normal));
+        m_guideHairs.append(new Hair(3, 2, pos, normal));
     }
+    
+    setAttributes(_oldObject);
+
     m_simulation = _simulation;
+}
+
+void HairObject::setAttributes(HairObject *_oldObject){
+    if (_oldObject == NULL){
+        setAttributes();
+    } else {
+        setAttributes(_oldObject->m_color, _oldObject->m_numGroupHairs, _oldObject->m_hairGroupWidth, _oldObject->m_hairRadius, _oldObject->m_noiseAmplitude, _oldObject->m_numSplineVertices);
+    }
+}
+
+void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hairGroupWidth, float _hairRadius, float _noiseAmplitude, int _numSplineVertices){
+    m_color = _color;
+    m_numGroupHairs = _numGroupHairs;
+    m_hairGroupWidth = _hairGroupWidth;
+    m_hairRadius = _hairRadius;
+    m_noiseAmplitude = _noiseAmplitude;
+    m_numSplineVertices = _numSplineVertices;
 }
 
 void HairObject::update(float _time){
@@ -63,6 +92,7 @@ void HairObject::update(float _time){
 }
 
 void HairObject::paint(ShaderProgram &program){
+    
     program.uniforms.color = m_color;
     program.uniforms.numGroupHairs = m_numGroupHairs;
     program.uniforms.hairGroupWidth = m_hairGroupWidth;

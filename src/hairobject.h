@@ -13,9 +13,10 @@ class HairObject
 {
 public:
     HairObject(int _numGuideHairs, Simulation *_simulation);
-
+    HairObject(HairObject *_oldObject, Simulation *_simulation);
+    
     // Generates hair on the mesh according to the hair growth map.
-    HairObject(ObjMesh *_mesh, const char *_hairGrowthMap, Simulation *_simulation);
+    HairObject(ObjMesh *_mesh, const char *_hairGrowthMap, Simulation *_simulation, HairObject *_oldObject = NULL);
 
     // Generates hair all over the given mesh.
     HairObject(ObjMesh *_mesh, Simulation *_simulation)
@@ -23,8 +24,11 @@ public:
 
     void update(float _time);
     void paint(ShaderProgram &program);
-
+    void setAttributes(HairObject *_oldObject);
+    void setAttributes(glm::vec3 _color = glm::vec3(.6f, .4f, .3f), int _numGroupHairs = 15, float _hairGroupWidth = 0.2, float _hairRadius = 0.005f, float _noiseAmplitude = 0.03f, int _numSplineVertices = 20);
+    
 public:
+    
     QList<Hair*> m_guideHairs;
 
     Simulation *m_simulation;

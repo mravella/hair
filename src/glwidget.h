@@ -34,6 +34,7 @@ protected:
     void paintGL();
     void resizeGL(int w, int h);
     
+    void syncUI();
     void initSimulation();
 
 protected slots:
@@ -41,7 +42,7 @@ protected slots:
     void tick();
     void resetSimulation();
     void setHairsPerPatch(int);
-    void setNumSplineVertices(int);
+    void setSplineVertices(int);
 
 private:
     ObjMesh *m_mesh;

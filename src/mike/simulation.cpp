@@ -35,6 +35,7 @@ void Simulation::update(float _time){
 void Simulation::simulate(HairObject *_object)
 {
 
+    
     if (__BMONTELL_MODE__){
 
         sinDerp(_object);

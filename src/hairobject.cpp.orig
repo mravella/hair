@@ -8,7 +8,11 @@ HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
 {
     for (int i = 0; i < _numGuideHairs; i++)
     {
+<<<<<<< HEAD
         m_guideHairs.append(new Hair(3, 1, glm::vec3(i + 0.25, 1, 0), glm::vec3(1, 0, 0)));
+=======
+        m_guideHairs.append(new Hair(2, 2, glm::vec3(i + 0.25, 1, 0), glm::vec3(1, 0, 0)));
+>>>>>>> ea7c78ec9ebcb826ebac24151ae2d18c2b79ce98
     }
 
     m_simulation = _simulation;

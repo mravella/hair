@@ -66,40 +66,43 @@ struct Triangle {
 struct HairVertex
 {
     glm::vec3 position;
+    glm::vec3 tempPos;
     glm::vec3 velocity;
-    glm::vec3 acceleration;
+    glm::vec3 forces;
+    glm::vec3 d;
     double    theta;
     double    omega;
-    double    segLen;
+    float    segLen;
+    float     mass;
+    float     invMass;
 
     HairVertex(void)
     {
         position = glm::vec3(0.0);
         velocity = glm::vec3(0.0);
-        acceleration = glm::vec3(0.0);
         omega = 0.0;
         theta = 0.0;
         segLen = 0.0;
+        tempPos = glm::vec3(0.0);
+        forces = glm::vec3(0.0);
+        d = glm::vec3(0.0);
+        mass = 0.0;
+        invMass = 0.0;
     }
 
     HairVertex(glm::vec3 x)
     {
         position = x;
+        tempPos = x;
         velocity = glm::vec3(0.0);
-        acceleration = glm::vec3(0.0);
         omega = 0.0;
         theta = 0.0;
         segLen = 0.0;
-    }
+        forces = glm::vec3(0.0);
+        d = glm::vec3(0.0);
+        mass = 1.0;
+        invMass = 1.0;
 
-    HairVertex(glm::vec3 x, glm::vec3 v, glm::vec3 a)
-    {
-        position = x;
-        velocity = v;
-        acceleration = a;
-        omega = 0.0;
-        theta = 0.0;
-        segLen = 0.0;
     }
 };
 
@@ -239,5 +242,7 @@ struct Joint
        mb.exec(); \
        exit(0xf); \
    }
+
+#define PRINT_VEC(__name, __vec) cout << __name << glm::to_string(__vec) << endl;
 
 #endif

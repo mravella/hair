@@ -6,13 +6,25 @@
 
 HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
 {
-    for (int i = 0; i < _numGuideHairs; i++)
+    
+    m_numGuideHairs = _numGuideHairs;
+    
+    m_color = glm::vec3(.6f, .4f, .3f);
+    m_numGroupHairs = 15;
+    m_hairGroupWidth = 0.2;
+    m_hairRadius = 0.005f;
+    m_noiseAmplitude = 0.03f;
+    m_numSplineVertices = 20;
+    
+    
+    for (int i = 0; i < m_numGuideHairs; i++)
     {
         m_guideHairs.append(new Hair(2, 2, glm::vec3(i + 0.25, 1, 0), glm::vec3(1, 0, 0)));
     }
 
     m_simulation = _simulation;
 }
+
 
 HairObject::HairObject(ObjMesh *_mesh, const char * _hairGrowthMap, Simulation *_simulation)
 {
@@ -51,12 +63,12 @@ void HairObject::update(float _time){
 }
 
 void HairObject::paint(ShaderProgram &program){
-    program.uniforms.color = glm::vec3(.6f, .4f, .3f);
-    program.uniforms.numGroupHairs = 15;
-    program.uniforms.hairGroupWidth = 0.2;
-    program.uniforms.hairRadius = 0.005f;
-    program.uniforms.noiseAmplitude = 0.03f;
-    program.uniforms.numSplineVertices = 20;
+    program.uniforms.color = m_color;
+    program.uniforms.numGroupHairs = m_numGroupHairs;
+    program.uniforms.hairGroupWidth = m_hairGroupWidth;
+    program.uniforms.hairRadius = m_hairRadius;
+    program.uniforms.noiseAmplitude = m_noiseAmplitude;
+    program.uniforms.numSplineVertices = m_numSplineVertices;
     program.setPerHairObjectUniforms();
 
     for (int i = 0; i < m_guideHairs.size(); i++)

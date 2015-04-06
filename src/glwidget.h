@@ -8,9 +8,15 @@
 #include "hairpatch.h"
 #include "shaderprogram.h"
 
+namespace Ui {
+    class MainWindow;
+}
+
+
 class ObjMesh;
 class HairObject;
 class Simulation;
+
 
 class GLWidget : public QGLWidget
 {
@@ -21,15 +27,21 @@ public:
     ~GLWidget();
 
     void setFPSLabel(QLabel *label);
+    void setUI(Ui::MainWindow *ui);
 
 protected:
     void initializeGL();
     void paintGL();
     void resizeGL(int w, int h);
+    
+    void initSimulation();
 
 protected slots:
     /** Repaints the canvas. Called 60 times per second by m_timer. */
     void tick();
+    void resetSimulation();
+    void setHairsPerPatch(int);
+    void setNumSplineVertices(int);
 
 private:
     ObjMesh *m_mesh;
@@ -39,6 +51,7 @@ private:
     GLuint m_meshProgramID;
     ShaderProgram m_hairProgram;
 
+    Ui::MainWindow *m_ui;
     QLabel *m_fpsLabel;
 
     QTime m_clock;

@@ -34,8 +34,8 @@
   <widget class="QDockWidget" name="settingsDock">
    <property name="minimumSize">
     <size>
-     <width>140</width>
-     <height>211</height>
+     <width>173</width>
+     <height>217</height>
     </size>
    </property>
    <property name="features">
@@ -50,6 +50,58 @@
     </property>
     <layout class="QVBoxLayout" name="settingsLayout">
      <item>
+      <widget class="QLabel" name="label">
+       <property name="maximumSize">
+        <size>
+         <width>180</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Hairs per patch:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="sliderHairsPerPatch">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>20</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="maximumSize">
+        <size>
+         <width>180</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Spline Vertices:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="sliderNumSplineVertices">
+       <property name="minimum">
+        <number>2</number>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="fpsLabel">
        <property name="enabled">
         <bool>true</bool>
@@ -62,6 +114,13 @@
        </property>
        <property name="text">
         <string>FPS</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonResetSim">
+       <property name="text">
+        <string>Reset Simulation</string>
        </property>
       </widget>
      </item>

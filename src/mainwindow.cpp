@@ -14,6 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QGridLayout *gridLayout = new QGridLayout(m_ui->centralWidget);
     m_glWidget = new GLWidget(qglFormat, this);
     m_glWidget->setFPSLabel(m_ui->fpsLabel);
+    m_glWidget->setUI(m_ui);
+    
     gridLayout->addWidget(m_glWidget, 0, 1);
 }
 

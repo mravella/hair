@@ -28,6 +28,17 @@ public:
     QList<Hair*> m_guideHairs;
 
     Simulation *m_simulation;
+    
+    int m_numGuideHairs;
+    int m_numHairVertices;
+    
+    int m_numHairsPerPatch;
+    glm::vec3 m_color;
+    int m_numGroupHairs;
+    float m_hairGroupWidth;
+    float m_hairRadius;
+    float m_noiseAmplitude;
+    int m_numSplineVertices;
 
 };
 

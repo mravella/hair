@@ -57,6 +57,8 @@ private:
     GLuint m_meshProgramID;
     ShaderProgram m_hairProgram;
 
+    int m_hairDensity;
+
     Ui::MainWindow *m_ui;
     QLabel *m_fpsLabel;
 

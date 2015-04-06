@@ -47,6 +47,20 @@ struct Triangle {
     glm::vec3 v1, v2, v3;
     glm::vec2 uv1, uv2, uv3;
     glm::vec3 n1, n2, n3;
+
+    float area() { return glm::length(glm::cross(v3 - v1, v2 - v1)) / 2.f; }
+
+    void randPoint(glm::vec3 &pos, glm::vec2 &uv, glm::vec3 &normal)
+    {
+        float t = sqrt(rand() / (float) RAND_MAX);
+        glm::vec3 randPtBary;
+        randPtBary.x = 1 - t;
+        randPtBary.y = rand() / (float) RAND_MAX;
+        randPtBary.z = 1 - randPtBary.x - randPtBary.y;
+        uv = glm::mat3x2(uv1, uv2, uv3) * randPtBary;
+        pos = glm::mat3(v1, v2, v3) * randPtBary;
+        normal = glm::mat3(n1, n2, n3) * randPtBary;
+    }
 };
 
 struct HairVertex

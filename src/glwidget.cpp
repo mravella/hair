@@ -21,7 +21,7 @@
 #define _USE_MESH_ true
 
 GLWidget::GLWidget(QGLFormat format, QWidget *parent)
-    : QGLWidget(format, parent), m_timer(this), m_targetFPS(60.f), m_increment(0)
+    : QGLWidget(format, parent), m_timer(this), m_targetFPS(60.f), m_increment(0), m_hairDensity(40)
 {
     // Set up 60 FPS draw loop.
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
@@ -70,7 +70,8 @@ void GLWidget::initSimulation(){
 #if _USE_MESH_
     m_mesh = new ObjMesh();
     m_mesh->init(":/models/sphere.obj");
-    m_hairObject = new HairObject(m_mesh, ":/images/lower.png", m_testSimulation, m_hairObject);
+    m_hairObject = new HairObject(
+                m_mesh, m_hairDensity, ":/images/lower.png", m_testSimulation, m_hairObject);
 #else
     if (_oldHairObject != NULL){
         m_hairObject = new HairObject(_oldHairObject, m_testSimulation);

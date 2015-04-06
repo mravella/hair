@@ -16,11 +16,16 @@ public:
     HairObject(HairObject *_oldObject, Simulation *_simulation);
     
     // Generates hair on the mesh according to the hair growth map.
-    HairObject(ObjMesh *_mesh, const char *_hairGrowthMap, Simulation *_simulation, HairObject *_oldObject = NULL);
+    HairObject(
+            ObjMesh *_mesh,
+            int _hairsPerUnitArea,
+            const char *_hairGrowthMap,
+            Simulation *_simulation,
+            HairObject *_oldObject = NULL);
 
     // Generates hair all over the given mesh.
-    HairObject(ObjMesh *_mesh, Simulation *_simulation)
-        : HairObject(_mesh, ":/images/white.jpg", _simulation) { }
+    HairObject(ObjMesh *_mesh, int _hairsPerUnitArea, Simulation *_simulation)
+        : HairObject(_mesh, _hairsPerUnitArea, ":/images/white.jpg", _simulation) { }
 
     void update(float _time);
     void paint(ShaderProgram &program);

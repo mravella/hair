@@ -22,7 +22,9 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
 
 GLWidget::~GLWidget()
 {
+#if _USE_MESH_
     safeDelete(m_mesh);
+#endif
     safeDelete(m_testSimulation);
     safeDelete(m_hairObject);
 }

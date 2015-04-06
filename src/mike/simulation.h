@@ -26,6 +26,8 @@ private:
 
     void integrate(HairObject *_object);
     void integrate2(HairObject *_object);
+    void integrate3(HairObject *_object);
+    void integrate4(HairObject *_object);
 
 
 public:

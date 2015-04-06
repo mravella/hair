@@ -7,8 +7,8 @@ ShaderProgram::ShaderProgram()
 {
     // Default uniform values.
     uniforms.numGroupHairs = 1;
-    uniforms.hairGroupWidth = 0.1f;
-    uniforms.hairRadius = 0.004f;
+    uniforms.hairGroupWidth = 1.0f;
+    uniforms.hairRadius = 100.0f;
     uniforms.color = glm::vec3(.6f, .4f, .3f);
 }
 
@@ -54,6 +54,6 @@ void ShaderProgram::setUniforms()
     glUniform1i(m_uniformLocs["numSplineVertices"], uniforms.numSplineVertices);
     glUniform3fv(m_uniformLocs["vertexData"], uniforms.numHairVertices, &uniforms.vertexData[0][0]);
     glUniform1f(m_uniformLocs["groupWidth"], uniforms.hairGroupWidth);
-    glUniform1f(m_uniformLocs["hairRadius"], uniforms.hairRadius);
+    glUniform1f(m_uniformLocs["hairRadius"], 0.005);
     glUniform3fv(m_uniformLocs["color"], 1, glm::value_ptr(uniforms.color));
 }

@@ -75,7 +75,12 @@ void Simulation::calculateExternalForces(HairObject *_object)
         float numVerts = _object->m_guideHairs.at(i)->m_vertices.size();
         for (int j = 1; j < numVerts; j++)
         {
-            _object->m_guideHairs.at(i)->m_vertices.at(j)->forces = glm::vec3(0.0, -9.8, 0.0);
+            glm::vec3 force = glm::vec3(0.0);
+            // Gravity
+            force += glm::vec3(0.0, -9.8, 0.0);
+            // Wind
+            force += glm::vec3(6.0 + 20.0 * ((rand() % 100) / 100.0) - 10.0, 0.0, 0.0);
+            _object->m_guideHairs.at(i)->m_vertices.at(j)->forces = force;
         }
     }
 }

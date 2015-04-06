@@ -34,7 +34,6 @@ Hair::Hair(int numSegments, double length, glm::vec3 location, glm::vec3 dir)
         }
         newVert->segLen = stepSize;
         m_vertices.append(newVert);
-        cout << glm::to_string(m_vertices.last()->position) << endl;
         
     }
 

@@ -17,7 +17,7 @@
 
 #define EULER false
 #define __BMONTELL_MODE__ false
-#define TIMESTEP 0.01
+#define TIMESTEP 0.01f
 
 Simulation::Simulation()
 {
@@ -45,7 +45,7 @@ void Simulation::simulate(HairObject *_object)
         calculateExternalForces(_object);
         calculateConstraintForces(_object);
 
-        integrate3(_object);
+        this->particleSimulation(_object);
 
     }
 
@@ -70,7 +70,14 @@ void Simulation::sinDerp(HairObject *_object){
 // Calculate linear & angular forces for each joint, for each external force included in the simulation
 void Simulation::calculateExternalForces(HairObject *_object)
 {
-
+    for (int i = 0; i < _object->m_guideHairs.size(); i++)
+    {
+        float numVerts = _object->m_guideHairs.at(i)->m_vertices.size();
+        for (int j = 1; j < numVerts; j++)
+        {
+            _object->m_guideHairs.at(i)->m_vertices.at(j)->forces = glm::vec3(0.0, -9.8, 0.0);
+        }
+    }
 }
 
 // TODO:
@@ -542,5 +549,46 @@ void Simulation::integrate4(HairObject *_object)
     }
 }
 
+void Simulation::particleSimulation(HairObject *obj)
+{
+    for (int i = 0; i < obj->m_guideHairs.size(); i++)
+    {
+        float numVerts = obj->m_guideHairs.at(i)->m_vertices.size();
 
+        obj->m_guideHairs.at(i)->m_vertices.at(0)->tempPos = obj->m_guideHairs.at(i)->m_vertices.at(0)->position;
 
+        // Update Velocities
+        for (int j = 1; j < numVerts; ++j){
+            HairVertex *h = obj->m_guideHairs.at(i)->m_vertices.at(j);
+
+            // TODO: Precompute the mass
+            h->velocity = h->velocity + TIMESTEP * (h->forces * (1.0f / h->mass));
+            h->tempPos += (h->velocity * TIMESTEP);
+            h->forces = glm::vec3(0.0);
+            h->velocity *= 0.99f;
+        }
+
+        glm::vec3 dir;
+        glm::vec3 curr_pos;
+        for (int j = 1; j < numVerts; ++j)
+        {
+            HairVertex *prev = obj->m_guideHairs.at(i)->m_vertices.at(j - 1);
+            HairVertex *curr = obj->m_guideHairs.at(i)->m_vertices.at(j);
+            curr_pos = curr->tempPos;
+            dir = glm::normalize(curr->tempPos - prev->tempPos);
+            curr->tempPos = prev->tempPos + dir * prev->segLen;
+            curr->d = curr_pos - curr->tempPos;
+        }
+
+        for (int j = 1; j < numVerts; ++j)
+        {
+            HairVertex *prev = obj->m_guideHairs.at(i)->m_vertices.at(j - 1);
+            HairVertex *curr = obj->m_guideHairs.at(i)->m_vertices.at(j);
+            prev->velocity = ((prev->tempPos - prev->position) / TIMESTEP) + 0.9f * (curr->d / TIMESTEP);
+            prev->position = prev->tempPos;
+        }
+
+        HairVertex *last = obj->m_guideHairs.at(i)->m_vertices.last();
+        last->position = last->tempPos;
+    }
+}

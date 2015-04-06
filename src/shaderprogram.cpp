@@ -9,7 +9,7 @@ ShaderProgram::ShaderProgram()
     // Default uniform values.
     uniforms.numGroupHairs = 1;
     uniforms.hairGroupWidth = 0.1f;
-    uniforms.hairRadius = 0.004f;
+    uniforms.hairRadius = 0.02f;
     uniforms.taperExponent = 5.0;
     uniforms.noiseAmplitude = 0;
     uniforms.color = glm::vec3(.6f, .4f, .3f);

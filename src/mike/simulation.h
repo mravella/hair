@@ -29,6 +29,8 @@ private:
     void integrate3(HairObject *_object);
     void integrate4(HairObject *_object);
 
+    void particleSimulation(HairObject *obj);
+
 
 public:
     QList<glm::vec3> m_externalForces;

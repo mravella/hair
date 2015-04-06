@@ -28,6 +28,13 @@ struct Uniforms {
     // The radius of a single hair.
     float hairRadius;
 
+    // Exponent used for tapering the hair. The higher the exponent, the closer to the end the
+    // tapering occurs.
+    float taperExponent;
+
+    // Controls mount of noise in interpolated hairs. Should probably be in range [0, 0.1]
+    float noiseAmplitude;
+
     // Hair color.
     glm::vec3 color;
 };
@@ -43,9 +50,14 @@ public:
 
     void unbind();
 
-    // Sends all the uniforms to the shader program. Should be called after binding and before
-    // drawing.
-    void setUniforms();
+    // Sends all global uniforms to the shader program.
+    void setGlobalUniforms();
+
+    // Sends all hair object-specific uniforms to the shader program.
+    void setPerHairObjectUniforms();
+
+    // Sends all guide hair-specific uniforms to the shader program.
+    void setPerGuideHairUniforms();
 
     Uniforms uniforms;
 

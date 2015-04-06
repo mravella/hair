@@ -39,7 +39,15 @@ using std::endl;
 using std::max;
 using std::min;
 
-typedef double REAL;
+struct Triangle {
+    Triangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3,
+             glm::vec2 uv1, glm::vec2 uv2, glm::vec2 uv3,
+             glm::vec3 n1, glm::vec3 n2, glm::vec3 n3) :
+        v1(v1), v2(v2), v3(v3), uv1(uv1), uv2(uv2), uv3(uv3), n1(n1), n2(n2), n3(n3) {}
+    glm::vec3 v1, v2, v3;
+    glm::vec2 uv1, uv2, uv3;
+    glm::vec3 n1, n2, n3;
+};
 
 struct HairVertex
 {

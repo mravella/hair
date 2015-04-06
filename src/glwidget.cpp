@@ -2,20 +2,29 @@
 #include "resourceloader.h"
 #include "errorchecker.h"
 #include "hairCommon.h"
+#include <ctime>
+#include <chrono>
+#include <QLabel>
 
 #include "hairobject.h"
 #include "simulation.h"
+#include "objmesh.h"
+
+#define _USE_MESH_ false
 
 GLWidget::GLWidget(QGLFormat format, QWidget *parent)
-    : QGLWidget(format, parent), m_timer(this), m_fps(60.f), m_increment(0)
+    : QGLWidget(format, parent), m_timer(this), m_targetFPS(60.f), m_increment(0)
 {
     // Set up 60 FPS draw loop.
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
-    m_timer.start(1000.0f / m_fps);
+    m_timer.start(1000.0f / m_targetFPS);
 }
 
 GLWidget::~GLWidget()
 {
+    safeDelete(m_mesh);
+    safeDelete(m_testSimulation);
+    safeDelete(m_hairObject);
 }
 
 void GLWidget::initializeGL()
@@ -25,10 +34,19 @@ void GLWidget::initializeGL()
     glEnable(GL_CULL_FACE);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    m_program.create();
-    m_testSimulation = new Simulation();
-    m_hairObject = new HairObject(1, m_testSimulation);
+    m_meshProgramID = ResourceLoader::createBasicShaderProgram(
+                ":/shaders/basic.vert", ":/shaders/basic.frag");
 
+    m_hairProgram.create();
+    m_testSimulation = new Simulation();
+
+#if _USE_MESH_
+    m_mesh = new ObjMesh();
+    m_mesh->init(":/models/sphere.obj");
+    m_hairObject = new HairObject(m_mesh, ":/images/lower.png", m_testSimulation);
+#else
+    m_hairObject = new HairObject(1, m_testSimulation);
+#endif
 
     ErrorChecker::printGLErrors("end of initializeGL");
 }
@@ -37,22 +55,48 @@ void GLWidget::paintGL()
 {
     ErrorChecker::printGLErrors("start of paintGL");
 
+    int updateFrequency = 10;
+    if (m_increment % updateFrequency == 0) {
+        int fps = updateFrequency * 1000.0 / m_clock.elapsed();
+        m_fpsLabel->setText(QString::number(fps, 'f', 1) + " FPS");
+        m_clock.restart();
+    }
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    float time = m_increment++ / (float) m_fps;      // Time in seconds.
+    float time = m_increment++ / (float) m_targetFPS;      // Time in seconds.
 
     m_testSimulation->update(time);
     m_hairObject->update(time);
 
-    m_program.bind();
-    m_program.uniforms.projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
-    m_program.uniforms.view = glm::lookAt(
-                glm::vec3(0.f, 0.f, 4.f),  // eye
+    m_hairProgram.bind();
+    m_hairProgram.uniforms.projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+    m_hairProgram.uniforms.view = glm::lookAt(
+                glm::vec3(0.f, 0.f, 6.f),  // eye
                 glm::vec3(0.f, 0.f, 0.f),  // center
                 glm::vec3(0.f, 1.f, 0.f)); // up
-    m_program.uniforms.model = glm::mat4(1.f);
-    m_hairObject->paint(m_program);
-    m_program.unbind();
+    m_hairProgram.setGlobalUniforms();
+
+    m_hairProgram.uniforms.model = glm::mat4(1.f);
+    m_hairObject->paint(m_hairProgram);
+    m_hairProgram.unbind();
+
+#if _USE_MESH_
+    glUseProgram(m_meshProgramID);
+    glUniformMatrix4fv(glGetUniformLocation(m_meshProgramID, "projection"), 1, GL_FALSE,
+                       glm::value_ptr(m_hairProgram.uniforms.projection));
+    glUniformMatrix4fv(glGetUniformLocation(m_meshProgramID, "view"), 1, GL_FALSE,
+                       glm::value_ptr(m_hairProgram.uniforms.view));
+    glUniformMatrix4fv(glGetUniformLocation(m_meshProgramID, "model"), 1, GL_FALSE,
+                       glm::value_ptr(m_hairProgram.uniforms.model));
+    m_mesh->draw();
+    glUseProgram(0);
+#endif
+}
+
+void GLWidget::setFPSLabel(QLabel *label)
+{
+    m_fpsLabel = label;
 }
 
 void GLWidget::resizeGL(int w, int h)

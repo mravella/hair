@@ -29,7 +29,9 @@ SOURCES += \
     src/mike/hair.cpp \
     src/mike/simulation.cpp \
     src/shaderprogram.cpp \
-    src/mike/integrator.cpp
+    src/mike/integrator.cpp \
+    src/objloader.cpp \
+    src/objmesh.cpp
 
 
 HEADERS += \
@@ -45,7 +47,9 @@ HEADERS += \
     src/mike/hair.h \
     src/mike/simulation.h \
     src/shaderprogram.h \
-    src/mike/integrator.h
+    src/mike/integrator.h \
+    src/objloader.hpp \
+    src/objmesh.h
 
 
 FORMS += src/mainwindow.ui
@@ -61,7 +65,9 @@ OTHER_FILES += \
 
 
 RESOURCES += \
-    shaders/shaders.qrc
+    shaders/shaders.qrc \
+    models/models.qrc \
+    images/images.qrc
 
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unknown-pragmas
 

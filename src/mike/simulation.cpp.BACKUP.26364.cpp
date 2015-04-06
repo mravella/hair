@@ -175,8 +175,13 @@ void Simulation::integrate2(HairObject *_object)
             float omega2 = v2->omega;
 
             // TODO: These will be stored on vertices eventually
+<<<<<<< HEAD
             float m1 = 0.4;
             float m2 = 0.2;
+=======
+            float m1 = .5;
+            float m2 = .2;
+>>>>>>> ea7c78ec9ebcb826ebac24151ae2d18c2b79ce98
 
             // Calculates angular acceleration for v1
             auto omega1Dot = [l1, l2, theta2, omega2, m1, m2](double theta1, double omega1)

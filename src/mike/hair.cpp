@@ -21,7 +21,6 @@ Hair::Hair(int numSegments, double length, glm::vec3 location, glm::vec3 dir)
     m_numSegments = numSegments;
     m_length = length;
 
-    // TEMPORARY: Add all vertices directly below m_location
     double stepSize = (double) length / numSegments;
     for (int i = 0; i < numSegments + 1; ++i)
     {
@@ -29,7 +28,9 @@ Hair::Hair(int numSegments, double length, glm::vec3 location, glm::vec3 dir)
         if (i > 0)
         {
             HairVertex *oldVert = m_vertices.at(i - 1);
-            newVert->theta = acos(CLAMP(glm::dot(oldVert->position - newVert->position, glm::vec3(0, -1, 0)), -1.0, 1.0));
+            double dot = CLAMP(glm::dot(oldVert->position - newVert->position, glm::vec3(0, -1, 0)), -1.0, 1.0);
+            double det = CLAMP(glm::dot(oldVert->position - newVert->position, glm::vec3(1, 0, 0)), -1.0, 1.0);
+            newVert->theta = -atan2(det, dot);
         }
         newVert->segLen = stepSize;
         m_vertices.append(newVert);

@@ -35,26 +35,35 @@ HairObject::HairObject(HairObject *_oldObject, Simulation *_simulation)
 }
 
 
-HairObject::HairObject(ObjMesh *_mesh, const char * _hairGrowthMap, Simulation *_simulation, HairObject *_oldObject)
+HairObject::HairObject(
+        ObjMesh *_mesh,
+        int _hairsPerUnitArea,
+        const char * _hairGrowthMap,
+        Simulation *_simulation,
+        HairObject *_oldObject)
 {
     QImage image(_hairGrowthMap);
-    std::cout << QColor(image.pixel(0,0)).value() << std::endl;
-    for (int i = 0; i < _mesh->triangles.size(); i++)
+    for (unsigned int i = 0; i < _mesh->triangles.size(); i++)
     {
         Triangle t = _mesh->triangles[i];
 
-        // If hair growth map is black, skip this triangle.
-        glm::vec2 uv = (t.uv1 + t.uv2 + t.uv3) / 3.f;
-        QColor hairGrowth = QColor(image.pixel(uv.x * image.width(), (1 - uv.y) * image.height()));
-        if (hairGrowth.value() == 0) continue;
+        // Number of guide hairs to generate on this triangle.
+        int numHairs = (int) (_hairsPerUnitArea * t.area() + rand() / RAND_MAX);
+        for (int hair = 0; hair < numHairs; hair++)
+        {
+            // Generate random point on triangle.
+            glm::vec3 pos; glm::vec2 uv; glm::vec3 normal;
+            t.randPoint(pos, uv, normal);
 
-        glm::vec3 pos = (t.v1 + t.v2 + t.v3) / 3.f;
-        glm::vec3 normal = (t.n1 + t.n2 + t.n3) / 3.f;
+            // If hair growth map is black, skip this hair.
+            QColor hairGrowth = QColor(image.pixel(uv.x * image.width(), (1 - uv.y) * image.height()));
+            if (hairGrowth.value() == 0) continue;
 
-        // TODO: Don't set the z component to 0 when the sim works in 3D.
-        normal.z = 0.f; normal = glm::normalize(normal);
+            // TODO: Don't set the z component to 0 when the sim works in 3D.
+            normal.z = 0.f; normal = glm::normalize(normal);
 
-        m_guideHairs.append(new Hair(3, 1, pos, normal));
+            m_guideHairs.append(new Hair(3, 1, pos, normal));
+        }
     }
     
     setAttributes(_oldObject);

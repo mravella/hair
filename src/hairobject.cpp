@@ -53,7 +53,8 @@ HairObject::HairObject(ObjMesh *_mesh, const char * _hairGrowthMap, Simulation *
 
         // TODO: Don't set the z component to 0 when the sim works in 3D.
         normal.z = 0.f; normal = glm::normalize(normal);
-        m_guideHairs.append(new Hair(3, 2, pos, normal));
+
+        m_guideHairs.append(new Hair(3, 1, pos, normal));
     }
     
     setAttributes(_oldObject);

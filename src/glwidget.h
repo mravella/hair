@@ -43,6 +43,7 @@ protected slots:
     void resetSimulation();
     void setHairsPerPatch(int);
     void setSplineVertices(int);
+    void setHairRadius(int);
     void setHairColorR(int);
     void setHairColorG(int);
     void setHairColorB(int);

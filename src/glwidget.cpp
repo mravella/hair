@@ -150,20 +150,18 @@ void GLWidget::setUI(Ui::MainWindow *ui)
     m_ui = ui;
     
     // hairs per patch
-    QSlider *slider = m_ui->sliderHairsPerPatch;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setHairsPerPatch(int)));
+    connect(m_ui->sliderHairsPerPatch, SIGNAL(valueChanged(int)), this, SLOT(setHairsPerPatch(int)));
     
     // spline vertices
-    slider = m_ui->sliderSplineVertices;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setSplineVertices(int)));
+    connect(m_ui->sliderSplineVertices, SIGNAL(valueChanged(int)), this, SLOT(setSplineVertices(int)));
+    
+    // hair radius
+    connect(m_ui->sliderHairRadius, SIGNAL(valueChanged(int)), this, SLOT(setHairRadius(int)));
     
     // rgb
-    slider = m_ui->sliderHairColorR;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setHairColorR(int)));
-    slider = m_ui->sliderHairColorG;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setHairColorG(int)));
-    slider = m_ui->sliderHairColorB;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setHairColorB(int)));
+    connect(m_ui->sliderHairColorR, SIGNAL(valueChanged(int)), this, SLOT(setHairColorR(int)));
+    connect(m_ui->sliderHairColorG, SIGNAL(valueChanged(int)), this, SLOT(setHairColorG(int)));
+    connect(m_ui->sliderHairColorB, SIGNAL(valueChanged(int)), this, SLOT(setHairColorB(int)));
 }
  
 void GLWidget::syncUI()
@@ -176,6 +174,10 @@ void GLWidget::syncUI()
     m_ui->sliderSplineVertices->setValue(m_hairObject->m_numSplineVertices);
     m_ui->inputSplineVertices->setText(QString::number(m_hairObject->m_numSplineVertices));
     
+    // spline vertices
+    m_ui->sliderHairRadius->setValue(m_hairObject->m_hairRadius*10000.);
+    m_ui->inputHairRadius->setText(QString::number(m_hairObject->m_hairRadius));
+    
     // rgb
     m_ui->sliderHairColorR->setValue(m_hairObject->m_color.x*2550);
     m_ui->sliderHairColorG->setValue(m_hairObject->m_color.y*2550);
@@ -185,8 +187,7 @@ void GLWidget::syncUI()
     m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 2));
     
     // reset button
-    QPushButton *button = m_ui->buttonResetSim;
-    connect(button, SIGNAL(pressed()), this, SLOT(resetSimulation()));
+    connect(m_ui->buttonResetSim, SIGNAL(pressed()), this, SLOT(resetSimulation()));
 }
 
 void GLWidget::resizeGL(int w, int h)
@@ -208,10 +209,13 @@ void GLWidget::setHairsPerPatch(int numHairs){
     m_hairObject->m_numGroupHairs = numHairs;
     m_ui->inputHairsPerPatch->setText(QString::number(numHairs));
 }
-
 void GLWidget::setSplineVertices(int numVertices){
     m_hairObject->m_numSplineVertices = numVertices;
     m_ui->inputSplineVertices->setText(QString::number(numVertices));
+}
+void GLWidget::setHairRadius(int radius){
+    m_hairObject->m_hairRadius = radius/10000.;
+    m_ui->inputHairRadius->setText(QString::number(m_hairObject->m_hairRadius));
 }
 
 void GLWidget::setHairColorR(int value){

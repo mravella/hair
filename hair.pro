@@ -17,6 +17,7 @@ macx {
 INCLUDEPATH += \
     glm \
     src \
+    src/lib \
     src/mike \
     src/shaderPrograms \
     src/ui
@@ -24,6 +25,7 @@ INCLUDEPATH += \
 DEPENDPATH += \
     glm \
     src \
+    src/lib \
     src/mike \
     src/shaderPrograms \
     src/ui
@@ -32,16 +34,16 @@ SOURCES += \
     src/ui/mainwindow.cpp \
     src/main.cpp \
     src/glwidget.cpp \
-    src/resourceloader.cpp \
-    src/openglshape.cpp \
-    src/errorchecker.cpp \
+    src/lib/resourceloader.cpp \
+    src/lib/openglshape.cpp \
+    src/lib/errorchecker.cpp \
     src/hairpatch.cpp \
     src/hairobject.cpp \
     src/mike/hair.cpp \
     src/mike/simulation.cpp \
     src/shaderPrograms/shaderprogram.cpp \
     src/mike/integrator.cpp \
-    src/objloader.cpp \
+    src/lib/objloader.cpp \
     src/objmesh.cpp \
     src/shaderPrograms/hairshaderprogram.cpp \
     src/shaderPrograms/meshshaderprogram.cpp \
@@ -51,10 +53,9 @@ SOURCES += \
 HEADERS += \
     src/ui/mainwindow.h \
     src/glwidget.h \
-    src/resourceloader.h \
-    src/sphere.h \
-    src/openglshape.h \
-    src/errorchecker.h \
+    src/lib/resourceloader.h \
+    src/lib/openglshape.h \
+    src/lib/errorchecker.h \
     src/hairpatch.h \
     src/hairobject.h \
     src/hairCommon.h \
@@ -62,7 +63,7 @@ HEADERS += \
     src/mike/simulation.h \
     src/shaderPrograms/shaderprogram.h \
     src/mike/integrator.h \
-    src/objloader.hpp \
+    src/lib/objloader.hpp \
     src/objmesh.h \
     src/shaderPrograms/hairshaderprogram.h \
     src/shaderPrograms/meshshaderprogram.h \

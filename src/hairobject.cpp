@@ -59,7 +59,7 @@ HairObject::HairObject(
             QColor hairGrowth = QColor(image.pixel(uv.x * image.width(), (1 - uv.y) * image.height()));
             if (hairGrowth.value() == 0) continue;
 
-            m_guideHairs.append(new Hair(3, 1, pos, normal));
+            m_guideHairs.append(new Hair(10, 1, pos, normal));
         }
     }
     

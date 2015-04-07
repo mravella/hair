@@ -137,9 +137,9 @@ void GLWidget::paintGL()
         int numSplineVertices = m_hairObject->m_numSplineVertices;
         m_ui->statsLabel->setText(
                     QString::number(numGuideHairs) + " guide hairs\n" +
-                    QString::number(numGuideHairs * numGroupHairs) + " total hairs\n" +
-                    QString::number(numGuideHairs * numGroupHairs * numGuideVertices) + " simulated vertices\n" +
-                    QString::number(numGuideHairs * numGroupHairs * numSplineVertices) + " total vertices");
+                    QString::number(numGuideHairs * numGroupHairs) + " rendered hairs\n" +
+                    QString::number(numGuideHairs * numGuideVertices) + " simulated vertices\n" +
+                    QString::number(numGuideHairs * numGroupHairs * numSplineVertices * 4) + " rendered vertices");
 
         m_clock.restart();
     }

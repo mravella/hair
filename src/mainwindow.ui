@@ -312,7 +312,14 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>FPS</string>
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="statsLabel">
+       <property name="text">
+        <string>TextLabel</string>
        </property>
       </widget>
      </item>

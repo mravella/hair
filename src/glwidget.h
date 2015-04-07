@@ -26,7 +26,6 @@ public:
     GLWidget(QGLFormat format, QWidget *parent = 0);
     ~GLWidget();
 
-    void setFPSLabel(QLabel *label);
     void setUI(Ui::MainWindow *ui);
 
 protected:
@@ -60,7 +59,6 @@ private:
     float m_hairDensity;
 
     Ui::MainWindow *m_ui;
-    QLabel *m_fpsLabel;
 
     QTime m_clock;
 

@@ -11,6 +11,7 @@
 #include <QGraphicsView>
 #include <QBrush>
 
+#include "hair.h"
 #include "hairobject.h"
 #include "simulation.h"
 #include "objmesh.h"
@@ -89,14 +90,7 @@ void GLWidget::initSimulation(){
 void GLWidget::paintGL()
 {
     ErrorChecker::printGLErrors("start of paintGL");
-    
-    int updateFrequency = 10;
-    if (m_increment % updateFrequency == 0) {
-        int fps = updateFrequency * 1000.0 / m_clock.elapsed();
-        m_fpsLabel->setText(QString::number(fps, 'f', 1) + " FPS");
-        m_clock.restart();
-    }
-    
+        
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     float time = m_increment++ / (float) m_targetFPS;      // Time in seconds.
@@ -127,12 +121,30 @@ void GLWidget::paintGL()
     m_mesh->draw();
     glUseProgram(0);
 #endif
+
+    int updateFrequency = 10;
+    if (m_increment % updateFrequency == 0) {
+        // Update FPS label.
+        if (m_increment > 0) {
+            int fps = updateFrequency * 1000.0 / m_clock.elapsed();
+            m_ui->fpsLabel->setText(QString::number(fps, 'f', 1) + " FPS");
+        }
+
+        // Update stats label.
+        int numGuideHairs = m_hairObject->m_guideHairs.size();
+        int numGroupHairs = m_hairObject->m_numGroupHairs;
+        int numGuideVertices = m_hairObject->m_guideHairs[0]->m_vertices.size();
+        int numSplineVertices = m_hairObject->m_numSplineVertices;
+        m_ui->statsLabel->setText(
+                    QString::number(numGuideHairs) + " guide hairs\n" +
+                    QString::number(numGuideHairs * numGroupHairs) + " total hairs\n" +
+                    QString::number(numGuideHairs * numGroupHairs * numGuideVertices) + " simulated vertices\n" +
+                    QString::number(numGuideHairs * numGroupHairs * numSplineVertices) + " total vertices");
+
+        m_clock.restart();
+    }
 }
 
-void GLWidget::setFPSLabel(QLabel *label)
-{
-    m_fpsLabel = label;
-}
 void GLWidget::setUI(Ui::MainWindow *ui)
 {
     m_ui = ui;

@@ -37,7 +37,6 @@ SOURCES += \
     src/lib/resourceloader.cpp \
     src/lib/openglshape.cpp \
     src/lib/errorchecker.cpp \
-    src/hairpatch.cpp \
     src/hairobject.cpp \
     src/mike/hair.cpp \
     src/mike/simulation.cpp \
@@ -56,7 +55,6 @@ HEADERS += \
     src/lib/resourceloader.h \
     src/lib/openglshape.h \
     src/lib/errorchecker.h \
-    src/hairpatch.h \
     src/hairobject.h \
     src/hairCommon.h \
     src/mike/hair.h \

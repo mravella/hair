@@ -8,6 +8,7 @@
 namespace Ui {
     class MainWindow;
 }
+class HairInterface;
 
 class MainWindow : public QMainWindow
 {
@@ -19,6 +20,7 @@ public:
 
 private:
     Ui::MainWindow *m_ui;
+    HairInterface *m_hairInterface;
     GLWidget *m_glWidget;
 
 };

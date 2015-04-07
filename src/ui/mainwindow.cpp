@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "hairinterface.h"
 #include <QSettings>
 #include <QGridLayout>
 
@@ -12,8 +13,9 @@ MainWindow::MainWindow(QWidget *parent) :
     qglFormat.setProfile(QGLFormat::CoreProfile);
     m_ui->setupUi(this);
     QGridLayout *gridLayout = new QGridLayout(m_ui->centralWidget);
-    m_glWidget = new GLWidget(qglFormat, this);
-    m_glWidget->setUI(m_ui);
+
+    m_hairInterface = new HairInterface(m_ui);
+    m_glWidget = new GLWidget(qglFormat, m_hairInterface, this);
     
     gridLayout->addWidget(m_glWidget, 0, 1);
 }
@@ -21,5 +23,6 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete m_ui;
+    delete m_hairInterface;
     delete m_glWidget;
 }

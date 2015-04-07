@@ -14,11 +14,22 @@ macx {
     CONFIG += c++11
 }
 
-INCLUDEPATH += src glm src/mike src/programs
-DEPENDPATH += src glm src/mike src/program
+INCLUDEPATH += \
+    glm \
+    src \
+    src/mike \
+    src/shaderPrograms \
+    src/ui
+
+DEPENDPATH += \
+    glm \
+    src \
+    src/mike \
+    src/shaderPrograms \
+    src/ui
 
 SOURCES += \
-    src/mainwindow.cpp \
+    src/ui/mainwindow.cpp \
     src/main.cpp \
     src/glwidget.cpp \
     src/resourceloader.cpp \
@@ -28,16 +39,17 @@ SOURCES += \
     src/hairobject.cpp \
     src/mike/hair.cpp \
     src/mike/simulation.cpp \
-    src/programs/shaderprogram.cpp \
+    src/shaderPrograms/shaderprogram.cpp \
     src/mike/integrator.cpp \
     src/objloader.cpp \
     src/objmesh.cpp \
-    src/programs/hairshaderprogram.cpp \
-    src/programs/meshshaderprogram.cpp
+    src/shaderPrograms/hairshaderprogram.cpp \
+    src/shaderPrograms/meshshaderprogram.cpp \
+    src/ui/hairinterface.cpp
 
 
 HEADERS += \
-    src/mainwindow.h \
+    src/ui/mainwindow.h \
     src/glwidget.h \
     src/resourceloader.h \
     src/sphere.h \
@@ -48,12 +60,13 @@ HEADERS += \
     src/hairCommon.h \
     src/mike/hair.h \
     src/mike/simulation.h \
-    src/programs/shaderprogram.h \
+    src/shaderPrograms/shaderprogram.h \
     src/mike/integrator.h \
     src/objloader.hpp \
     src/objmesh.h \
-    src/programs/hairshaderprogram.h \
-    src/programs/meshshaderprogram.h
+    src/shaderPrograms/hairshaderprogram.h \
+    src/shaderPrograms/meshshaderprogram.h \
+    src/ui/hairinterface.h
 
 
 FORMS += src/mainwindow.ui

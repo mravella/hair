@@ -2,40 +2,33 @@
 #include "resourceloader.h"
 #include "errorchecker.h"
 #include "hairCommon.h"
-#include <ctime>
-#include <chrono>
-#include <QLabel>
-#include <QSlider>
-#include <QPushButton>
-#include <QLineEdit>
-#include <QGraphicsView>
-#include <QBrush>
 
-#include "hair.h"
 #include "hairobject.h"
 #include "simulation.h"
-#include "objmesh.h"
 #include "hairshaderprogram.h"
 #include "meshshaderprogram.h"
-
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "hairinterface.h"
 
 #define _USE_MESH_ true
 
-GLWidget::GLWidget(QGLFormat format, QWidget *parent)
-    : QGLWidget(format, parent), m_timer(this), m_targetFPS(60.f), m_increment(0), m_hairDensity(40)
+GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
+    : QGLWidget(format, parent),
+      m_hairInterface(hairInterface),
+      m_hairDensity(40),
+      m_timer(this),
+      m_increment(0),
+      m_targetFPS(60.f)
 {
-    // Set up 60 FPS draw loop.
-    connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
-    m_timer.start(1000.0f / m_targetFPS);
-    
-    m_ui = NULL;
     m_mesh = NULL;
     m_hairObject = NULL;
     m_testSimulation = NULL;
     m_hairProgram = new HairShaderProgram();
     m_meshProgram = new MeshShaderProgram();
+    m_hairInterface->setGLWidget(this);
+
+    // Set up 60 FPS draw loop.
+    connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateCanvas()));
+    m_timer.start(1000.0f / m_targetFPS);
 }
 
 GLWidget::~GLWidget()
@@ -62,14 +55,53 @@ void GLWidget::initializeGL()
     ErrorChecker::printGLErrors("end of initializeGL");
 }
 
+void GLWidget::paintGL()
+{
+    ErrorChecker::printGLErrors("start of paintGL");
+        
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    float time = m_increment++ / (float) m_targetFPS;      // Time in seconds.
+    
+    m_testSimulation->update(time);
+    m_hairObject->update(time);
 
-void GLWidget::initSimulation(){
-    delete m_mesh;
-    delete m_testSimulation;
+    glm::mat4 projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+    glm::mat4 view = glm::lookAt(
+                glm::vec3(0, 0, 6)/*eye*/, glm::vec3(0, 0, 0)/*center*/, glm::vec3(0, 1, 0)/*up*/);
+    glm::mat4 model = glm::mat4(1.f);
+    
+    m_hairProgram->bind();
+    m_hairProgram->uniforms.projection = projection;
+    m_hairProgram->uniforms.view = view;
+    m_hairProgram->uniforms.model = model;
+    m_hairProgram->setGlobalUniforms();
+    m_hairObject->paint(m_hairProgram);
+    m_hairProgram->unbind();
+    
+#if _USE_MESH_
+    m_meshProgram->bind();
+    m_meshProgram->uniforms.projection = projection;
+    m_meshProgram->uniforms.view = view;
+    m_meshProgram->uniforms.model = model;
+    m_meshProgram->setGlobalUniforms();
+    m_meshProgram->setPerObjectUniforms();
+    m_mesh->draw();
+    m_meshProgram->unbind();
+#endif
+
+    m_hairInterface->updateLabels(m_increment);
+}
+
+
+void GLWidget::initSimulation()
+{
+    safeDelete(m_mesh);
+    safeDelete(m_testSimulation);
     HairObject *_oldHairObject = m_hairObject;
-    
+
     m_testSimulation = new Simulation();
-    
+
 #if _USE_MESH_
     m_mesh = new ObjMesh();
     m_mesh->init(":/models/sphere.obj");
@@ -82,115 +114,18 @@ void GLWidget::initSimulation(){
         m_hairObject = new HairObject(1, m_testSimulation);
     }
 #endif
-    
-    delete _oldHairObject;
-    
-    syncUI();
+
+    safeDelete(_oldHairObject);
+
+    m_hairInterface->setHairObject(m_hairObject);
 }
 
 
-void GLWidget::paintGL()
+void GLWidget::resetSimulation()
 {
-    ErrorChecker::printGLErrors("start of paintGL");
-        
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    float time = m_increment++ / (float) m_targetFPS;      // Time in seconds.
-    
-    m_testSimulation->update(time);
-    m_hairObject->update(time);
-    
-    m_hairProgram->bind();
-    m_hairProgram->uniforms.projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
-    m_hairProgram->uniforms.view = glm::lookAt(
-                glm::vec3(0.f, 0.f, 6.f),  // eye
-                glm::vec3(0.f, 0.f, 0.f),  // center
-                glm::vec3(0.f, 1.f, 0.f)); // up
-    m_hairProgram->setGlobalUniforms();
-    
-    m_hairProgram->uniforms.model = glm::mat4(1.f);
-    m_hairObject->paint(m_hairProgram);
-    m_hairProgram->unbind();
-    
-#if _USE_MESH_
-    m_meshProgram->bind();
-    m_meshProgram->uniforms.projection = m_hairProgram->uniforms.projection;
-    m_meshProgram->uniforms.view = m_hairProgram->uniforms.view;
-    m_meshProgram->setGlobalUniforms();
-
-    m_meshProgram->uniforms.model = m_hairProgram->uniforms.model;
-    m_meshProgram->setPerObjectUniforms();
-    m_mesh->draw();
-    m_meshProgram->unbind();
-#endif
-
-    // Update UI labels.
-    int updateFrequency = 10;
-    if (m_increment % updateFrequency == 1) {
-        // Update FPS label.
-        if (m_increment > 1) {
-            int fps = updateFrequency * 1000.0 / m_clock.elapsed();
-            m_ui->fpsLabel->setText(QString::number(fps, 'f', 1) + " FPS");
-        }
-
-        // Update stats label.
-        int numGuideHairs = m_hairObject->m_guideHairs.size();
-        int numGroupHairs = m_hairObject->m_numGroupHairs;
-        int numGuideVertices = m_hairObject->m_guideHairs[0]->m_vertices.size();
-        int numSplineVertices = m_hairObject->m_numSplineVertices;
-        m_ui->statsLabel->setText(
-                    QString::number(numGuideHairs) + " guide hairs\n" +
-                    QString::number(numGuideHairs * numGroupHairs) + " rendered hairs\n" +
-                    QString::number(numGuideHairs * numGuideVertices) + " simulated vertices\n" +
-                    QString::number(numGuideHairs * numGroupHairs * numSplineVertices * 4) + " rendered vertices");
-
-        m_clock.restart();
-    }
+    initSimulation();
 }
 
-void GLWidget::setUI(Ui::MainWindow *ui)
-{
-    m_ui = ui;
-    
-    // hairs per patch
-    QSlider *slider = m_ui->sliderHairsPerPatch;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setHairsPerPatch(int)));
-    
-    // spline vertices
-    slider = m_ui->sliderSplineVertices;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setSplineVertices(int)));
-    
-    // rgb
-    slider = m_ui->sliderHairColorR;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setHairColorR(int)));
-    slider = m_ui->sliderHairColorG;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setHairColorG(int)));
-    slider = m_ui->sliderHairColorB;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setHairColorB(int)));
-}
- 
-void GLWidget::syncUI()
-{
-    // hairs per patch
-    m_ui->sliderHairsPerPatch->setValue(m_hairObject->m_numGroupHairs);
-    m_ui->inputHairsPerPatch->setText(QString::number(m_hairObject->m_numGroupHairs));
-    
-    // spline vertices
-    m_ui->sliderSplineVertices->setValue(m_hairObject->m_numSplineVertices);
-    m_ui->inputSplineVertices->setText(QString::number(m_hairObject->m_numSplineVertices));
-    
-    // rgb
-    m_ui->sliderHairColorR->setValue(m_hairObject->m_color.x*2550);
-    m_ui->sliderHairColorG->setValue(m_hairObject->m_color.y*2550);
-    m_ui->sliderHairColorB->setValue(m_hairObject->m_color.z*2550);
-    m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x, 'g', 2));
-    m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y, 'g', 2));
-    m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 2));
-    
-    // reset button
-    QPushButton *button = m_ui->buttonResetSim;
-    connect(button, SIGNAL(pressed()), this, SLOT(resetSimulation()));
-}
 
 void GLWidget::resizeGL(int w, int h)
 {
@@ -198,34 +133,7 @@ void GLWidget::resizeGL(int w, int h)
 }
 
 /** Repaints the canvas. Called 60 times per second. */
-void GLWidget::tick()
+void GLWidget::updateCanvas()
 {
     update();
-}
-
-void GLWidget::resetSimulation(){
-    initSimulation();
-}
-
-void GLWidget::setHairsPerPatch(int numHairs){
-    m_hairObject->m_numGroupHairs = numHairs;
-    m_ui->inputHairsPerPatch->setText(QString::number(numHairs));
-}
-
-void GLWidget::setSplineVertices(int numVertices){
-    m_hairObject->m_numSplineVertices = numVertices;
-    m_ui->inputSplineVertices->setText(QString::number(numVertices));
-}
-
-void GLWidget::setHairColorR(int value){
-    m_hairObject->m_color.x = value/2550.;
-    m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x, 'g', 2));
-}
-void GLWidget::setHairColorG(int value){
-    m_hairObject->m_color.y = value/2550.;
-    m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y, 'g', 2));
-}
-void GLWidget::setHairColorB(int value){
-    m_hairObject->m_color.z = value/2550.;
-    m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 2));
 }

@@ -10,36 +10,27 @@
 struct Uniforms {
     glm::mat4 model, view, projection;
 
-    // Number of vertices in the current guide hair.
-    int numHairVertices;
+    int numHairVertices; // Number of vertices per guide hair.
 
-    // Vertex position data for the current guide hair.
-    glm::vec3 vertexData[MAX_HAIR_VERTICES];
+    glm::vec3 vertexData[MAX_HAIR_VERTICES]; // Vertex position data for the current guide hair.
 
-    // Number of duplicates rendered with single-hair interpolation for each guide hair.
-    int numGroupHairs;
+    int numGroupHairs; // Number of single-hair-interpolated hairs per guide hair.
 
-    // Number of vertices rendered with a spline.
-    int numSplineVertices;
+    int numSplineVertices; // Number of vertices rendered with a spline.
 
-    // Defines the width that a hair group is spread across.
-    float hairGroupSpread;
+    float hairGroupSpread; // Max distance from a hair to its corresponding guide hair.
 
-    // The radius of a single hair.
-    float hairRadius;
+    float hairRadius; // The radius of a single hair.
 
-    // Exponent used for tapering the hair. The higher the exponent, the closer to the end the
-    // tapering occurs.
-    float taperExponent;
+    float taperExponent; // Controls how far along the hair it starts tapering at the end.
 
-    // Controls mount of noise in interpolated hairs. Should probably be in range [0, 0.1]
-    float noiseAmplitude;
+    float noiseAmplitude; // Amount of noise added to each hair vertex poistion.
 
-    // Basis vectors for the plane orthogonal to the hair's normal vector.
-    glm::vec3 triangleFace[2];
+    glm::vec3 triangleFace[2]; // Basis vectors for the plane orthogonal to the hair's normal vector.
 
-    // Hair color.
     glm::vec3 color;
+
+    glm::vec3 lightPosition;
 };
 
 class ShaderProgram

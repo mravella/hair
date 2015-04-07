@@ -2,17 +2,16 @@
 
 uniform vec3 color;
 uniform mat4 view;
+uniform vec3 lightPosition;
 
 in vec4 position_g;
 in vec3 tangent_g;
 
 out vec3 fragColor;
 
-const vec4 lightPosition = vec4(2., 1., 2., 1.);
-
 void main(){
     
-    vec4 toLight_N = normalize((view * lightPosition) - position_g);
+    vec4 toLight_N = normalize((view * vec4(lightPosition, 1.)) - position_g);
     vec3 tangent_N = normalize(tangent_g);
     
     float diffuse = sqrt(1. - abs(dot(tangent_N, toLight_N.xyz)));

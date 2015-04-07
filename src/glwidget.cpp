@@ -70,11 +70,13 @@ void GLWidget::paintGL()
     glm::mat4 view = glm::lookAt(
                 glm::vec3(0, 0, 6)/*eye*/, glm::vec3(0, 0, 0)/*center*/, glm::vec3(0, 1, 0)/*up*/);
     glm::mat4 model = glm::mat4(1.f);
+    glm::vec3 lightPosition = glm::vec3(2, 1, 2);
     
     m_hairProgram->bind();
     m_hairProgram->uniforms.projection = projection;
     m_hairProgram->uniforms.view = view;
     m_hairProgram->uniforms.model = model;
+    m_hairProgram->uniforms.lightPosition = lightPosition;
     m_hairProgram->setGlobalUniforms();
     m_hairObject->paint(m_hairProgram);
     m_hairProgram->unbind();
@@ -84,6 +86,7 @@ void GLWidget::paintGL()
     m_meshProgram->uniforms.projection = projection;
     m_meshProgram->uniforms.view = view;
     m_meshProgram->uniforms.model = model;
+    m_meshProgram->uniforms.lightPosition = lightPosition;
     m_meshProgram->setGlobalUniforms();
     m_meshProgram->setPerObjectUniforms();
     m_mesh->draw();

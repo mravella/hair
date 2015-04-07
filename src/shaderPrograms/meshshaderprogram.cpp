@@ -13,7 +13,8 @@ std::vector<GLchar const *> MeshShaderProgram::getUniformNames()
     std::vector<GLchar const *> uniformNames {
         "model",
         "view",
-        "projection"
+        "projection",
+        "lightPosition"
     };
     return uniformNames;
 }
@@ -21,6 +22,7 @@ void MeshShaderProgram::setGlobalUniforms()
 {
     setUniformMatrix4f("projection", uniforms.projection);
     setUniformMatrix4f("view", uniforms.view);
+    setUniform3f("lightPosition", uniforms.lightPosition);
 }
 
 void MeshShaderProgram::setPerObjectUniforms()

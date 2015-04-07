@@ -56,7 +56,7 @@ private:
     GLuint m_meshProgramID;
     ShaderProgram m_hairProgram;
 
-    int m_hairDensity;
+    float m_hairDensity;
 
     Ui::MainWindow *m_ui;
 

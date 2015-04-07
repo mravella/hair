@@ -180,9 +180,9 @@ void GLWidget::syncUI()
     m_ui->sliderHairColorR->setValue(m_hairObject->m_color.x*2550);
     m_ui->sliderHairColorG->setValue(m_hairObject->m_color.y*2550);
     m_ui->sliderHairColorB->setValue(m_hairObject->m_color.z*2550);
-    m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x*255, 'g', 3));
-    m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y*255, 'g', 3));
-    m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z*255, 'g', 3));
+    m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x, 'g', 2));
+    m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y, 'g', 2));
+    m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 2));
     
     // reset button
     QPushButton *button = m_ui->buttonResetSim;
@@ -216,13 +216,13 @@ void GLWidget::setSplineVertices(int numVertices){
 
 void GLWidget::setHairColorR(int value){
     m_hairObject->m_color.x = value/2550.;
-    m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x*255, 'g', 3));
+    m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x, 'g', 2));
 }
 void GLWidget::setHairColorG(int value){
     m_hairObject->m_color.y = value/2550.;
-    m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y*255, 'g', 3));
+    m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y, 'g', 2));
 }
 void GLWidget::setHairColorB(int value){
     m_hairObject->m_color.z = value/2550.;
-    m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z*255, 'g', 3));
+    m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 2));
 }

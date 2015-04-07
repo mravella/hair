@@ -5,7 +5,7 @@
 
 GLuint MeshShaderProgram::createShaderProgram()
 {
-    return ResourceLoader::createBasicShaderProgram(":/shaders/basic.vert", ":/shaders/basic.frag");
+    return ResourceLoader::createBasicShaderProgram(":/shaders/mesh.vert", ":/shaders/mesh.frag");
 }
 
 std::vector<GLchar const *> MeshShaderProgram::getUniformNames()

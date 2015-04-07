@@ -54,9 +54,6 @@ void GLWidget::initializeGL()
     glEnable(GL_CULL_FACE);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     
-    m_meshProgramID = ResourceLoader::createBasicShaderProgram(
-                ":/shaders/basic.vert", ":/shaders/basic.frag");
-    
     m_hairProgram->create();
     m_meshProgram->create();
     
@@ -127,6 +124,7 @@ void GLWidget::paintGL()
     m_meshProgram->unbind();
 #endif
 
+    // Update UI labels.
     int updateFrequency = 10;
     if (m_increment % updateFrequency == 1) {
         // Update FPS label.

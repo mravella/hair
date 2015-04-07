@@ -59,13 +59,13 @@ HEADERS += \
 FORMS += src/mainwindow.ui
 
 OTHER_FILES += \
-    shaders/full.vert \
-    shaders/full.frag \
-    shaders/full.tes \
-    shaders/full.tcs \
-    shaders/full.geom \
-    shaders/basic.vert \
-    shaders/basic.frag
+    shaders/mesh.frag \
+    shaders/mesh.vert \
+    shaders/hair.frag \
+    shaders/hair.geom \
+    shaders/hair.tcs \
+    shaders/hair.tes \
+    shaders/hair.vert
 
 
 RESOURCES += \

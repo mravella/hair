@@ -5,8 +5,8 @@
 GLuint HairShaderProgram::createShaderProgram()
 {
     return ResourceLoader::createFullShaderProgram(
-                ":/shaders/full.vert", ":/shaders/full.frag", ":/shaders/full.geom",
-                ":/shaders/full.tcs", ":/shaders/full.tes");
+                ":/shaders/hair.vert", ":/shaders/hair.frag", ":/shaders/hair.geom",
+                ":/shaders/hair.tcs", ":/shaders/hair.tes");
 }
 
 std::vector<GLchar const *> HairShaderProgram::getUniformNames()

@@ -37,7 +37,7 @@ HairObject::HairObject(HairObject *_oldObject, Simulation *_simulation)
 
 HairObject::HairObject(
         ObjMesh *_mesh,
-        float _hairsPerUnitArea,
+        int _hairsPerUnitArea,
         const char * _hairGrowthMap,
         Simulation *_simulation,
         HairObject *_oldObject)

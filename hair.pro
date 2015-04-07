@@ -32,7 +32,8 @@ SOURCES += \
     src/mike/integrator.cpp \
     src/objloader.cpp \
     src/objmesh.cpp \
-    src/programs/hairshaderprogram.cpp
+    src/programs/hairshaderprogram.cpp \
+    src/programs/meshshaderprogram.cpp
 
 
 HEADERS += \
@@ -51,7 +52,8 @@ HEADERS += \
     src/mike/integrator.h \
     src/objloader.hpp \
     src/objmesh.h \
-    src/programs/hairshaderprogram.h
+    src/programs/hairshaderprogram.h \
+    src/programs/meshshaderprogram.h
 
 
 FORMS += src/mainwindow.ui

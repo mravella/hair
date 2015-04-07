@@ -16,6 +16,7 @@
 #include "simulation.h"
 #include "objmesh.h"
 #include "hairshaderprogram.h"
+#include "meshshaderprogram.h"
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -33,16 +34,17 @@ GLWidget::GLWidget(QGLFormat format, QWidget *parent)
     m_mesh = NULL;
     m_hairObject = NULL;
     m_testSimulation = NULL;
+    m_hairProgram = new HairShaderProgram();
+    m_meshProgram = new MeshShaderProgram();
 }
 
 GLWidget::~GLWidget()
 {
-#if _USE_MESH_
     safeDelete(m_mesh);
-#endif
     safeDelete(m_testSimulation);
     safeDelete(m_hairObject);
     safeDelete(m_hairProgram);
+    safeDelete(m_meshProgram);
 }
 
 void GLWidget::initializeGL()
@@ -55,8 +57,8 @@ void GLWidget::initializeGL()
     m_meshProgramID = ResourceLoader::createBasicShaderProgram(
                 ":/shaders/basic.vert", ":/shaders/basic.frag");
     
-    m_hairProgram = new HairShaderProgram();
     m_hairProgram->create();
+    m_meshProgram->create();
     
     initSimulation();
     
@@ -114,15 +116,15 @@ void GLWidget::paintGL()
     m_hairProgram->unbind();
     
 #if _USE_MESH_
-    glUseProgram(m_meshProgramID);
-    glUniformMatrix4fv(glGetUniformLocation(m_meshProgramID, "projection"), 1, GL_FALSE,
-                       glm::value_ptr(m_hairProgram->uniforms.projection));
-    glUniformMatrix4fv(glGetUniformLocation(m_meshProgramID, "view"), 1, GL_FALSE,
-                       glm::value_ptr(m_hairProgram->uniforms.view));
-    glUniformMatrix4fv(glGetUniformLocation(m_meshProgramID, "model"), 1, GL_FALSE,
-                       glm::value_ptr(m_hairProgram->uniforms.model));
+    m_meshProgram->bind();
+    m_meshProgram->uniforms.projection = m_hairProgram->uniforms.projection;
+    m_meshProgram->uniforms.view = m_hairProgram->uniforms.view;
+    m_meshProgram->setGlobalUniforms();
+
+    m_meshProgram->uniforms.model = m_hairProgram->uniforms.model;
+    m_meshProgram->setPerObjectUniforms();
     m_mesh->draw();
-    glUseProgram(0);
+    m_meshProgram->unbind();
 #endif
 
     int updateFrequency = 10;

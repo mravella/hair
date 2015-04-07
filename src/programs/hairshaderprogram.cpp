@@ -2,12 +2,15 @@
 
 #include "resourceloader.h"
 
-void HairShaderProgram::create()
+GLuint HairShaderProgram::createShaderProgram()
 {
-    m_id = ResourceLoader::createFullShaderProgram(
+    return ResourceLoader::createFullShaderProgram(
                 ":/shaders/full.vert", ":/shaders/full.frag", ":/shaders/full.geom",
                 ":/shaders/full.tcs", ":/shaders/full.tes");
+}
 
+std::vector<GLchar const *> HairShaderProgram::getUniformNames()
+{
     std::vector<GLchar const *> uniformNames {
         "model",
         "view",
@@ -23,8 +26,7 @@ void HairShaderProgram::create()
         "triangleFace",
         "color"
     };
-
-    getUniformLocations(uniformNames);
+    return uniformNames;
 }
 
 void HairShaderProgram::setGlobalUniforms()
@@ -33,7 +35,7 @@ void HairShaderProgram::setGlobalUniforms()
     setUniformMatrix4f("projection", uniforms.projection);
 }
 
-void HairShaderProgram::setPerHairObjectUniforms()
+void HairShaderProgram::setPerObjectUniforms()
 {
     setUniformMatrix4f("model", uniforms.model);
     setUniform1i("numPatchHairs", uniforms.numGroupHairs);
@@ -45,7 +47,7 @@ void HairShaderProgram::setPerHairObjectUniforms()
     setUniform3f("color", uniforms.color);
 }
 
-void HairShaderProgram::setPerGuideHairUniforms()
+void HairShaderProgram::setPerDrawUniforms()
 {
     setUniform1i("numHairSegments", uniforms.numHairVertices-1);
     setUniform3fv("vertexData", uniforms.numHairVertices, uniforms.vertexData);

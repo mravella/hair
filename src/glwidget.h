@@ -51,7 +51,7 @@ private:
     Simulation *m_testSimulation;
 
     GLuint m_meshProgramID;
-    ShaderProgram *m_hairProgram;
+    ShaderProgram *m_hairProgram, *m_meshProgram;
 
     float m_hairDensity;
 

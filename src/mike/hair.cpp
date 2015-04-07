@@ -71,7 +71,7 @@ void Hair::paint(ShaderProgram *_program)
     for (int i = 0; i < _program->uniforms.numHairVertices; i++){
         _program->uniforms.vertexData[i] = m_vertices.at(i)->position;
     }
-    _program->setPerGuideHairUniforms();
+    _program->setPerDrawUniforms();
 
     glPatchParameteri(GL_PATCH_VERTICES, 4);
     m_patch.draw(GL_PATCHES);

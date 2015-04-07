@@ -18,16 +18,16 @@ public:
 
     virtual ~HairShaderProgram() { }
 
-    virtual void create();
+    virtual void setGlobalUniforms() override;
 
-    // Sends all global uniforms to the shader program.
-    virtual void setGlobalUniforms();
+    virtual void setPerObjectUniforms() override;
 
-    // Sends all hair object-specific uniforms to the shader program.
-    virtual void setPerHairObjectUniforms();
+    virtual void setPerDrawUniforms() override;
 
-    // Sends all guide hair-specific uniforms to the shader program.
-    virtual void setPerGuideHairUniforms();
+protected:
+    virtual GLuint createShaderProgram() override;
+
+    virtual std::vector<GLchar const *> getUniformNames() override;
 
 };
 

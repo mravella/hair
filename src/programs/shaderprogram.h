@@ -49,25 +49,29 @@ public:
 
     virtual ~ShaderProgram() { }
 
+    void create();
+
     void bind();
 
     void unbind();
 
-    virtual void create() = 0;
+    // Sets all uniforms that do not change between objects.
+    virtual void setGlobalUniforms() { }
 
-    // Sends all global uniforms to the shader program.
-    virtual void setGlobalUniforms() = 0;
+    // Sets all uniforms that change between objects.
+    virtual void setPerObjectUniforms() { }
 
-    // Sends all hair object-specific uniforms to the shader program.
-    virtual void setPerHairObjectUniforms() = 0;
-
-    // Sends all guide hair-specific uniforms to the shader program.
-    virtual void setPerGuideHairUniforms() = 0;
+    // Sets all uniforms that change between draw calls (if each object uses multiple draw calls).
+    virtual void setPerDrawUniforms() { }
 
     Uniforms uniforms;
 
 protected:
-    void getUniformLocations(std::vector<GLchar const *> &uniformNames);
+    // Calls one of the program creation functions in ResourceLoader, and returns the program ID.
+    virtual GLuint createShaderProgram() = 0;
+
+    // Returns a list of all uniforms used in the shader program.
+    virtual std::vector<GLchar const *> getUniformNames() = 0;
 
     void setUniform1i(GLchar const *name, int value);
     void setUniform1f(GLchar const *name, float value);

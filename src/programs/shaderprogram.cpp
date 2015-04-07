@@ -4,8 +4,10 @@
 #include "errorchecker.h"
 #include <vector>
 
-void ShaderProgram::getUniformLocations(std::vector<const GLchar *> &uniformNames)
+void ShaderProgram::create()
 {
+    m_id = createShaderProgram();
+    std::vector<const GLchar *> uniformNames = getUniformNames();
     for (unsigned int i = 0; i < uniformNames.size(); i++)
         m_uniformLocs[uniformNames[i]] = glGetUniformLocation(m_id, uniformNames[i]);
 }

@@ -15,6 +15,7 @@
 #include "hairobject.h"
 #include "simulation.h"
 #include "objmesh.h"
+#include "hairshaderprogram.h"
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -41,6 +42,7 @@ GLWidget::~GLWidget()
 #endif
     safeDelete(m_testSimulation);
     safeDelete(m_hairObject);
+    safeDelete(m_hairProgram);
 }
 
 void GLWidget::initializeGL()
@@ -53,7 +55,8 @@ void GLWidget::initializeGL()
     m_meshProgramID = ResourceLoader::createBasicShaderProgram(
                 ":/shaders/basic.vert", ":/shaders/basic.frag");
     
-    m_hairProgram.create();
+    m_hairProgram = new HairShaderProgram();
+    m_hairProgram->create();
     
     initSimulation();
     
@@ -98,34 +101,34 @@ void GLWidget::paintGL()
     m_testSimulation->update(time);
     m_hairObject->update(time);
     
-    m_hairProgram.bind();
-    m_hairProgram.uniforms.projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
-    m_hairProgram.uniforms.view = glm::lookAt(
+    m_hairProgram->bind();
+    m_hairProgram->uniforms.projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+    m_hairProgram->uniforms.view = glm::lookAt(
                 glm::vec3(0.f, 0.f, 6.f),  // eye
                 glm::vec3(0.f, 0.f, 0.f),  // center
                 glm::vec3(0.f, 1.f, 0.f)); // up
-    m_hairProgram.setGlobalUniforms();
+    m_hairProgram->setGlobalUniforms();
     
-    m_hairProgram.uniforms.model = glm::mat4(1.f);
+    m_hairProgram->uniforms.model = glm::mat4(1.f);
     m_hairObject->paint(m_hairProgram);
-    m_hairProgram.unbind();
+    m_hairProgram->unbind();
     
 #if _USE_MESH_
     glUseProgram(m_meshProgramID);
     glUniformMatrix4fv(glGetUniformLocation(m_meshProgramID, "projection"), 1, GL_FALSE,
-                       glm::value_ptr(m_hairProgram.uniforms.projection));
+                       glm::value_ptr(m_hairProgram->uniforms.projection));
     glUniformMatrix4fv(glGetUniformLocation(m_meshProgramID, "view"), 1, GL_FALSE,
-                       glm::value_ptr(m_hairProgram.uniforms.view));
+                       glm::value_ptr(m_hairProgram->uniforms.view));
     glUniformMatrix4fv(glGetUniformLocation(m_meshProgramID, "model"), 1, GL_FALSE,
-                       glm::value_ptr(m_hairProgram.uniforms.model));
+                       glm::value_ptr(m_hairProgram->uniforms.model));
     m_mesh->draw();
     glUseProgram(0);
 #endif
 
     int updateFrequency = 10;
-    if (m_increment % updateFrequency == 0) {
+    if (m_increment % updateFrequency == 1) {
         // Update FPS label.
-        if (m_increment > 0) {
+        if (m_increment > 1) {
             int fps = updateFrequency * 1000.0 / m_clock.elapsed();
             m_ui->fpsLabel->setText(QString::number(fps, 'f', 1) + " FPS");
         }

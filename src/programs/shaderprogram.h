@@ -45,28 +45,40 @@ struct Uniforms {
 class ShaderProgram
 {
 public:
-    ShaderProgram();
+    ShaderProgram() { }
 
-    void create();
+    virtual ~ShaderProgram() { }
 
     void bind();
 
     void unbind();
 
+    virtual void create() = 0;
+
     // Sends all global uniforms to the shader program.
-    void setGlobalUniforms();
+    virtual void setGlobalUniforms() = 0;
 
     // Sends all hair object-specific uniforms to the shader program.
-    void setPerHairObjectUniforms();
+    virtual void setPerHairObjectUniforms() = 0;
 
     // Sends all guide hair-specific uniforms to the shader program.
-    void setPerGuideHairUniforms();
+    virtual void setPerGuideHairUniforms() = 0;
 
     Uniforms uniforms;
 
-private:
-    GLuint m_id;
+protected:
+    void getUniformLocations(std::vector<GLchar const *> &uniformNames);
+
+    void setUniform1i(GLchar const *name, int value);
+    void setUniform1f(GLchar const *name, float value);
+    void setUniform3f(GLchar const *name, glm::vec3 &value);
+    void setUniform3fv(GLchar const *name, GLsizei count, glm::vec3 *values);
+    void setUniformMatrix4f(GLchar const *name, glm::mat4 &value);
+
     std::map<std::string, int> m_uniformLocs;
+
+    GLuint m_id;
+
 };
 
 #endif // SHADERPROGRAM_H

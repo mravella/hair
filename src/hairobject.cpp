@@ -98,15 +98,15 @@ void HairObject::update(float _time){
     }
 }
 
-void HairObject::paint(ShaderProgram &program){
+void HairObject::paint(ShaderProgram *program){
     
-    program.uniforms.color = m_color;
-    program.uniforms.numGroupHairs = m_numGroupHairs;
-    program.uniforms.hairGroupSpread = m_hairGroupSpread;
-    program.uniforms.hairRadius = m_hairRadius;
-    program.uniforms.noiseAmplitude = m_noiseAmplitude;
-    program.uniforms.numSplineVertices = m_numSplineVertices;
-    program.setPerHairObjectUniforms();
+    program->uniforms.color = m_color;
+    program->uniforms.numGroupHairs = m_numGroupHairs;
+    program->uniforms.hairGroupSpread = m_hairGroupSpread;
+    program->uniforms.hairRadius = m_hairRadius;
+    program->uniforms.noiseAmplitude = m_noiseAmplitude;
+    program->uniforms.numSplineVertices = m_numSplineVertices;
+    program->setPerHairObjectUniforms();
 
     for (int i = 0; i < m_guideHairs.size(); i++)
     {

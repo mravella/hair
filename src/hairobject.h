@@ -27,7 +27,7 @@ public:
         : HairObject(_mesh, _hairsPerUnitArea, ":/images/white.jpg", _simulation) { }
 
     void update(float _time);
-    void paint(ShaderProgram &program);
+    void paint(ShaderProgram *program);
     void setAttributes(HairObject *_oldObject);
     void setAttributes(
             glm::vec3 _color = glm::vec3(.6f, .4f, .3f),

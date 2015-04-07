@@ -14,8 +14,8 @@ macx {
     CONFIG += c++11
 }
 
-INCLUDEPATH += src glm src/mike
-DEPENDPATH += src glm src/mike
+INCLUDEPATH += src glm src/mike src/programs
+DEPENDPATH += src glm src/mike src/program
 
 SOURCES += \
     src/mainwindow.cpp \
@@ -28,10 +28,11 @@ SOURCES += \
     src/hairobject.cpp \
     src/mike/hair.cpp \
     src/mike/simulation.cpp \
-    src/shaderprogram.cpp \
+    src/programs/shaderprogram.cpp \
     src/mike/integrator.cpp \
     src/objloader.cpp \
-    src/objmesh.cpp
+    src/objmesh.cpp \
+    src/programs/hairshaderprogram.cpp
 
 
 HEADERS += \
@@ -46,10 +47,11 @@ HEADERS += \
     src/hairCommon.h \
     src/mike/hair.h \
     src/mike/simulation.h \
-    src/shaderprogram.h \
+    src/programs/shaderprogram.h \
     src/mike/integrator.h \
     src/objloader.hpp \
-    src/objmesh.h
+    src/objmesh.h \
+    src/programs/hairshaderprogram.h
 
 
 FORMS += src/mainwindow.ui

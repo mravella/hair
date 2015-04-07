@@ -4,9 +4,6 @@
 #include <QGLWidget>
 #include <QTimer>
 #include <QTime>
-#include "sphere.h"
-#include "hairpatch.h"
-#include "shaderprogram.h"
 
 namespace Ui {
     class MainWindow;
@@ -16,7 +13,7 @@ namespace Ui {
 class ObjMesh;
 class HairObject;
 class Simulation;
-
+class ShaderProgram;
 
 class GLWidget : public QGLWidget
 {
@@ -54,7 +51,7 @@ private:
     Simulation *m_testSimulation;
 
     GLuint m_meshProgramID;
-    ShaderProgram m_hairProgram;
+    ShaderProgram *m_hairProgram;
 
     float m_hairDensity;
 

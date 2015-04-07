@@ -24,8 +24,7 @@ public:
     OpenGLShape m_patch;
     int m_numSegments;
     double m_length;
-
-
+    glm::vec3 m_triangleFace[2];
 
 };
 

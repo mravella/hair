@@ -23,7 +23,7 @@ struct Uniforms {
     int numSplineVertices;
 
     // Defines the width that a hair group is spread across.
-    float hairGroupWidth;
+    float hairGroupSpread;
 
     // The radius of a single hair.
     float hairRadius;
@@ -34,6 +34,9 @@ struct Uniforms {
 
     // Controls mount of noise in interpolated hairs. Should probably be in range [0, 0.1]
     float noiseAmplitude;
+
+    // Basis vectors for the plane orthogonal to the hair's normal vector.
+    glm::vec3 triangleFace[2];
 
     // Hair color.
     glm::vec3 color;

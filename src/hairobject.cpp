@@ -59,9 +59,6 @@ HairObject::HairObject(
             QColor hairGrowth = QColor(image.pixel(uv.x * image.width(), (1 - uv.y) * image.height()));
             if (hairGrowth.value() == 0) continue;
 
-            // TODO: Don't set the z component to 0 when the sim works in 3D.
-            normal.z = 0.f; normal = glm::normalize(normal);
-
             m_guideHairs.append(new Hair(3, 1, pos, normal));
         }
     }
@@ -75,14 +72,14 @@ void HairObject::setAttributes(HairObject *_oldObject){
     if (_oldObject == NULL){
         setAttributes();
     } else {
-        setAttributes(_oldObject->m_color, _oldObject->m_numGroupHairs, _oldObject->m_hairGroupWidth, _oldObject->m_hairRadius, _oldObject->m_noiseAmplitude, _oldObject->m_numSplineVertices);
+        setAttributes(_oldObject->m_color, _oldObject->m_numGroupHairs, _oldObject->m_hairGroupSpread, _oldObject->m_hairRadius, _oldObject->m_noiseAmplitude, _oldObject->m_numSplineVertices);
     }
 }
 
-void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hairGroupWidth, float _hairRadius, float _noiseAmplitude, int _numSplineVertices){
+void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hairGroupSpread, float _hairRadius, float _noiseAmplitude, int _numSplineVertices){
     m_color = _color;
     m_numGroupHairs = _numGroupHairs;
-    m_hairGroupWidth = _hairGroupWidth;
+    m_hairGroupSpread = _hairGroupSpread;
     m_hairRadius = _hairRadius;
     m_noiseAmplitude = _noiseAmplitude;
     m_numSplineVertices = _numSplineVertices;
@@ -105,7 +102,7 @@ void HairObject::paint(ShaderProgram &program){
     
     program.uniforms.color = m_color;
     program.uniforms.numGroupHairs = m_numGroupHairs;
-    program.uniforms.hairGroupWidth = m_hairGroupWidth;
+    program.uniforms.hairGroupSpread = m_hairGroupSpread;
     program.uniforms.hairRadius = m_hairRadius;
     program.uniforms.noiseAmplitude = m_noiseAmplitude;
     program.uniforms.numSplineVertices = m_numSplineVertices;

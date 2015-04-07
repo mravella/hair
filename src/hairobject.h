@@ -32,9 +32,9 @@ public:
     void setAttributes(
             glm::vec3 _color = glm::vec3(.6f, .4f, .3f),
             int _numGroupHairs = 15,
-            float _hairGroupWidth = 0.2,
+            float _hairGroupSpread = 0.15,
             float _hairRadius = 0.005f,
-            float _noiseAmplitude = 0.03f,
+            float _noiseAmplitude = 0.1f,
             int _numSplineVertices = 20);
     
 public:
@@ -49,7 +49,7 @@ public:
     int m_numHairsPerPatch;
     glm::vec3 m_color;
     int m_numGroupHairs;
-    float m_hairGroupWidth;
+    float m_hairGroupSpread;
     float m_hairRadius;
     float m_noiseAmplitude;
     int m_numSplineVertices;

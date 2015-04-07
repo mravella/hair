@@ -15,6 +15,8 @@
 #define B   0.35f
 #define MASS 1.0f
 
+#define DAMPENING 0.95f
+
 #define EULER false
 #define __BMONTELL_MODE__ false
 #define TIMESTEP 0.01f
@@ -79,7 +81,8 @@ void Simulation::calculateExternalForces(HairObject *_object)
             // Gravity
             force += glm::vec3(0.0, -9.8, 0.0);
             // Wind
-            force += glm::vec3(6.0 + 20.0 * ((rand() % 100) / 100.0) - 10.0, 0.0, 0.0);
+            if (m_time > 2)
+                force += glm::vec3(6.0 + 20.0 * ((rand() % 100) / 100.0) - 10.0, 0.0, 0.0);
             _object->m_guideHairs.at(i)->m_vertices.at(j)->forces = force;
         }
     }
@@ -582,14 +585,14 @@ void Simulation::particleSimulation(HairObject *obj)
             curr_pos = curr->tempPos;
             dir = glm::normalize(curr->tempPos - prev->tempPos);
             curr->tempPos = prev->tempPos + dir * prev->segLen;
-            curr->d = curr_pos - curr->tempPos;
+            curr->correctionVector = curr_pos - curr->tempPos;
         }
 
         for (int j = 1; j < numVerts; ++j)
         {
             HairVertex *prev = obj->m_guideHairs.at(i)->m_vertices.at(j - 1);
             HairVertex *curr = obj->m_guideHairs.at(i)->m_vertices.at(j);
-            prev->velocity = ((prev->tempPos - prev->position) / TIMESTEP) + 0.9f * (curr->d / TIMESTEP);
+            prev->velocity = ((prev->tempPos - prev->position) / TIMESTEP) + DAMPENING * (curr->correctionVector / TIMESTEP);
             prev->position = prev->tempPos;
         }
 

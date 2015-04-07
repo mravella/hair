@@ -69,7 +69,7 @@ struct HairVertex
     glm::vec3 tempPos;
     glm::vec3 velocity;
     glm::vec3 forces;
-    glm::vec3 d;
+    glm::vec3 correctionVector;
     double    theta;
     double    omega;
     float    segLen;
@@ -85,7 +85,7 @@ struct HairVertex
         segLen = 0.0;
         tempPos = glm::vec3(0.0);
         forces = glm::vec3(0.0);
-        d = glm::vec3(0.0);
+        correctionVector = glm::vec3(0.0);
         mass = 0.0;
         invMass = 0.0;
     }
@@ -99,7 +99,7 @@ struct HairVertex
         theta = 0.0;
         segLen = 0.0;
         forces = glm::vec3(0.0);
-        d = glm::vec3(0.0);
+        correctionVector = glm::vec3(0.0);
         mass = 1.0;
         invMass = 1.0;
 

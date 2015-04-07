@@ -63,15 +63,15 @@ void Hair::update(float time)
 
 }
 
-void Hair::paint(ShaderProgram &_program)
+void Hair::paint(ShaderProgram *_program)
 {
-    _program.uniforms.triangleFace[0] = m_triangleFace[0];
-    _program.uniforms.triangleFace[1] = m_triangleFace[1];
-    _program.uniforms.numHairVertices = MIN(m_vertices.size(), MAX_HAIR_VERTICES);
-    for (int i = 0; i < _program.uniforms.numHairVertices; i++){
-        _program.uniforms.vertexData[i] = m_vertices.at(i)->position;
+    _program->uniforms.triangleFace[0] = m_triangleFace[0];
+    _program->uniforms.triangleFace[1] = m_triangleFace[1];
+    _program->uniforms.numHairVertices = MIN(m_vertices.size(), MAX_HAIR_VERTICES);
+    for (int i = 0; i < _program->uniforms.numHairVertices; i++){
+        _program->uniforms.vertexData[i] = m_vertices.at(i)->position;
     }
-    _program.setPerGuideHairUniforms();
+    _program->setPerDrawUniforms();
 
     glPatchParameteri(GL_PATCH_VERTICES, 4);
     m_patch.draw(GL_PATCHES);

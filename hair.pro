@@ -14,54 +14,70 @@ macx {
     CONFIG += c++11
 }
 
-INCLUDEPATH += src glm src/mike
-DEPENDPATH += src glm src/mike
+INCLUDEPATH += \
+    glm \
+    src \
+    src/lib \
+    src/mike \
+    src/shaderPrograms \
+    src/ui
+
+DEPENDPATH += \
+    glm \
+    src \
+    src/lib \
+    src/mike \
+    src/shaderPrograms \
+    src/ui
 
 SOURCES += \
-    src/mainwindow.cpp \
+    src/ui/mainwindow.cpp \
     src/main.cpp \
     src/glwidget.cpp \
-    src/resourceloader.cpp \
-    src/openglshape.cpp \
-    src/errorchecker.cpp \
-    src/hairpatch.cpp \
+    src/lib/resourceloader.cpp \
+    src/lib/openglshape.cpp \
+    src/lib/errorchecker.cpp \
     src/hairobject.cpp \
     src/mike/hair.cpp \
     src/mike/simulation.cpp \
-    src/shaderprogram.cpp \
+    src/shaderPrograms/shaderprogram.cpp \
     src/mike/integrator.cpp \
-    src/objloader.cpp \
-    src/objmesh.cpp
+    src/lib/objloader.cpp \
+    src/objmesh.cpp \
+    src/shaderPrograms/hairshaderprogram.cpp \
+    src/shaderPrograms/meshshaderprogram.cpp \
+    src/ui/hairinterface.cpp
 
 
 HEADERS += \
-    src/mainwindow.h \
+    src/ui/mainwindow.h \
     src/glwidget.h \
-    src/resourceloader.h \
-    src/sphere.h \
-    src/openglshape.h \
-    src/errorchecker.h \
-    src/hairpatch.h \
+    src/lib/resourceloader.h \
+    src/lib/openglshape.h \
+    src/lib/errorchecker.h \
     src/hairobject.h \
     src/hairCommon.h \
     src/mike/hair.h \
     src/mike/simulation.h \
-    src/shaderprogram.h \
+    src/shaderPrograms/shaderprogram.h \
     src/mike/integrator.h \
-    src/objloader.hpp \
-    src/objmesh.h
+    src/lib/objloader.hpp \
+    src/objmesh.h \
+    src/shaderPrograms/hairshaderprogram.h \
+    src/shaderPrograms/meshshaderprogram.h \
+    src/ui/hairinterface.h
 
 
 FORMS += src/mainwindow.ui
 
 OTHER_FILES += \
-    shaders/full.vert \
-    shaders/full.frag \
-    shaders/full.tes \
-    shaders/full.tcs \
-    shaders/full.geom \
-    shaders/basic.vert \
-    shaders/basic.frag
+    shaders/mesh.frag \
+    shaders/mesh.vert \
+    shaders/hair.frag \
+    shaders/hair.geom \
+    shaders/hair.tcs \
+    shaders/hair.tes \
+    shaders/hair.vert
 
 
 RESOURCES += \

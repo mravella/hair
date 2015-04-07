@@ -45,7 +45,9 @@ struct Uniforms {
 class ShaderProgram
 {
 public:
-    ShaderProgram();
+    ShaderProgram() { }
+
+    virtual ~ShaderProgram() { }
 
     void create();
 
@@ -53,20 +55,34 @@ public:
 
     void unbind();
 
-    // Sends all global uniforms to the shader program.
-    void setGlobalUniforms();
+    // Sets all uniforms that do not change between objects.
+    virtual void setGlobalUniforms() { }
 
-    // Sends all hair object-specific uniforms to the shader program.
-    void setPerHairObjectUniforms();
+    // Sets all uniforms that change between objects.
+    virtual void setPerObjectUniforms() { }
 
-    // Sends all guide hair-specific uniforms to the shader program.
-    void setPerGuideHairUniforms();
+    // Sets all uniforms that change between draw calls (if each object uses multiple draw calls).
+    virtual void setPerDrawUniforms() { }
 
     Uniforms uniforms;
 
-private:
-    GLuint m_id;
+protected:
+    // Calls one of the program creation functions in ResourceLoader, and returns the program ID.
+    virtual GLuint createShaderProgram() = 0;
+
+    // Returns a list of all uniforms used in the shader program.
+    virtual std::vector<GLchar const *> getUniformNames() = 0;
+
+    void setUniform1i(GLchar const *name, int value);
+    void setUniform1f(GLchar const *name, float value);
+    void setUniform3f(GLchar const *name, glm::vec3 &value);
+    void setUniform3fv(GLchar const *name, GLsizei count, glm::vec3 *values);
+    void setUniformMatrix4f(GLchar const *name, glm::mat4 &value);
+
     std::map<std::string, int> m_uniformLocs;
+
+    GLuint m_id;
+
 };
 
 #endif // SHADERPROGRAM_H

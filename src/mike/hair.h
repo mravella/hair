@@ -15,7 +15,7 @@ public:
     virtual ~Hair();
 
     void update(float time);
-    void paint(ShaderProgram &_program);
+    void paint(ShaderProgram *_program);
 
 
 public:

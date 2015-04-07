@@ -16,24 +16,18 @@ HairInterface::HairInterface(Ui::MainWindow *ui)
 void HairInterface::connectUserInputs()
 {
     // hairs per patch
-    QSlider *slider = m_ui->sliderHairsPerPatch;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setHairsPerPatch(int)));
+    connect(m_ui->sliderHairsPerPatch, SIGNAL(valueChanged(int)), this, SLOT(setHairsPerPatch(int)));
 
     // spline vertices
-    slider = m_ui->sliderSplineVertices;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setSplineVertices(int)));
+    connect(m_ui->sliderSplineVertices, SIGNAL(valueChanged(int)), this, SLOT(setSplineVertices(int)));
 
     // rgb
-    slider = m_ui->sliderHairColorR;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setHairColorR(int)));
-    slider = m_ui->sliderHairColorG;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setHairColorG(int)));
-    slider = m_ui->sliderHairColorB;
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setHairColorB(int)));
+    connect(m_ui->sliderHairColorR, SIGNAL(valueChanged(int)), this, SLOT(setHairColorR(int)));
+    connect(m_ui->sliderHairColorG, SIGNAL(valueChanged(int)), this, SLOT(setHairColorG(int)));
+    connect(m_ui->sliderHairColorB, SIGNAL(valueChanged(int)), this, SLOT(setHairColorB(int)));
 
     // reset button
-    QPushButton *button = m_ui->buttonResetSim;
-    connect(button, SIGNAL(pressed()), this, SLOT(resetSimulation()));
+    connect(m_ui->buttonResetSim, SIGNAL(pressed()), this, SLOT(resetSimulation()));
 }
 
 void HairInterface::setGLWidget(GLWidget *glWidget)

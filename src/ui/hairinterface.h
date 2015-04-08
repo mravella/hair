@@ -20,7 +20,8 @@ public:
 
     void setGLWidget(GLWidget *glWidget);
     void setHairObject(HairObject *hairObject);
-    void updateLabels(int increment);
+    void updateFPSLabel(int totalNumFrames);
+    void updateStatsLabel();
 
 public slots:
     void resetSimulation();

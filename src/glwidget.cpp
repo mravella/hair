@@ -93,7 +93,7 @@ void GLWidget::paintGL()
     m_meshProgram->unbind();
 #endif
 
-    m_hairInterface->updateLabels(m_increment);
+    m_hairInterface->updateFPSLabel(m_increment);
 }
 
 

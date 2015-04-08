@@ -16,6 +16,9 @@ public:
 
     void unbind(unsigned int textureUnit);
 
+    // Renders a full-screen quad of the texture.
+    void renderFullScreen();
+
     GLuint id;
 
 private:

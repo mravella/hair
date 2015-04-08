@@ -1,5 +1,8 @@
 #include "texture.h"
 
+#include "texturedquadshaderprogram.h"
+#include "quad.h"
+
 void Texture::create(QImage &image, GLint magFilter, GLint minFilter)
 {
     create(image.bits(), image.width(), image.height(), magFilter, minFilter);
@@ -40,4 +43,18 @@ void Texture::unbind(unsigned int textureUnit)
     glActiveTexture(GL_TEXTURE0 + textureUnit);
     glBindTexture(GL_TEXTURE_2D, 0);
     glActiveTexture(GL_TEXTURE0);
+}
+
+void Texture::renderFullScreen()
+{
+    Quad quad;
+    TexturedQuadShaderProgram program;
+    quad.init();
+    program.create();
+    program.bind();
+    bind(0);
+    glUniform1i(glGetUniformLocation(program.id, "tex"), 0);
+    quad.draw();
+    unbind(0);
+    program.unbind();
 }

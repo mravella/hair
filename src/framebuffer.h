@@ -14,6 +14,8 @@ public:
 
     void attachTextures(std::vector<GLuint> textureIDs, GLenum target = GL_FRAMEBUFFER);
 
+    void generateDepthBuffer(int width, int height);
+
 private:
     GLuint m_id;
 };

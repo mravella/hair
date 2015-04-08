@@ -2,7 +2,7 @@
 
 Quad::~Quad()
 {
-    m_shape.destroy();
+//    m_shape.destroy();
 }
 
 void Quad::init()

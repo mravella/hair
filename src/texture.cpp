@@ -3,6 +3,18 @@
 #include "texturedquadshaderprogram.h"
 #include "quad.h"
 
+Texture::Texture()
+{
+    m_quad = NULL;
+    m_program = NULL;
+}
+
+Texture::~Texture()
+{
+    safeDelete(m_quad);
+    safeDelete(m_program);
+}
+
 void Texture::create(const char *imageFile, GLint magFilter, GLint minFilter)
 {
     QImage image(imageFile);
@@ -32,38 +44,36 @@ void Texture::_create(
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::bind(unsigned int textureUnit)
+void Texture::bind(GLenum textureUnit)
 {
-    if (textureUnit > 32) {
-        std::cout << "Error: Tried to bind GL_TEXTURE" << textureUnit << std::endl;
-        return;
-    }
-    glActiveTexture(GL_TEXTURE0 + textureUnit);
+    glActiveTexture(textureUnit);
     glBindTexture(GL_TEXTURE_2D, id);
     glActiveTexture(GL_TEXTURE0);
 }
 
-void Texture::unbind(unsigned int textureUnit)
+void Texture::unbind(GLenum textureUnit)
 {
-    if (textureUnit > 32) {
-        std::cout << "Error: Tried to unbind GL_TEXTURE" << textureUnit << std::endl;
-        return;
-    }
-    glActiveTexture(GL_TEXTURE0 + textureUnit);
+    glActiveTexture(textureUnit);
     glBindTexture(GL_TEXTURE_2D, 0);
     glActiveTexture(GL_TEXTURE0);
 }
 
 void Texture::renderFullScreen()
 {
-    Quad quad;
-    TexturedQuadShaderProgram program;
-    quad.init();
-    program.create();
-    program.bind();
-    bind(0);
-    glUniform1i(glGetUniformLocation(program.id, "tex"), 0);
-    quad.draw();
-    unbind(0);
-    program.unbind();
+    if (!m_quad)
+    {
+        m_quad = new Quad();
+        m_quad->init();
+    }
+    if (!m_program)
+    {
+        m_program = new TexturedQuadShaderProgram();
+        m_program->create();
+    }
+    m_program->bind();
+    bind(GL_TEXTURE0);
+    glUniform1i(glGetUniformLocation(m_program->id, "tex"), 0);
+    m_quad->draw();
+    unbind(GL_TEXTURE0);
+    m_program->unbind();
 }

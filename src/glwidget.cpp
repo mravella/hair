@@ -77,14 +77,15 @@ void GLWidget::paintGL()
     glm::vec3 lightPosition = glm::vec3(2, 1, 2);
     
     m_hairProgram->bind();
+    m_noiseTexture->bind(GL_TEXTURE0);
     m_hairProgram->uniforms.projection = projection;
     m_hairProgram->uniforms.view = view;
     m_hairProgram->uniforms.model = model;
     m_hairProgram->uniforms.lightPosition = lightPosition;
     m_hairProgram->uniforms.noiseTexture = 0;
-    m_noiseTexture->bind(0);
     m_hairProgram->setGlobalUniforms();
     m_hairObject->paint(m_hairProgram);
+    m_noiseTexture->unbind(GL_TEXTURE0);
     m_hairProgram->unbind();
     
 #if _USE_MESH_

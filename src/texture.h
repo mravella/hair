@@ -3,9 +3,16 @@
 
 #include "hairCommon.h"
 
+class Quad;
+class TexturedQuadShaderProgram;
+
 class Texture
 {
 public:
+    Texture();
+
+    virtual ~Texture();
+
     // Creates a texture containing the given image.
     void create(const char *imageFile, GLint magFilter, GLint minFilter);
 
@@ -14,9 +21,9 @@ public:
 
     void createDepthTexture(int width, int height);
 
-    void bind(unsigned int textureUnit);
+    void bind(GLenum textureUnit);
 
-    void unbind(unsigned int textureUnit);
+    void unbind(GLenum textureUnit);
 
     // Renders a full-screen quad of the texture.
     void renderFullScreen();
@@ -33,6 +40,8 @@ private:
             GLint magFilter,
             GLint minFilter);
 
+    Quad *m_quad;
+    TexturedQuadShaderProgram *m_program;
 };
 
 #endif // TEXTURE_H

@@ -18,6 +18,8 @@ uniform float hairGroupSpread;
 uniform float noiseAmplitude;
 uniform vec3 triangleFace[2];
 
+uniform sampler2D noiseTexture;
+
 float rand( vec2 p )
 {
     return fract(sin(dot(p,vec2(12.9898,78.233))) * 43758.5453);
@@ -82,9 +84,18 @@ vec3 shiftedSpline(in vec2 tessCoord)
 
     // Apply noise to offset position.
     float noise = noiseAmplitude * tessCoord.x;
-    pos.x += noise * noiseWithOctaves(tessCoord.xy);
-    pos.y += noise * noiseWithOctaves(tessCoord.xy + 1);
-    pos.z += noise * noiseWithOctaves(tessCoord.xy + 2);
+
+    // Procedural noise function
+//    pos.x += noise * noiseWithOctaves(tessCoord.xy);
+//    pos.y += noise * noiseWithOctaves(tessCoord.xy + 1);
+//    pos.z += noise * noiseWithOctaves(tessCoord.xy + 2);
+
+    // Noise texure
+    tessCoord *= 0.4;
+    pos.x += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy).r);
+    pos.y += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy + .1).r);
+    pos.z += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy + .2).r);
+
     return pos;
 }
 

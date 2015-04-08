@@ -10,6 +10,7 @@ class HairObject;
 class Simulation;
 class ShaderProgram;
 class HairInterface;
+class Texture;
 
 class GLWidget : public QGLWidget
 {
@@ -43,6 +44,8 @@ private:
     ShaderProgram *m_hairProgram, *m_meshProgram;
 
     float m_hairDensity;
+
+    Texture *m_noiseTexture;
 
     QTimer m_timer; /** Timer calls tick() 60 times per second. */
     int m_increment; /** Incremented on every call to paintGL. */

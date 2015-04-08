@@ -3,8 +3,9 @@
 #include "texturedquadshaderprogram.h"
 #include "quad.h"
 
-void Texture::create(QImage &image, GLint magFilter, GLint minFilter)
+void Texture::create(const char *imageFile, GLint magFilter, GLint minFilter)
 {
+    QImage image(imageFile);
     _create(image.bits(), GL_RGBA, image.width(), image.height(), GL_UNSIGNED_BYTE,
             magFilter, minFilter);
 }

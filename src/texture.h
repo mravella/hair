@@ -7,7 +7,7 @@ class Texture
 {
 public:
     // Creates a texture containing the given image.
-    void create(QImage &image, GLint magFilter, GLint minFilter);
+    void create(const char *imageFile, GLint magFilter, GLint minFilter);
 
     // Creates a black texture with the given width and height.
     void createColorTexture(int width, int height, GLint magFilter, GLint minFilter);

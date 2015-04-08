@@ -4,5 +4,6 @@
         <file>lower.png</file>
         <file>white.jpg</file>
         <file>headHair.jpg</file>
+        <file>noise128.jpg</file>
     </qresource>
 </RCC>

@@ -8,6 +8,7 @@
 #include "hairshaderprogram.h"
 #include "meshshaderprogram.h"
 #include "hairinterface.h"
+#include "texture.h"
 
 #define _USE_MESH_ true
 
@@ -24,6 +25,7 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     m_testSimulation = NULL;
     m_hairProgram = new HairShaderProgram();
     m_meshProgram = new MeshShaderProgram();
+    m_noiseTexture = new Texture();
     m_hairInterface->setGLWidget(this);
 
     // Set up 60 FPS draw loop.
@@ -38,6 +40,7 @@ GLWidget::~GLWidget()
     safeDelete(m_hairObject);
     safeDelete(m_hairProgram);
     safeDelete(m_meshProgram);
+    safeDelete(m_noiseTexture);
 }
 
 void GLWidget::initializeGL()
@@ -49,6 +52,7 @@ void GLWidget::initializeGL()
     
     m_hairProgram->create();
     m_meshProgram->create();
+    m_noiseTexture->create(":/images/noise128.jpg", GL_LINEAR, GL_LINEAR);
     
     initSimulation();
     
@@ -77,6 +81,8 @@ void GLWidget::paintGL()
     m_hairProgram->uniforms.view = view;
     m_hairProgram->uniforms.model = model;
     m_hairProgram->uniforms.lightPosition = lightPosition;
+    m_hairProgram->uniforms.noiseTexture = 0;
+    m_noiseTexture->bind(0);
     m_hairProgram->setGlobalUniforms();
     m_hairObject->paint(m_hairProgram);
     m_hairProgram->unbind();

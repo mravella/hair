@@ -6,10 +6,6 @@
 class MeshShaderProgram : public ShaderProgram
 {
 public:
-    MeshShaderProgram() { }
-
-    virtual ~MeshShaderProgram() { }
-
     virtual void setGlobalUniforms() override;
 
     virtual void setPerObjectUniforms() override;

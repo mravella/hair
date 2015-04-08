@@ -7,5 +7,7 @@
         <file>hair.tcs</file>
         <file>hair.tes</file>
         <file>hair.geom</file>
+        <file>texturedquad.frag</file>
+        <file>texturedquad.vert</file>
     </qresource>
 </RCC>

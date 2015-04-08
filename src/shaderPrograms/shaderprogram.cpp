@@ -6,15 +6,21 @@
 
 void ShaderProgram::create()
 {
-    m_id = createShaderProgram();
+    id = createShaderProgram();
     std::vector<const GLchar *> uniformNames = getUniformNames();
     for (unsigned int i = 0; i < uniformNames.size(); i++)
-        m_uniformLocs[uniformNames[i]] = glGetUniformLocation(m_id, uniformNames[i]);
+        m_uniformLocs[uniformNames[i]] = glGetUniformLocation(id, uniformNames[i]);
+    m_created = true;
 }
 
 void ShaderProgram::bind()
 {
-    glUseProgram(m_id);
+    if (!m_created)
+    {
+        std::cout << "Tried to bind shader program before creating it" << std::endl;
+        exit(1);
+    }
+    glUseProgram(id);
 }
 
 void ShaderProgram::unbind()

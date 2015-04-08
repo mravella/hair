@@ -16,8 +16,6 @@ public:
         uniforms.color = glm::vec3(.6f, .4f, .3f);
     }
 
-    virtual ~HairShaderProgram() { }
-
     virtual void setGlobalUniforms() override;
 
     virtual void setPerObjectUniforms() override;

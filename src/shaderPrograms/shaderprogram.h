@@ -57,6 +57,8 @@ public:
 
     Uniforms uniforms;
 
+    GLuint id;
+
 protected:
     // Calls one of the program creation functions in ResourceLoader, and returns the program ID.
     virtual GLuint createShaderProgram() = 0;
@@ -72,8 +74,8 @@ protected:
 
     std::map<std::string, int> m_uniformLocs;
 
-    GLuint m_id;
-
+private:
+    bool m_created = false;
 };
 
 #endif // SHADERPROGRAM_H

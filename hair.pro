@@ -46,7 +46,11 @@ SOURCES += \
     src/objmesh.cpp \
     src/shaderPrograms/hairshaderprogram.cpp \
     src/shaderPrograms/meshshaderprogram.cpp \
-    src/ui/hairinterface.cpp
+    src/ui/hairinterface.cpp \
+    src/shaderPrograms/texturedquadshaderprogram.cpp \
+    src/texture.cpp \
+    src/framebuffer.cpp \
+    src/quad.cpp
 
 
 HEADERS += \
@@ -65,7 +69,11 @@ HEADERS += \
     src/objmesh.h \
     src/shaderPrograms/hairshaderprogram.h \
     src/shaderPrograms/meshshaderprogram.h \
-    src/ui/hairinterface.h
+    src/ui/hairinterface.h \
+    src/shaderPrograms/texturedquadshaderprogram.h \
+    src/texture.h \
+    src/framebuffer.h \
+    src/quad.h
 
 
 FORMS += src/mainwindow.ui
@@ -77,7 +85,9 @@ OTHER_FILES += \
     shaders/hair.geom \
     shaders/hair.tcs \
     shaders/hair.tes \
-    shaders/hair.vert
+    shaders/hair.vert \
+    shaders/texturedquad.vert \
+    shaders/texturedquad.frag
 
 
 RESOURCES += \

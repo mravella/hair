@@ -5,19 +5,27 @@
 
 void Texture::create(QImage &image, GLint magFilter, GLint minFilter)
 {
-    create(image.bits(), image.width(), image.height(), magFilter, minFilter);
+    _create(image.bits(), GL_RGBA, image.width(), image.height(), GL_UNSIGNED_BYTE,
+            magFilter, minFilter);
 }
 
-void Texture::create(int width, int height, GLint magFilter, GLint minFilter)
+void Texture::createColorTexture(int width, int height, GLint magFilter, GLint minFilter)
 {
-    create(0, width, height, magFilter, minFilter);
+    _create(0, GL_RGBA, width, height, GL_UNSIGNED_BYTE, magFilter, minFilter);
 }
 
-void Texture::create(const GLvoid *data, int width, int height, GLint magFilter, GLint minFilter)
+void Texture::createDepthTexture(int width, int height)
+{
+    _create(0, GL_DEPTH_COMPONENT, width, height, GL_FLOAT, GL_NEAREST, GL_NEAREST);
+}
+
+void Texture::_create(
+        const GLvoid *data, GLint format, int width, int height, GLenum type,
+        GLint magFilter, GLint minFilter)
 {
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, type, data);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
     glBindTexture(GL_TEXTURE_2D, 0);

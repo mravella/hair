@@ -10,7 +10,9 @@ public:
     void create(QImage &image, GLint magFilter, GLint minFilter);
 
     // Creates a black texture with the given width and height.
-    void create(int width, int height, GLint magFilter, GLint minFilter);
+    void createColorTexture(int width, int height, GLint magFilter, GLint minFilter);
+
+    void createDepthTexture(int width, int height);
 
     void bind(unsigned int textureUnit);
 
@@ -22,7 +24,14 @@ public:
     GLuint id;
 
 private:
-    void create(const GLvoid * data, int width, int height, GLint magFilter, GLint minFilter);
+    void _create(
+            const GLvoid * data,
+            GLint format,
+            int width,
+            int height,
+            GLenum type,
+            GLint magFilter,
+            GLint minFilter);
 
 };
 

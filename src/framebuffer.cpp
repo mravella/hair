@@ -15,7 +15,7 @@ void Framebuffer::unbind(GLenum target)
     glBindFramebuffer(target, 0);
 }
 
-void Framebuffer::attachTextures(std::vector<GLuint> textureIDs, GLenum target)
+void Framebuffer::attachColorTextures(std::vector<GLuint> textureIDs, GLenum target)
 {
     bind(target);
 
@@ -34,6 +34,13 @@ void Framebuffer::attachTextures(std::vector<GLuint> textureIDs, GLenum target)
     if(framebufferStatus != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Framebuffer not complete. Status: " << framebufferStatus << std::endl;
 
+    unbind(target);
+}
+
+void Framebuffer::attachDepthTexture(GLuint textureID, GLenum target)
+{
+    bind(target);
+    glFramebufferTexture(target, GL_DEPTH_ATTACHMENT, textureID, 0);
     unbind(target);
 }
 

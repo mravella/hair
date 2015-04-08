@@ -12,7 +12,9 @@ public:
 
     void unbind(GLenum target = GL_FRAMEBUFFER);
 
-    void attachTextures(std::vector<GLuint> textureIDs, GLenum target = GL_FRAMEBUFFER);
+    void attachColorTextures(std::vector<GLuint> textureIDs, GLenum target = GL_FRAMEBUFFER);
+
+    void attachDepthTexture(GLuint textureID, GLenum target = GL_FRAMEBUFFER);
 
     void generateDepthBuffer(int width, int height);
 

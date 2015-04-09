@@ -84,7 +84,8 @@ void Simulation::calculateExternalForces(HairObject *_object)
             force += glm::vec3(0.0, -9.8, 0.0);
             if (m_time > 2)
                 force += glm::vec3(6.0 + 20.0 * ((rand() % 100) / 100.0) - 10.0, 0.0, 0.0);
-            if (m_mesh->contains(currVert->position)) force = glm::vec3(0.0, 1000.0, 0.0);
+            glm::vec3 normal;
+            if (m_mesh->contains(normal, currVert->position)) force = 20.0f * normal;
             currVert->forces = force;
         }
     }

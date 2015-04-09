@@ -58,18 +58,23 @@ void ObjMesh::draw()
  * If it intersects an odd number of triangles it is inside
  * TODO: Generate a random vector more elegantly
  */
-bool ObjMesh::contains(glm::vec3 ro)
+bool ObjMesh::contains(glm::vec3 &normal, glm::vec3 ro)
 {
     int numIntersections = 0;
     double rand1 = rand() % 1000; double rand2 = rand() % 1000; double rand3 = rand() % 1000;
     glm::vec3 randDir = glm::normalize(glm::vec3(rand1, rand2, rand3));
+    randDir = glm::normalize(ro);
+
     for (unsigned int i = 0; i < triangles.size(); ++i)
     {
         Triangle currTriangle = triangles.at(i);
         glm::vec3 intersectionPoint = glm::vec3(0.0);
 
         if (intersect(intersectionPoint, ro, randDir, currTriangle))
+        {
+            normal = (currTriangle.n1 + currTriangle.n2 + currTriangle.n3) / 3.0f;
             numIntersections++;
+        }
     }
     return (numIntersections % 2);
 }

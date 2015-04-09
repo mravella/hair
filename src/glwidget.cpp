@@ -113,10 +113,10 @@ void GLWidget::initSimulation()
 
 #if _USE_MESH_
     m_mesh = new ObjMesh();
-    m_mesh->init(":/models/sphere.obj");
+    m_mesh->init(":/models/head.obj");
     m_testSimulation = new Simulation(m_mesh);
     m_hairObject = new HairObject(
-                m_mesh, m_hairDensity, ":/images/lower.png", m_testSimulation, m_hairObject);
+                m_mesh, m_hairDensity, ":/images/headHair.png", m_testSimulation, m_hairObject);
 #else
     if (_oldHairObject != NULL){
         m_hairObject = new HairObject(_oldHairObject, m_testSimulation);

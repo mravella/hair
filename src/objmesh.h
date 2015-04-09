@@ -13,7 +13,7 @@ public:
 
     void draw();
 
-    bool contains(glm::vec3 ro);
+    bool contains(glm::vec3 &normal, glm::vec3 ro);
     bool intersect(glm::vec3 &intersection, glm::vec3 ro, glm::vec3 rd, Triangle tri);
 
     std::vector<Triangle> triangles;

@@ -3,13 +3,14 @@
 
 #include "hairCommon.h"
 #include "integrator.h"
+#include "objmesh.h"
 
 class HairObject;
 
 class Simulation
 {
 public:
-    Simulation();
+    Simulation(ObjMesh *mesh);
 
     virtual ~Simulation();
 
@@ -39,6 +40,7 @@ public:
 
 private:
     float m_time;
+    ObjMesh *m_mesh;
 
 };
 

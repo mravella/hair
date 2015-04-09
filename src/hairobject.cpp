@@ -11,7 +11,7 @@ HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
     
     for (int i = 0; i < m_numGuideHairs; i++)
     {
-        m_guideHairs.append(new Hair(10, 1, glm::vec3(i + 0.25, 1, 0), glm::vec3(1, 0, 0)));
+        m_guideHairs.append(new Hair(20, 1, glm::vec3(i + 0.25, 1, 0), glm::vec3(1, 0, 0)));
     }
     
     setAttributes();
@@ -26,7 +26,7 @@ HairObject::HairObject(HairObject *_oldObject, Simulation *_simulation)
     
     for (int i = 0; i < m_numGuideHairs; i++)
     {
-        m_guideHairs.append(new Hair(10, 1, glm::vec3(i + 0.25, 1, 0), glm::vec3(1, 0, 0)));
+        m_guideHairs.append(new Hair(20, 1, glm::vec3(i + 0.25, 1, 0), glm::vec3(1, 0, 0)));
     }
     
     setAttributes(_oldObject);
@@ -59,7 +59,7 @@ HairObject::HairObject(
             QColor hairGrowth = QColor(image.pixel(uv.x * image.width(), (1 - uv.y) * image.height()));
             if (hairGrowth.value() == 0) continue;
 
-            m_guideHairs.append(new Hair(10, 1, pos, normal));
+            m_guideHairs.append(new Hair(20, 1, pos, normal));
         }
     }
     

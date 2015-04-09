@@ -18,18 +18,18 @@ Texture::~Texture()
 void Texture::create(const char *imageFile, GLint magFilter, GLint minFilter)
 {
     QImage image(imageFile);
-    _create(image.bits(), GL_RGBA, image.width(), image.height(), GL_UNSIGNED_BYTE,
-            magFilter, minFilter);
+    _create(image.bits(), GL_RGBA, image.width(), image.height(), GL_RGBA,
+            GL_UNSIGNED_BYTE, magFilter, minFilter);
 }
 
 void Texture::createColorTexture(int width, int height, GLint magFilter, GLint minFilter)
 {
-    _create(0, GL_RGBA, width, height, GL_UNSIGNED_BYTE, magFilter, minFilter);
+    _create(0, GL_RGBA, width, height, GL_RGBA, GL_UNSIGNED_BYTE, magFilter, minFilter);
 }
 
 void Texture::createDepthTexture(int width, int height)
 {
-    _create(0, GL_DEPTH_COMPONENT, width, height, GL_FLOAT, GL_NEAREST, GL_NEAREST);
+    _create(0, GL_DEPTH_COMPONENT16, width, height, GL_DEPTH_COMPONENT, GL_FLOAT, GL_NEAREST, GL_NEAREST);
     bind(GL_TEXTURE0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
@@ -37,14 +37,14 @@ void Texture::createDepthTexture(int width, int height)
 }
 
 void Texture::_create(
-        const GLvoid *data, GLint format, int width, int height, GLenum type,
-        GLint magFilter, GLint minFilter)
+        const GLvoid *data, GLint internalFormat, int width, int height, GLenum format,
+        GLenum type, GLint magFilter, GLint minFilter)
 {
     m_width = width;
     m_height = height;
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, type, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, data);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
     glBindTexture(GL_TEXTURE_2D, 0);

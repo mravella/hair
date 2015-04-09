@@ -34,11 +34,11 @@ public:
     GLuint id;
 
 private:
-    void _create(
-            const GLvoid * data,
-            GLint format,
+    void _create(const GLvoid * data,
+            GLint internalFormat,
             int width,
             int height,
+            GLenum format,
             GLenum type,
             GLint magFilter,
             GLint minFilter);

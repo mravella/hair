@@ -28,18 +28,22 @@ public:
     // Renders a full-screen quad of the texture.
     void renderFullScreen();
 
+    int width();
+    int height();
+
     GLuint id;
 
 private:
-    void _create(
-            const GLvoid * data,
-            GLint format,
+    void _create(const GLvoid * data,
+            GLint internalFormat,
             int width,
             int height,
+            GLenum format,
             GLenum type,
             GLint magFilter,
             GLint minFilter);
 
+    int m_width, m_height;
     Quad *m_quad;
     TexturedQuadShaderProgram *m_program;
 };

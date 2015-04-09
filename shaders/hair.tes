@@ -104,7 +104,7 @@ void main()
     vec3 pos = shiftedSpline(gl_TessCoord.xy);
     vec3 prevPos = shiftedSpline(vec2(gl_TessCoord.x - 1.0 / (numSplineVertices - 1), gl_TessCoord.y));
     vec3 nextPos = shiftedSpline(vec2(gl_TessCoord.x + 1.0 / (numSplineVertices - 1), gl_TessCoord.y));
-    
+
     tangent_te = (view * model * vec4(nextPos - prevPos, 0.)).xyz;
     tessx_te = gl_TessCoord.x;
 

@@ -10,6 +10,10 @@
 struct Uniforms {
     glm::mat4 model, view, projection;
 
+    glm::vec3 lightPosition;
+
+    glm::mat4 eyeToLight; // Matrix for rendering shadow map (eye space --> light space).
+
     int numHairVertices; // Number of vertices per guide hair.
 
     glm::vec3 vertexData[MAX_HAIR_VERTICES]; // Vertex position data for the current guide hair.
@@ -30,9 +34,9 @@ struct Uniforms {
 
     glm::vec3 color;
 
-    glm::vec3 lightPosition;
-
     int noiseTexture;
+
+    int shadowMap;
 };
 
 class ShaderProgram

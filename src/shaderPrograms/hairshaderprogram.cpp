@@ -26,6 +26,8 @@ std::vector<GLchar const *> HairShaderProgram::getUniformNames()
         "triangleFace",
         "color",
         "lightPosition",
+        "eyeToLight",
+        "shadowMap",
         "noiseTexture",
     };
     return uniformNames;
@@ -35,7 +37,9 @@ void HairShaderProgram::setGlobalUniforms()
 {
     setUniformMatrix4f("view", uniforms.view);
     setUniformMatrix4f("projection", uniforms.projection);
+    setUniformMatrix4f("eyeToLight", uniforms.eyeToLight);
     setUniform3f("lightPosition", uniforms.lightPosition);
+    setUniform1i("shadowMap", uniforms.shadowMap);
     setUniform1i("noiseTexture", uniforms.noiseTexture);
 }
 

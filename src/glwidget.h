@@ -4,6 +4,7 @@
 #include <QGLWidget>
 #include <QTimer>
 #include <QTime>
+#include "hairCommon.h"
 
 class ObjMesh;
 class HairObject;
@@ -11,6 +12,7 @@ class Simulation;
 class ShaderProgram;
 class HairInterface;
 class Texture;
+class Framebuffer;
 
 class GLWidget : public QGLWidget
 {
@@ -23,10 +25,13 @@ public:
     void resetSimulation();
 
 protected:
-    void initializeGL();
-    void paintGL();
-    void resizeGL(int w, int h);
-        
+    void initializeGL() override;
+    void paintGL() override;
+    void resizeGL(int w, int h) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
+
     void initSimulation();
 
 protected slots:
@@ -40,12 +45,16 @@ private:
     HairObject *m_hairObject;
     Simulation *m_testSimulation;
 
-    GLuint m_meshProgramID;
     ShaderProgram *m_hairProgram, *m_meshProgram;
+    Texture *m_noiseTexture, *m_shadowDepthTexture;
+    Framebuffer *m_shadowFramebuffer;
+
+    // Camera parameters
+    glm::mat4 m_projection, m_view;
+    float m_zoom = 6;
+    QPoint m_prevMousePos;
 
     float m_hairDensity;
-
-    Texture *m_noiseTexture;
 
     QTimer m_timer; /** Timer calls tick() 60 times per second. */
     int m_increment; /** Incremented on every call to paintGL. */

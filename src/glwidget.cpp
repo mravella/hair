@@ -80,30 +80,47 @@ void GLWidget::paintGL()
     ErrorChecker::printGLErrors("start of paintGL");
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+
     float time = m_increment++ / (float) m_targetFPS;      // Time in seconds.
 
     m_testSimulation->update(time);
     m_hairObject->update(time);
 
     glm::mat4 model = glm::mat4(1.f);
-    glm::vec3 lightPosition = glm::vec3(10, 5, 10);
-    glm::mat4 worldToLight = glm::perspective(1.f, 1.f, .1f, 100.f) *
-            glm::lookAt(lightPosition, glm::vec3(0), glm::vec3(0,1,0));
-    glm::mat4 eyeToLight = worldToLight * glm::inverse(m_view);
+    glm::vec3 lightPosition = glm::vec3(2, 1, 2);
+    glm::mat4 lightProjection = glm::perspective(1.5f, 1.f, .1f, 100.f);
+    glm::mat4 lightView = glm::lookAt(lightPosition, glm::vec3(0), glm::vec3(0,1,0));
+    glm::mat4 eyeToLight = lightProjection * lightView * glm::inverse(m_view);
 
     // Render shadow map.
     glViewport(0, 0, m_shadowDepthTexture->width(), m_shadowDepthTexture->height());
     m_shadowFramebuffer->bind();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    m_meshProgram->bind();
-    m_meshProgram->uniforms.projection = worldToLight;
-    m_meshProgram->uniforms.view = glm::mat4(1.f);
-    m_meshProgram->uniforms.model = model;
-    m_meshProgram->setGlobalUniforms();
-    m_meshProgram->setPerObjectUniforms();
-    m_mesh->draw();
-    m_meshProgram->unbind();
+    {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        m_meshProgram->bind();
+        m_meshProgram->uniforms.projection = lightProjection;
+        m_meshProgram->uniforms.view = lightView;
+        m_meshProgram->uniforms.model = model;
+        m_meshProgram->setGlobalUniforms();
+        m_meshProgram->setPerObjectUniforms();
+        m_mesh->draw();
+        m_meshProgram->unbind();
+        m_hairProgram->bind();
+        m_noiseTexture->bind(GL_TEXTURE0);
+        m_shadowDepthTexture->bind(GL_TEXTURE1);
+        m_hairProgram->uniforms.projection = lightProjection;
+        m_hairProgram->uniforms.view = lightView;
+        m_hairProgram->uniforms.model = model;
+        m_hairProgram->uniforms.eyeToLight = eyeToLight;
+        m_hairProgram->uniforms.lightPosition = lightPosition;
+        m_hairProgram->uniforms.noiseTexture = 0;
+        m_hairProgram->uniforms.shadowMap = 1;
+        m_hairProgram->setGlobalUniforms();
+        m_hairObject->paint(m_hairProgram);
+        m_shadowDepthTexture->unbind(GL_TEXTURE1);
+        m_noiseTexture->unbind(GL_TEXTURE0);
+        m_hairProgram->unbind();
+    }
     m_shadowFramebuffer->unbind();
 
     // Render hair.
@@ -138,6 +155,7 @@ void GLWidget::paintGL()
 #endif
 
     m_hairInterface->updateFPSLabel(m_increment);
+
 }
 
 

@@ -4,7 +4,7 @@ uniform vec3 color;
 uniform mat4 view;
 uniform vec3 lightPosition;
 
-uniform sampler2DShadow shadowMap;
+uniform sampler2D shadowMap;
 uniform mat4 eyeToLight;
 
 in vec4 position_g;
@@ -27,6 +27,11 @@ void main(){
     fragColor =  color * vec3(.5 * diffuse + specular);
 
     vec4 shadowCoord = eyeToLight * position_g;
-    float visibility = texture(shadowMap, (shadowCoord.xyz / shadowCoord.w + 1.0) / 2.0);
-    if (visibility < .1) fragColor = vec3(0,1,0);
+
+    // sampler2D
+//    shadowCoord = (shadowCoord / shadowCoord.w + 1.0) / 2.0;
+//    float visibility = step(shadowCoord.z, texture(shadowMap, shadowCoord.xy).r);
+
+    // sampler2DShadow
+//    float visibility = texture(shadowMap, (shadowCoord.xyz / shadowCoord.w + 1.0) / 2.0);
 }

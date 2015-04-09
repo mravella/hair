@@ -15,6 +15,7 @@
 #include "framebuffer.h"
 
 #define _USE_MESH_ true
+#define _123_ORBIT_ true
 
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
     : QGLWidget(format, parent),
@@ -215,6 +216,13 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
+#if _123_ORBIT_
+    m_angleX += 10 * (event->x() - m_prevMousePos.x()) / (float) width();
+    m_angleY += 10 * (event->y() - m_prevMousePos.y()) / (float) height();
+    m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
+            glm::rotate(m_angleY, glm::vec3(1, 0, 0)) *
+            glm::rotate(m_angleX, glm::vec3(0, 1, 0));
+#else
     float dx = 10 * (event->x() - m_prevMousePos.x()) / (float) width();
     float dy = 10 * (m_prevMousePos.y() - event->y()) / (float) height();
     glm::vec3 up(0, 1, 0);
@@ -224,12 +232,22 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             glm::rotate(dy, glm::cross(up, glm::vec3(pos.x, pos.y, pos.z))) *
             glm::translate(glm::vec3(0, 0, m_zoom)) *
             m_view;
+#endif
     m_prevMousePos = event->pos();
 }
 
 void GLWidget::wheelEvent(QWheelEvent *event)
 {
+#if _123_ORBIT_
+    m_zoom -= event->delta() / 100.f;
+    m_angleX += 10 * (event->x() - m_prevMousePos.x()) / (float) width();
+    m_angleY += 10 * (event->y() - m_prevMousePos.y()) / (float) height();
+    m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
+            glm::rotate(m_angleY, glm::vec3(1, 0, 0)) *
+            glm::rotate(m_angleX, glm::vec3(0, 1, 0));
+#else
     m_view = glm::translate(glm::vec3(0, 0, m_zoom)) * m_view;
     m_zoom -= event->delta() / 100.f;
     m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) * m_view;
+#endif
 }

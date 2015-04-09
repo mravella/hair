@@ -28,6 +28,9 @@ public:
     // Renders a full-screen quad of the texture.
     void renderFullScreen();
 
+    int width();
+    int height();
+
     GLuint id;
 
 private:
@@ -40,6 +43,7 @@ private:
             GLint magFilter,
             GLint minFilter);
 
+    int m_width, m_height;
     Quad *m_quad;
     TexturedQuadShaderProgram *m_program;
 };

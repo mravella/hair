@@ -30,12 +30,18 @@ void Texture::createColorTexture(int width, int height, GLint magFilter, GLint m
 void Texture::createDepthTexture(int width, int height)
 {
     _create(0, GL_DEPTH_COMPONENT, width, height, GL_FLOAT, GL_NEAREST, GL_NEAREST);
+    bind(GL_TEXTURE0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+    unbind(GL_TEXTURE0);
 }
 
 void Texture::_create(
         const GLvoid *data, GLint format, int width, int height, GLenum type,
         GLint magFilter, GLint minFilter)
 {
+    m_width = width;
+    m_height = height;
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, type, data);
@@ -76,4 +82,14 @@ void Texture::renderFullScreen()
     m_quad->draw();
     unbind(GL_TEXTURE0);
     m_program->unbind();
+}
+
+int Texture::width()
+{
+    return m_width;
+}
+
+int Texture::height()
+{
+    return m_height;
 }

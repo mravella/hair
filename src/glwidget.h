@@ -4,6 +4,7 @@
 #include <QGLWidget>
 #include <QTimer>
 #include <QTime>
+#include "hairCommon.h"
 
 class ObjMesh;
 class HairObject;
@@ -11,6 +12,7 @@ class Simulation;
 class ShaderProgram;
 class HairInterface;
 class Texture;
+class Framebuffer;
 
 class GLWidget : public QGLWidget
 {
@@ -40,12 +42,15 @@ private:
     HairObject *m_hairObject;
     Simulation *m_testSimulation;
 
-    GLuint m_meshProgramID;
     ShaderProgram *m_hairProgram, *m_meshProgram;
 
-    float m_hairDensity;
+    Texture *m_noiseTexture, *m_shadowDepthTexture;
 
-    Texture *m_noiseTexture;
+    Framebuffer *m_shadowFramebuffer;
+
+    glm::mat4 m_projection, m_view;
+
+    float m_hairDensity;
 
     QTimer m_timer; /** Timer calls tick() 60 times per second. */
     int m_increment; /** Incremented on every call to paintGL. */

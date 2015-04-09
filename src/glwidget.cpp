@@ -9,6 +9,7 @@
 #include "meshshaderprogram.h"
 #include "hairinterface.h"
 #include "texture.h"
+#include "framebuffer.h"
 
 #define _USE_MESH_ true
 
@@ -26,6 +27,8 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     m_hairProgram = new HairShaderProgram();
     m_meshProgram = new MeshShaderProgram();
     m_noiseTexture = new Texture();
+    m_shadowDepthTexture = new Texture();
+    m_shadowFramebuffer = new Framebuffer();
     m_hairInterface->setGLWidget(this);
 
     // Set up 60 FPS draw loop.
@@ -49,12 +52,25 @@ void GLWidget::initializeGL()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    
+
+    // Initialize shader programs.
     m_hairProgram->create();
     m_meshProgram->create();
+
+    // Initialize textures.
     m_noiseTexture->create(":/images/noise128.jpg", GL_LINEAR, GL_LINEAR);
+    m_shadowDepthTexture->createDepthTexture(1024, 1024);
+
+    // Initialize framebuffers.
+    m_shadowFramebuffer->create();
+    m_shadowFramebuffer->attachDepthTexture(m_shadowDepthTexture->id);
     
+    // Initialize simulation.
     initSimulation();
+
+    // Initialize global view and projection matrices.
+    m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+    m_view = glm::lookAt(glm::vec3(0,0,6)/*eye*/, glm::vec3(0)/*center*/, glm::vec3(0,1,0)/*up*/);
     
     ErrorChecker::printGLErrors("end of initializeGL");
 }
@@ -62,24 +78,23 @@ void GLWidget::initializeGL()
 void GLWidget::paintGL()
 {
     ErrorChecker::printGLErrors("start of paintGL");
-        
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     float time = m_increment++ / (float) m_targetFPS;      // Time in seconds.
-    
+
     m_testSimulation->update(time);
     m_hairObject->update(time);
 
-    glm::mat4 projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
-    glm::mat4 view = glm::lookAt(
-                glm::vec3(0, 0, 6)/*eye*/, glm::vec3(0, 0, 0)/*center*/, glm::vec3(0, 1, 0)/*up*/);
     glm::mat4 model = glm::mat4(1.f);
     glm::vec3 lightPosition = glm::vec3(2, 1, 2);
-    
+
+    // Render hair.
+    glViewport(0, 0, width(), height());
     m_hairProgram->bind();
     m_noiseTexture->bind(GL_TEXTURE0);
-    m_hairProgram->uniforms.projection = projection;
-    m_hairProgram->uniforms.view = view;
+    m_hairProgram->uniforms.projection = m_projection;
+    m_hairProgram->uniforms.view = m_view;
     m_hairProgram->uniforms.model = model;
     m_hairProgram->uniforms.lightPosition = lightPosition;
     m_hairProgram->uniforms.noiseTexture = 0;
@@ -88,10 +103,11 @@ void GLWidget::paintGL()
     m_noiseTexture->unbind(GL_TEXTURE0);
     m_hairProgram->unbind();
     
+    // Render mesh.
 #if _USE_MESH_
     m_meshProgram->bind();
-    m_meshProgram->uniforms.projection = projection;
-    m_meshProgram->uniforms.view = view;
+    m_meshProgram->uniforms.projection = m_projection;
+    m_meshProgram->uniforms.view = m_view;
     m_meshProgram->uniforms.model = model;
     m_meshProgram->uniforms.lightPosition = lightPosition;
     m_meshProgram->setGlobalUniforms();
@@ -101,6 +117,7 @@ void GLWidget::paintGL()
 #endif
 
     m_hairInterface->updateFPSLabel(m_increment);
+
 }
 
 
@@ -141,6 +158,7 @@ void GLWidget::resetSimulation()
 void GLWidget::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);
+    m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
 }
 
 /** Repaints the canvas. Called 60 times per second. */

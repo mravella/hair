@@ -21,9 +21,10 @@
 #define __BMONTELL_MODE__ false
 #define TIMESTEP 0.01f
 
-Simulation::Simulation()
+Simulation::Simulation(ObjMesh *mesh)
 {
     m_time = 0;
+    m_mesh = mesh;
 }
 
 Simulation::~Simulation()
@@ -77,13 +78,14 @@ void Simulation::calculateExternalForces(HairObject *_object)
         float numVerts = _object->m_guideHairs.at(i)->m_vertices.size();
         for (int j = 1; j < numVerts; j++)
         {
+            HairVertex *currVert = _object->m_guideHairs.at(i)->m_vertices.at(j);
+
             glm::vec3 force = glm::vec3(0.0);
-            // Gravity
             force += glm::vec3(0.0, -9.8, 0.0);
-            // Wind
             if (m_time > 2)
                 force += glm::vec3(6.0 + 20.0 * ((rand() % 100) / 100.0) - 10.0, 0.0, 0.0);
-            _object->m_guideHairs.at(i)->m_vertices.at(j)->forces = force;
+            if (m_mesh->contains(currVert->position)) force = glm::vec3(0.0, 1000.0, 0.0);
+            currVert->forces = force;
         }
     }
 }

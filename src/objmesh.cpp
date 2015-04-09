@@ -1,6 +1,8 @@
 #include "objmesh.h"
 #include "errorchecker.h"
 #include "objloader.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtx/random.hpp>
 
 ObjMesh::ObjMesh()
 {
@@ -49,4 +51,52 @@ void ObjMesh::init(const char *objFile)
 void ObjMesh::draw()
 {
     m_shape.draw(GL_TRIANGLES);
+}
+
+/*
+ * Shoot a ray from the point and if it intersects an even number of triangles, it is outside
+ * If it intersects an odd number of triangles it is inside
+ * TODO: Generate a random vector more elegantly
+ */
+bool ObjMesh::contains(glm::vec3 ro)
+{
+    int numIntersections = 0;
+    double rand1 = rand() % 1000; double rand2 = rand() % 1000; double rand3 = rand() % 1000;
+    glm::vec3 randDir = glm::normalize(glm::vec3(rand1, rand2, rand3));
+    for (unsigned int i = 0; i < triangles.size(); ++i)
+    {
+        Triangle currTriangle = triangles.at(i);
+        glm::vec3 intersectionPoint = glm::vec3(0.0);
+
+        if (intersect(intersectionPoint, ro, randDir, currTriangle))
+            numIntersections++;
+    }
+    return (numIntersections % 2);
+}
+
+// Using Moller-Trumbore method for triangle-ray intersection
+bool ObjMesh::intersect(glm::vec3 &intersection, glm::vec3 ro, glm::vec3 rd, Triangle tri)
+{
+    glm::vec3 edge1 = tri.v2 - tri.v1;
+    glm::vec3 edge2 = tri.v3 - tri.v1;
+    glm::vec3 pVec = glm::cross(rd, edge2);
+
+    float det = glm::dot(edge1, pVec);
+    if (det == 0) return false;
+    float invDet = 1.0f / det;
+
+    glm::vec3 tVec = ro - tri.v1;
+    float u = glm::dot(tVec, pVec) * invDet;
+    if (u < 0.0 || u > 1.0) return false;
+
+    glm::vec3 qVec = glm::cross(tVec, edge1);
+    float v = glm::dot(rd, qVec) * invDet;
+    if (v < 0.0 || u + v > 1.0) return false;
+
+    glm::vec3 intersectionPoint = tri.v1 + u * edge1 + v * edge2;
+    float t = (intersectionPoint.x - ro.x) / rd.x;
+    if (t < 0) return false;
+
+    intersection = intersectionPoint;
+    return true;
 }

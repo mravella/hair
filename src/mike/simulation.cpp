@@ -569,7 +569,7 @@ void Simulation::particleSimulation(HairObject *obj)
         for (int j = 1; j < numVerts; ++j){
             HairVertex *h = obj->m_guideHairs.at(i)->m_vertices.at(j);
 
-            // TODO: Precompute the mass
+            // TODO: Precompute the mass inverse
             h->velocity = h->velocity + TIMESTEP * (h->forces * (1.0f / h->mass));
             h->tempPos += (h->velocity * TIMESTEP);
             h->forces = glm::vec3(0.0);
@@ -600,3 +600,5 @@ void Simulation::particleSimulation(HairObject *obj)
         last->position = last->tempPos;
     }
 }
+
+

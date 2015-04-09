@@ -25,10 +25,13 @@ public:
     void resetSimulation();
 
 protected:
-    void initializeGL();
-    void paintGL();
-    void resizeGL(int w, int h);
-        
+    void initializeGL() override;
+    void paintGL() override;
+    void resizeGL(int w, int h) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
+
     void initSimulation();
 
 protected slots:
@@ -43,12 +46,13 @@ private:
     Simulation *m_testSimulation;
 
     ShaderProgram *m_hairProgram, *m_meshProgram;
-
     Texture *m_noiseTexture, *m_shadowDepthTexture;
-
     Framebuffer *m_shadowFramebuffer;
 
+    // Camera parameters
     glm::mat4 m_projection, m_view;
+    float m_zoom = 6;
+    QPoint m_prevMousePos;
 
     float m_hairDensity;
 

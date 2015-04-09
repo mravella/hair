@@ -3,6 +3,9 @@
 #include "errorchecker.h"
 #include "hairCommon.h"
 
+#include <QMouseEvent>
+#include <QWheelEvent>
+
 #include "hairobject.h"
 #include "simulation.h"
 #include "hairshaderprogram.h"
@@ -16,7 +19,7 @@
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
     : QGLWidget(format, parent),
       m_hairInterface(hairInterface),
-      m_hairDensity(40),
+      m_hairDensity(150),
       m_timer(this),
       m_increment(0),
       m_targetFPS(60.f)
@@ -69,8 +72,8 @@ void GLWidget::initializeGL()
     initSimulation();
 
     // Initialize global view and projection matrices.
+    m_view = glm::lookAt(glm::vec3(0,0,m_zoom), glm::vec3(0), glm::vec3(0,1,0));
     m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
-    m_view = glm::lookAt(glm::vec3(0,0,6)/*eye*/, glm::vec3(0)/*center*/, glm::vec3(0,1,0)/*up*/);
     
     ErrorChecker::printGLErrors("end of initializeGL");
 }
@@ -203,4 +206,30 @@ void GLWidget::resizeGL(int w, int h)
 void GLWidget::updateCanvas()
 {
     update();
+}
+
+void GLWidget::mousePressEvent(QMouseEvent *event)
+{
+    m_prevMousePos = event->pos();
+}
+
+void GLWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    float dx = 10 * (event->x() - m_prevMousePos.x()) / (float) width();
+    float dy = 10 * (m_prevMousePos.y() - event->y()) / (float) height();
+    glm::vec3 up(0, 1, 0);
+    glm::vec4 pos = m_view * glm::vec4(0, 0, 0, 1);
+    m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
+            glm::rotate(dx, up) *
+            glm::rotate(dy, glm::cross(up, glm::vec3(pos.x, pos.y, pos.z))) *
+            glm::translate(glm::vec3(0, 0, m_zoom)) *
+            m_view;
+    m_prevMousePos = event->pos();
+}
+
+void GLWidget::wheelEvent(QWheelEvent *event)
+{
+    m_view = glm::translate(glm::vec3(0, 0, m_zoom)) * m_view;
+    m_zoom -= event->delta() / 100.f;
+    m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) * m_view;
 }

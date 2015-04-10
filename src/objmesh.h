@@ -3,6 +3,7 @@
 
 #include "hairCommon.h"
 #include "openglshape.h"
+#include <limits>
 
 class ObjMesh
 {
@@ -20,6 +21,9 @@ public:
 
 private:
     OpenGLShape m_shape;
+
+    glm::vec3 m_min = glm::vec3(std::numeric_limits<float>::max());
+    glm::vec3 m_max = glm::vec3(std::numeric_limits<float>::min());
 
 };
 

@@ -40,7 +40,12 @@ void ObjMesh::init(const char *objFile)
         vboData.push_back(normals[i].x);
         vboData.push_back(normals[i].y);
         vboData.push_back(normals[i].z);
+
+        // Set object boundaries.
+        m_min = glm::min(m_min, vertices[i]);
+        m_max = glm::max(m_max, vertices[i]);
     }
+
     m_shape.create();
     m_shape.setVertexData(&vboData[0], sizeof(GLfloat) * vboData.size(), vertices.size());
     m_shape.setAttribute(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, 0);
@@ -60,6 +65,10 @@ void ObjMesh::draw()
  */
 bool ObjMesh::contains(glm::vec3 &normal, glm::vec3 ro)
 {
+    // Return false if point is outside bounding cube.
+    if (glm::any(glm::lessThan(ro, m_min)) || glm::any(glm::greaterThan(ro, m_max)))
+        return false;
+
     int numIntersections = 0;
     double rand1 = rand() % 1000; double rand2 = rand() % 1000; double rand3 = rand() % 1000;
     glm::vec3 randDir = glm::normalize(glm::vec3(rand1, rand2, rand3));

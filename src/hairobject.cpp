@@ -43,12 +43,18 @@ HairObject::HairObject(
         HairObject *_oldObject)
 {
     QImage image(_hairGrowthMap);
+    if (image.width() == 0)
+    {
+        std::cout << _hairGrowthMap << " does not appear to be a valid image." << std::endl;
+        exit(1);
+    }
+
     for (unsigned int i = 0; i < _mesh->triangles.size(); i++)
     {
         Triangle t = _mesh->triangles[i];
 
         // Number of guide hairs to generate on this triangle.
-        int numHairs = (int) (_hairsPerUnitArea * t.area() + rand() / RAND_MAX);
+        int numHairs = (int) (_hairsPerUnitArea * t.area() + rand() / (float)RAND_MAX);
         for (int hair = 0; hair < numHairs; hair++)
         {
             // Generate random point on triangle.

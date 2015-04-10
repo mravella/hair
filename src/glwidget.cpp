@@ -159,7 +159,6 @@ void GLWidget::paintGL()
 #endif
 
     m_hairInterface->updateFPSLabel(m_increment);
-
 }
 
 
@@ -175,7 +174,7 @@ void GLWidget::initSimulation()
     m_mesh->init(":/models/head.obj");
     m_testSimulation = new Simulation(m_mesh);
     m_hairObject = new HairObject(
-                m_mesh, m_hairDensity, ":/images/headHair.png", m_testSimulation, m_hairObject);
+                m_mesh, m_hairDensity, ":/images/headHair.jpg", m_testSimulation, m_hairObject);
 #else
     if (_oldHairObject != NULL){
         m_hairObject = new HairObject(_oldHairObject, m_testSimulation);

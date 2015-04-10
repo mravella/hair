@@ -55,7 +55,7 @@ void GLWidget::initializeGL()
     ResourceLoader::initializeGlew();
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
 
     // Initialize shader programs.
     m_hairProgram->create();
@@ -239,8 +239,6 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 {
 #if _123_ORBIT_
     m_zoom -= event->delta() / 100.f;
-    m_angleX += 10 * (event->x() - m_prevMousePos.x()) / (float) width();
-    m_angleY += 10 * (event->y() - m_prevMousePos.y()) / (float) height();
     m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
             glm::rotate(m_angleY, glm::vec3(1, 0, 0)) *
             glm::rotate(m_angleX, glm::vec3(0, 1, 0));

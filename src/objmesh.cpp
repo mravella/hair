@@ -79,38 +79,11 @@ bool ObjMesh::contains(glm::vec3 &normal, glm::vec3 ro)
         Triangle currTriangle = triangles.at(i);
         glm::vec3 intersectionPoint = glm::vec3(0.0);
 
-        if (intersect(intersectionPoint, ro, randDir, currTriangle))
+        if (currTriangle.intersect(intersectionPoint, ro, randDir))
         {
             normal = (currTriangle.n1 + currTriangle.n2 + currTriangle.n3) / 3.0f;
             numIntersections++;
         }
     }
     return (numIntersections % 2);
-}
-
-// Using Moller-Trumbore method for triangle-ray intersection
-bool ObjMesh::intersect(glm::vec3 &intersection, glm::vec3 ro, glm::vec3 rd, Triangle tri)
-{
-    glm::vec3 edge1 = tri.v2 - tri.v1;
-    glm::vec3 edge2 = tri.v3 - tri.v1;
-    glm::vec3 pVec = glm::cross(rd, edge2);
-
-    float det = glm::dot(edge1, pVec);
-    if (det == 0) return false;
-    float invDet = 1.0f / det;
-
-    glm::vec3 tVec = ro - tri.v1;
-    float u = glm::dot(tVec, pVec) * invDet;
-    if (u < 0.0 || u > 1.0) return false;
-
-    glm::vec3 qVec = glm::cross(tVec, edge1);
-    float v = glm::dot(rd, qVec) * invDet;
-    if (v < 0.0 || u + v > 1.0) return false;
-
-    glm::vec3 intersectionPoint = tri.v1 + u * edge1 + v * edge2;
-    float t = (intersectionPoint.x - ro.x) / rd.x;
-    if (t < 0) return false;
-
-    intersection = intersectionPoint;
-    return true;
 }

@@ -61,6 +61,34 @@ struct Triangle {
         pos = glm::mat3(v1, v2, v3) * randPtBary;
         normal = glm::mat3(n1, n2, n3) * randPtBary;
     }
+
+    // Using Moller-Trumbore method for triangle-ray intersection
+    bool intersect(glm::vec3 &intersection, glm::vec3 ro, glm::vec3 rd)
+    {
+        glm::vec3 edge1 = v2 - v1;
+        glm::vec3 edge2 = v3 - v1;
+        glm::vec3 pVec = glm::cross(rd, edge2);
+
+        float det = glm::dot(edge1, pVec);
+        if (det == 0) return false;
+        float invDet = 1.0f / det;
+
+        glm::vec3 tVec = ro - v1;
+        float u = glm::dot(tVec, pVec) * invDet;
+        if (u < 0.0 || u > 1.0) return false;
+
+        glm::vec3 qVec = glm::cross(tVec, edge1);
+        float v = glm::dot(rd, qVec) * invDet;
+        if (v < 0.0 || u + v > 1.0) return false;
+
+        glm::vec3 intersectionPoint = v1 + u * edge1 + v * edge2;
+        float t = (intersectionPoint.x - ro.x) / rd.x;
+        if (t < 0) return false;
+
+        intersection = intersectionPoint;
+        return true;
+    }
+
 };
 
 struct HairVertex

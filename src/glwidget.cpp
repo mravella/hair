@@ -195,7 +195,7 @@ void GLWidget::initSimulation()
     m_highResMesh->init(":/models/head.obj");
 
     m_lowResMesh = new ObjMesh();
-    m_lowResMesh->init(":/models/headLowRes.obj");
+    m_lowResMesh->init(":/models/headLowRes.obj", 1.25);
 
     m_testSimulation = new Simulation(m_lowResMesh);
     m_hairObject = new HairObject(

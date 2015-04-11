@@ -8,7 +8,7 @@ ObjMesh::ObjMesh()
 {
 }
 
-void ObjMesh::init(const char *objFile)
+void ObjMesh::init(const char *objFile, float scale)
 {
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> uvs;
@@ -23,7 +23,7 @@ void ObjMesh::init(const char *objFile)
     // Initialize m_triangles
     for (unsigned int i=0; i < vertices.size()/3; i++) {
         unsigned int i1 = i*3, i2 = i1+1, i3=i2+1;
-        Triangle t(vertices[i1], vertices[i2], vertices[i3],
+        Triangle t(vertices[i1] * scale, vertices[i2] * scale, vertices[i3] * scale,
                    uvs[i1], uvs[i2], uvs[i3],
                    normals[i1], normals[i2], normals[i3]);
         triangles.push_back(t);

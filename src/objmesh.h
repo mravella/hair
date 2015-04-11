@@ -10,7 +10,11 @@ class ObjMesh
 public:
     ObjMesh();
 
-    void init(const char * objFile);
+    /**
+     * @param objFile OBJ file to initialize mesh
+     * @param scale Factor by which to scale the mesh during computations (i.e. collision detection)
+     */
+    void init(const char * objFile, float scale = 1);
 
     void draw();
 

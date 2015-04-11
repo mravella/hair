@@ -41,7 +41,7 @@ protected slots:
 private:
     HairInterface *m_hairInterface;
 
-    ObjMesh *m_mesh;
+    ObjMesh *m_highResMesh, *m_lowResMesh;
     HairObject *m_hairObject;
     Simulation *m_testSimulation;
 

@@ -25,7 +25,8 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
       m_increment(0),
       m_targetFPS(60.f)
 {
-    m_mesh = NULL;
+    m_highResMesh = NULL;
+    m_lowResMesh = NULL;
     m_hairObject = NULL;
     m_testSimulation = NULL;
     m_hairProgram = new HairShaderProgram();
@@ -42,7 +43,8 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
 
 GLWidget::~GLWidget()
 {
-    safeDelete(m_mesh);
+    safeDelete(m_highResMesh);
+    safeDelete(m_lowResMesh);
     safeDelete(m_testSimulation);
     safeDelete(m_hairObject);
     safeDelete(m_hairProgram);
@@ -107,7 +109,7 @@ void GLWidget::paintGL()
         m_meshProgram->uniforms.model = model;
         m_meshProgram->setGlobalUniforms();
         m_meshProgram->setPerObjectUniforms();
-        m_mesh->draw();
+        m_highResMesh->draw();
         m_meshProgram->unbind();
         m_hairProgram->bind();
         m_noiseTexture->bind(GL_TEXTURE0);
@@ -126,6 +128,24 @@ void GLWidget::paintGL()
         m_hairProgram->unbind();
     }
     m_shadowFramebuffer->unbind();
+
+    // Render opacity map.
+    /// glEnable(GL_BLEND)
+    /// glBlendFunc(GL_ONE, GL_ONE)
+    /// glBlendEquation(GL_FUNC_ADD)
+    ///
+    /// Bind m_opacityMapFramebuffer
+    /// glClear
+    ///
+    /// Bind m_opacityMapShaderProgram
+    /// Bind m_shadowDepthTexture
+    ///
+    /// Set uniforms
+    /// Draw m_hairObject
+    ///
+    /// Unbind stuff
+    ///
+    /// glDisable(GL_BLEND)
 
     // Render hair.
     glViewport(0, 0, width(), height());
@@ -154,7 +174,7 @@ void GLWidget::paintGL()
     m_meshProgram->uniforms.lightPosition = lightPosition;
     m_meshProgram->setGlobalUniforms();
     m_meshProgram->setPerObjectUniforms();
-    m_mesh->draw();
+    m_highResMesh->draw();
     m_meshProgram->unbind();
 #endif
 
@@ -164,17 +184,22 @@ void GLWidget::paintGL()
 
 void GLWidget::initSimulation()
 {
-    safeDelete(m_mesh);
+    safeDelete(m_highResMesh);
+    safeDelete(m_lowResMesh);
     safeDelete(m_testSimulation);
     HairObject *_oldHairObject = m_hairObject;
 
 
 #if _USE_MESH_
-    m_mesh = new ObjMesh();
-    m_mesh->init(":/models/head.obj");
-    m_testSimulation = new Simulation(m_mesh);
+    m_highResMesh = new ObjMesh();
+    m_highResMesh->init(":/models/head.obj");
+
+    m_lowResMesh = new ObjMesh();
+    m_lowResMesh->init(":/models/headLowRes.obj");
+
+    m_testSimulation = new Simulation(m_lowResMesh);
     m_hairObject = new HairObject(
-                m_mesh, m_hairDensity, ":/images/headHair.jpg", m_testSimulation, m_hairObject);
+                m_highResMesh, m_hairDensity, ":/images/headHair.jpg", m_testSimulation, m_hairObject);
 #else
     if (_oldHairObject != NULL){
         m_hairObject = new HairObject(_oldHairObject, m_testSimulation);

@@ -25,6 +25,8 @@ Simulation::Simulation(ObjMesh *mesh)
 {
     m_time = 0;
     m_mesh = mesh;
+    m_xform = glm::mat4(1.0);
+    m_prev = glm::vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 Simulation::~Simulation()
@@ -37,40 +39,22 @@ void Simulation::update(float _time){
 
 void Simulation::simulate(HairObject *_object)
 {
+    moveObjects();
 
+    calculateExternalForces(_object);
+    calculateConstraintForces(_object);
 
-    if (__BMONTELL_MODE__){
+    this->particleSimulation(_object);
+}
 
-        sinDerp(_object);
-
-    } else {
-
-        calculateExternalForces(_object);
-        calculateConstraintForces(_object);
-
-        this->particleSimulation(_object);
-
-    }
+void Simulation::moveObjects(void)
+{
+    m_prev = m_xform * glm::vec4(0.0, 0.0, 0.0, 1.0);
+    m_xform = glm::translate(glm::mat4(1.0), glm::vec3(sin(m_time), 0.0, 0.0));
 
 }
 
-void Simulation::sinDerp(HairObject *_object){
-    for (int i = 0; i < _object->m_guideHairs.size(); i++){
-        int _numVertices = _object->m_guideHairs.at(i)->m_vertices.size();
-
-        for (int j = 0; j < _numVertices; j++){
-            HairVertex *_vert = _object->m_guideHairs.at(i)->m_vertices.at(j);
-
-            _vert->position.x = 0.5 * sin(2 * m_time + 6 * (float)j / _numVertices);
-            _vert->position.y = 1 - 2.f * j / (_numVertices-1);
-
-        }
-    }
-}
-
-
-// TODO:
-// Calculate linear & angular forces for each joint, for each external force included in the simulation
+// Calculate forces for each joint, for each external force included in the simulation
 void Simulation::calculateExternalForces(HairObject *_object)
 {
     for (int i = 0; i < _object->m_guideHairs.size(); i++)
@@ -81,17 +65,21 @@ void Simulation::calculateExternalForces(HairObject *_object)
             HairVertex *currVert = _object->m_guideHairs.at(i)->m_vertices.at(j);
 
             glm::vec3 force = glm::vec3(0.0);
+            glm::vec4 curr = m_xform * glm::vec4(0.0, 0.0, 0.0, 1.0);
+            glm::vec3 acceleration = (glm::vec3(m_prev - curr) - currVert->velocity * TIMESTEP) / (TIMESTEP * TIMESTEP);
+            force += acceleration * currVert->mass * 0.1f;
+
             force += glm::vec3(0.0, -9.8, 0.0);
-            if (m_time > 2)
-                force += glm::vec3(6.0 + 20.0 * ((rand() % 100) / 100.0) - 10.0, 0.0, 0.0);
+            //            if (m_time > 2)
+            //                force += glm::vec3(6.0 + 20.0 * ((rand() % 100) / 100.0) - 10.0, 0.0, 0.0);
             glm::vec3 normal;
             if (m_mesh->contains(normal, currVert->position)) force = 20.0f * normal;
             currVert->forces = force;
+
         }
     }
 }
 
-// TODO:
 // Calculate forces for maintaining position constraints
 void Simulation::calculateConstraintForces(HairObject *_object)
 {

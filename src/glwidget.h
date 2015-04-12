@@ -25,6 +25,7 @@ public:
     void resetSimulation();
 
     bool useShadows = true;
+    bool paused = false;
 
 protected:
     void initializeGL() override;

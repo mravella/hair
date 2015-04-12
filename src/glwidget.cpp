@@ -68,9 +68,10 @@ void GLWidget::initializeGL()
     m_opacityMapProgram->create();
 
     // Initialize textures.
+    int shadowMapRes = 2048;
     m_noiseTexture->create(":/images/noise128.jpg", GL_LINEAR, GL_LINEAR);
-    m_shadowDepthTexture->createDepthTexture(1024, 1024);
-    m_opacityMapTexture->createColorTexture(1024, 1024, GL_NEAREST, GL_NEAREST);
+    m_shadowDepthTexture->createDepthTexture(shadowMapRes, shadowMapRes);
+    m_opacityMapTexture->createColorTexture(shadowMapRes, shadowMapRes, GL_NEAREST, GL_NEAREST);
 
     // Initialize framebuffers.
     m_shadowFramebuffer->create();
@@ -78,7 +79,7 @@ void GLWidget::initializeGL()
     m_opacityMapFramebuffer->create();
     std::vector<GLuint> textures { m_opacityMapTexture->id };
     m_opacityMapFramebuffer->attachColorTextures(textures);
-    m_opacityMapFramebuffer->generateDepthBuffer(1024, 1024);
+    m_opacityMapFramebuffer->generateDepthBuffer(shadowMapRes, shadowMapRes);
     
     // Initialize simulation.
     initSimulation();
@@ -98,10 +99,14 @@ void GLWidget::paintGL()
 
     float time = m_increment++ / (float) m_targetFPS;      // Time in seconds.
 
-    m_testSimulation->update(time);
-    m_hairObject->update(time);
+    if (!paused)
+    {
+        m_testSimulation->update(time);
+        m_hairObject->update(time);
+    }
 
     glm::mat4 model = glm::mat4(1.f);
+    model = m_testSimulation->m_xform;
     glm::vec3 lightPosition = glm::vec3(2, 1, 3);
     glm::mat4 lightProjection = glm::perspective(1.3f, 1.f, .1f, 100.f);
     glm::mat4 lightView = glm::lookAt(lightPosition, glm::vec3(0), glm::vec3(0,1,0));
@@ -191,7 +196,7 @@ void GLWidget::paintGL()
         program->uniforms.model = model;
         program->uniforms.eyeToLight = eyeToLight;
         program->uniforms.lightPosition = lightPosition;
-        program->uniforms.shadowIntensity = useShadows ? 1.5 : 0;
+        program->uniforms.shadowIntensity = useShadows ? 1.2 : 0;
         program->setGlobalUniforms();
         m_hairObject->paint(program);
     }
@@ -233,14 +238,14 @@ void GLWidget::initSimulation()
     HairObject *_oldHairObject = m_hairObject;
 
     m_highResMesh = new ObjMesh();
-    m_highResMesh->init(":/models/head.obj");
+    m_highResMesh->init(":/models/sphere.obj");
 
     m_lowResMesh = new ObjMesh();
-    m_lowResMesh->init(":/models/headLowRes.obj", 1.1);
+    m_lowResMesh->init(":/models/sphere.obj", 1.1);
 
     m_testSimulation = new Simulation(m_lowResMesh);
     m_hairObject = new HairObject(
-                m_highResMesh, m_hairDensity, ":/images/headHair.jpg", m_testSimulation, m_hairObject);
+                m_highResMesh, m_hairDensity, ":/images/lower.png", m_testSimulation, m_hairObject);
 
     safeDelete(_oldHairObject);
 

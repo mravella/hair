@@ -17,10 +17,11 @@ public:
     void update(float _time);
     void simulate(HairObject *_object);
 
+    glm::mat4 m_xform;
+
 
 private:
-    void sinDerp(HairObject *_object);
-
+    void moveObjects(void);
 
     void calculateExternalForces(HairObject *_object);
     void calculateConstraintForces(HairObject *_object);
@@ -41,6 +42,7 @@ public:
 private:
     float m_time;
     ObjMesh *m_mesh;
+    glm::vec4 m_prev;
 
 };
 

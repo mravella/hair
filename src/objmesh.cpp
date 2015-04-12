@@ -3,6 +3,9 @@
 #include "objloader.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtx/random.hpp>
+#include "QTime"
+
+#include "meshocttree.h"
 
 ObjMesh::ObjMesh()
 {
@@ -28,6 +31,8 @@ void ObjMesh::init(const char *objFile, float scale)
                    normals[i1], normals[i2], normals[i3]);
         triangles.push_back(t);
     }
+
+    m_octTree = new MeshOctTree(this);
 
     // Initialize vbo
     std::vector<GLfloat> vboData;
@@ -73,6 +78,10 @@ bool ObjMesh::contains(glm::vec3 &normal, glm::vec3 ro)
     double rand1 = rand() % 1000; double rand2 = rand() % 1000; double rand3 = rand() % 1000;
     glm::vec3 randDir = glm::normalize(glm::vec3(rand1, rand2, rand3));
     randDir = glm::normalize(ro);
+
+//    OctTree, I think it works but not sure of performance
+//    QList<Triangle> reducedTriangles;
+//    m_octTree->getRelevantTriangles(reducedTriangles, ro, randDir);
 
     for (unsigned int i = 0; i < triangles.size(); ++i)
     {

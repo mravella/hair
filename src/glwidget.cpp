@@ -12,6 +12,7 @@
 #include "meshshaderprogram.h"
 #include "hairopacityshaderprogram.h"
 #include "hairinterface.h"
+#include "meshocttree.h"
 #include "texture.h"
 #include "framebuffer.h"
 
@@ -238,7 +239,7 @@ void GLWidget::initSimulation()
     HairObject *_oldHairObject = m_hairObject;
 
     m_highResMesh = new ObjMesh();
-    m_highResMesh->init(":/models/sphere.obj");
+    m_highResMesh->init(":/models/head.obj");
 
     m_lowResMesh = new ObjMesh();
     m_lowResMesh->init(":/models/sphere.obj", 1.1);

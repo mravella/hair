@@ -1,27 +1,26 @@
-#include "hairshaderprogram.h"
+#include "hairopacityshaderprogram.h"
 
 #include "resourceloader.h"
 
-GLuint HairShaderProgram::createShaderProgram()
+GLuint HairOpacityShaderProgram::createShaderProgram()
 {
     return ResourceLoader::createFullShaderProgram(
-                ":/shaders/hair.vert", ":/shaders/hair.frag", ":/shaders/hair.geom",
+                ":/shaders/hair.vert", ":/shaders/hairOpacity.frag", ":/shaders/hair.geom",
                 ":/shaders/hair.tcs", ":/shaders/hair.tes");
+
 }
 
-void HairShaderProgram::setGlobalUniforms()
+void HairOpacityShaderProgram::setGlobalUniforms()
 {
     setUniformMatrix4f("view", uniforms.view);
     setUniformMatrix4f("projection", uniforms.projection);
     setUniformMatrix4f("eyeToLight", uniforms.eyeToLight);
     setUniform3f("lightPosition", uniforms.lightPosition);
     setUniform1i("shadowMap", uniforms.shadowMap);
-    setUniform1i("opacityMap", uniforms.opacityMap);
     setUniform1i("noiseTexture", uniforms.noiseTexture);
-    setUniform1f("shadowIntensity", uniforms.shadowIntensity);
 }
 
-void HairShaderProgram::setPerObjectUniforms()
+void HairOpacityShaderProgram::setPerObjectUniforms()
 {
     setUniformMatrix4f("model", uniforms.model);
     setUniform1i("numPatchHairs", uniforms.numGroupHairs);
@@ -33,7 +32,7 @@ void HairShaderProgram::setPerObjectUniforms()
     setUniform3f("color", uniforms.color);
 }
 
-void HairShaderProgram::setPerDrawUniforms()
+void HairOpacityShaderProgram::setPerDrawUniforms()
 {
     setUniform1i("numHairSegments", uniforms.numHairVertices-1);
     setUniform3fv("vertexData", uniforms.numHairVertices, uniforms.vertexData);

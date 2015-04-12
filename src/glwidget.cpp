@@ -114,64 +114,68 @@ void GLWidget::paintGL()
 
     ShaderProgram *program;
 
-    // Render shadow map.
-    glViewport(0, 0, m_shadowDepthTexture->width(), m_shadowDepthTexture->height());
-    m_shadowFramebuffer->bind();
+    if (useShadows)
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        program = m_meshProgram;
+        // Render shadow map.
+        glViewport(0, 0, m_shadowDepthTexture->width(), m_shadowDepthTexture->height());
+        m_shadowFramebuffer->bind();
         {
-            program->bind();
-            program->uniforms.projection = lightProjection;
-            program->uniforms.view = lightView;
-            program->uniforms.model = model;
-            program->setGlobalUniforms();
-            program->setPerObjectUniforms();
-            m_highResMesh->draw();
-        }
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            program = m_meshProgram;
+            {
+                program->bind();
+                program->uniforms.projection = lightProjection;
+                program->uniforms.view = lightView;
+                program->uniforms.model = model;
+                program->setGlobalUniforms();
+                program->setPerObjectUniforms();
+                m_highResMesh->draw();
+            }
 
-        program = m_hairProgram;
-        {
-            program->bind();
-            program->uniforms.noiseTexture = 0;
-            program->uniforms.shadowMap = 1;
-            program->uniforms.projection = lightProjection;
-            program->uniforms.view = lightView;
-            program->uniforms.model = model;
-            program->uniforms.eyeToLight = eyeToLight;
-            program->uniforms.lightPosition = lightPosition;
-            program->setGlobalUniforms();
-            m_hairObject->paint(program);
+            program = m_hairProgram;
+            {
+                program->bind();
+                program->uniforms.noiseTexture = 0;
+                program->uniforms.shadowMap = 1;
+                program->uniforms.projection = lightProjection;
+                program->uniforms.view = lightView;
+                program->uniforms.model = model;
+                program->uniforms.eyeToLight = eyeToLight;
+                program->uniforms.lightPosition = lightPosition;
+                program->setGlobalUniforms();
+                m_hairObject->paint(program);
+            }
         }
-    }
-    m_shadowFramebuffer->unbind();
+        m_shadowFramebuffer->unbind();
 
-    // Render opacity map.
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE);
-    glBlendEquation(GL_FUNC_ADD);
-    glViewport(0, 0, m_shadowDepthTexture->width(), m_shadowDepthTexture->height());
-    m_opacityMapFramebuffer->bind();
-    {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        program = m_opacityMapProgram;
+        // Render opacity map.
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        glBlendEquation(GL_FUNC_ADD);
+        glViewport(0, 0, m_shadowDepthTexture->width(), m_shadowDepthTexture->height());
+        m_opacityMapFramebuffer->bind();
         {
-            program->bind();
-            program->uniforms.noiseTexture = 0;
-            program->uniforms.shadowMap = 1;
-            program->uniforms.projection = lightProjection;
-            program->uniforms.view = lightView;
-            program->uniforms.model = model;
-            program->uniforms.eyeToLight = eyeToLight;
-            program->uniforms.lightPosition = lightPosition;
-            program->setGlobalUniforms();
-            m_hairObject->paint(program);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            program = m_opacityMapProgram;
+            {
+                program->bind();
+                program->uniforms.noiseTexture = 0;
+                program->uniforms.shadowMap = 1;
+                program->uniforms.projection = lightProjection;
+                program->uniforms.view = lightView;
+                program->uniforms.model = model;
+                program->uniforms.eyeToLight = eyeToLight;
+                program->uniforms.lightPosition = lightPosition;
+                program->setGlobalUniforms();
+                m_hairObject->paint(program);
+            }
         }
-    }
-    m_opacityMapFramebuffer->unbind();
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
+        m_opacityMapFramebuffer->unbind();
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+
+    } // if useShadows
 
     // Render hair.
     glViewport(0, 0, width(), height());
@@ -186,7 +190,7 @@ void GLWidget::paintGL()
         program->uniforms.model = model;
         program->uniforms.eyeToLight = eyeToLight;
         program->uniforms.lightPosition = lightPosition;
-        program->uniforms.shadowIntensity = 1.5;
+        program->uniforms.shadowIntensity = useShadows ? 1.5 : 0;
         program->setGlobalUniforms();
         m_hairObject->paint(program);
     }
@@ -202,7 +206,7 @@ void GLWidget::paintGL()
         program->uniforms.model = model;
         program->uniforms.lightPosition = lightPosition;
         program->uniforms.eyeToLight = eyeToLight;
-        program->uniforms.shadowIntensity = 0.8;
+        program->uniforms.shadowIntensity = useShadows ? 0.8 : 0;
         program->setGlobalUniforms();
         program->setPerObjectUniforms();
         m_highResMesh->draw();

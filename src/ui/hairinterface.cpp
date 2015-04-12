@@ -29,6 +29,9 @@ void HairInterface::connectUserInputs()
     connect(m_ui->sliderHairColorG, SIGNAL(valueChanged(int)), this, SLOT(setHairColorG(int)));
     connect(m_ui->sliderHairColorB, SIGNAL(valueChanged(int)), this, SLOT(setHairColorB(int)));
 
+    // shadows
+    connect(m_ui->shadowCheckBox, SIGNAL(toggled(bool)), this, SLOT(setShadows(bool)));
+
     // reset button
     connect(m_ui->buttonResetSim, SIGNAL(pressed()), this, SLOT(resetSimulation()));
 }
@@ -61,6 +64,9 @@ void HairInterface::setHairObject(HairObject *hairObject)
     m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x, 'g', 2));
     m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y, 'g', 2));
     m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 2));
+
+    // Sync shadows button
+    m_ui->shadowCheckBox->setChecked(m_glWidget->useShadows);
 
     updateStatsLabel();
 }
@@ -134,4 +140,9 @@ void HairInterface::setHairColorB(int value)
 {
     m_hairObject->m_color.z = value/2550.;
     m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 2));
+}
+
+void HairInterface::setShadows(bool checked)
+{
+    m_glWidget->useShadows = checked;
 }

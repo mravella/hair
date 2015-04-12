@@ -364,6 +364,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="shadowCheckBox">
+       <property name="text">
+        <string>Shadows</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="fpsLabel">
        <property name="enabled">
         <bool>true</bool>

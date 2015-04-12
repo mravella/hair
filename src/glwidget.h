@@ -24,6 +24,8 @@ public:
 
     void resetSimulation();
 
+    bool useShadows = true;
+
 protected:
     void initializeGL() override;
     void paintGL() override;

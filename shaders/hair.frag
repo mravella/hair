@@ -13,7 +13,7 @@ uniform sampler2D opacityMap;
 uniform mat4 eyeToLight;
 uniform float shadowIntensity;
 
-const float occlusionLayerSize = 0.005;
+const float occlusionLayerSize = 0.004;
 
 float currDepth;
 float closestDepth;

@@ -22,7 +22,7 @@ float closestDepth;
 // number corresponding to the amount of occlusion from other hair fragments.
 float occlusionSample(vec2 uv)
 {
-    closestDepth = texture(shadowMap, uv).r;
+    closestDepth = texelFetch(shadowMap, ivec2(uv * textureSize(shadowMap, 0)), 0).r;
     vec4 opacityMapValues = texture(opacityMap, uv);
     float occlusion = 0.;
     for (int layer = 0; layer < 4; layer++)

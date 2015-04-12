@@ -137,6 +137,7 @@ void GLWidget::paintGL()
                 program->bind();
                 program->uniforms.noiseTexture = 0;
                 program->uniforms.shadowMap = 1;
+                program->uniforms.opacityMap = 2;
                 program->uniforms.projection = lightProjection;
                 program->uniforms.view = lightView;
                 program->uniforms.model = model;

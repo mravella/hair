@@ -68,9 +68,10 @@ void GLWidget::initializeGL()
     m_opacityMapProgram->create();
 
     // Initialize textures.
+    int shadowMapRes = 2048;
     m_noiseTexture->create(":/images/noise128.jpg", GL_LINEAR, GL_LINEAR);
-    m_shadowDepthTexture->createDepthTexture(1024, 1024);
-    m_opacityMapTexture->createColorTexture(1024, 1024, GL_NEAREST, GL_NEAREST);
+    m_shadowDepthTexture->createDepthTexture(shadowMapRes, shadowMapRes);
+    m_opacityMapTexture->createColorTexture(shadowMapRes, shadowMapRes, GL_NEAREST, GL_NEAREST);
 
     // Initialize framebuffers.
     m_shadowFramebuffer->create();
@@ -78,7 +79,7 @@ void GLWidget::initializeGL()
     m_opacityMapFramebuffer->create();
     std::vector<GLuint> textures { m_opacityMapTexture->id };
     m_opacityMapFramebuffer->attachColorTextures(textures);
-    m_opacityMapFramebuffer->generateDepthBuffer(1024, 1024);
+    m_opacityMapFramebuffer->generateDepthBuffer(shadowMapRes, shadowMapRes);
     
     // Initialize simulation.
     initSimulation();
@@ -191,7 +192,7 @@ void GLWidget::paintGL()
         program->uniforms.model = model;
         program->uniforms.eyeToLight = eyeToLight;
         program->uniforms.lightPosition = lightPosition;
-        program->uniforms.shadowIntensity = useShadows ? 1.5 : 0;
+        program->uniforms.shadowIntensity = useShadows ? 1.2 : 0;
         program->setGlobalUniforms();
         m_hairObject->paint(program);
     }

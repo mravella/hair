@@ -99,8 +99,11 @@ void GLWidget::paintGL()
 
     float time = m_increment++ / (float) m_targetFPS;      // Time in seconds.
 
-    m_testSimulation->update(time);
-    m_hairObject->update(time);
+    if (!paused)
+    {
+        m_testSimulation->update(time);
+        m_hairObject->update(time);
+    }
 
     glm::mat4 model = glm::mat4(1.f);
     glm::vec3 lightPosition = glm::vec3(2, 1, 3);

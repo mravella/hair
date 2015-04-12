@@ -102,6 +102,7 @@ void GLWidget::paintGL()
     m_hairObject->update(time);
 
     glm::mat4 model = glm::mat4(1.f);
+    model = m_testSimulation->m_xform;
     glm::vec3 lightPosition = glm::vec3(2, 1, 3);
     glm::mat4 lightProjection = glm::perspective(1.3f, 1.f, .1f, 100.f);
     glm::mat4 lightView = glm::lookAt(lightPosition, glm::vec3(0), glm::vec3(0,1,0));
@@ -233,14 +234,14 @@ void GLWidget::initSimulation()
     HairObject *_oldHairObject = m_hairObject;
 
     m_highResMesh = new ObjMesh();
-    m_highResMesh->init(":/models/head.obj");
+    m_highResMesh->init(":/models/sphere.obj");
 
     m_lowResMesh = new ObjMesh();
-    m_lowResMesh->init(":/models/headLowRes.obj", 1.1);
+    m_lowResMesh->init(":/models/sphere.obj", 1.1);
 
     m_testSimulation = new Simulation(m_lowResMesh);
     m_hairObject = new HairObject(
-                m_highResMesh, m_hairDensity, ":/images/headHair.jpg", m_testSimulation, m_hairObject);
+                m_highResMesh, m_hairDensity, ":/images/lower.png", m_testSimulation, m_hairObject);
 
     safeDelete(_oldHairObject);
 

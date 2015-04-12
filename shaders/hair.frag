@@ -13,23 +13,27 @@ uniform sampler2D opacityMap;
 uniform mat4 eyeToLight;
 uniform float shadowIntensity;
 
-const float occlusionLayerSize = 0.004;
+const float occlusionLayerSize = 0.0015;
 
 float currDepth;
-float closestDepth;
 
 // Samples all layers of the opacity map at the given UV coordinates. Returns a
 // number corresponding to the amount of occlusion from other hair fragments.
 float occlusionSample(vec2 uv)
 {
-    closestDepth = texelFetch(shadowMap, ivec2(uv * textureSize(shadowMap, 0)), 0).r;
     vec4 opacityMapValues = texture(opacityMap, uv);
-    float occlusion = 0.;
+
+    float occlusion = 0.; // Amount of occlusion from opacity map layers
+    float layerSize = occlusionLayerSize; // Size of current layer
+    float layerStart = texelFetch(shadowMap, ivec2(uv * textureSize(shadowMap, 0)), 0).r;
+
     for (int layer = 0; layer < 4; layer++)
     {
-        float layerStart = closestDepth + layer*occlusionLayerSize;
-        float t = clamp((currDepth - layerStart) / occlusionLayerSize, 0.0, 1.0);
+        float t = clamp((currDepth - layerStart) / layerSize, 0.0, 1.0);
         occlusion += mix(0, opacityMapValues[layer], t);
+
+        layerStart += layerSize;
+        layerSize *= 2.0;
     }
     return occlusion;
 }

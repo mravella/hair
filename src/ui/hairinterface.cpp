@@ -32,7 +32,8 @@ void HairInterface::connectUserInputs()
     // shadows
     connect(m_ui->shadowCheckBox, SIGNAL(toggled(bool)), this, SLOT(setShadows(bool)));
 
-    // reset button
+    // buttons
+    connect(m_ui->pauseButton, SIGNAL(pressed()), this, SLOT(togglePaused()));
     connect(m_ui->buttonResetSim, SIGNAL(pressed()), this, SLOT(resetSimulation()));
 }
 
@@ -145,4 +146,10 @@ void HairInterface::setHairColorB(int value)
 void HairInterface::setShadows(bool checked)
 {
     m_glWidget->useShadows = checked;
+}
+
+void HairInterface::togglePaused()
+{
+    m_glWidget->paused = !m_glWidget->paused;
+    m_ui->pauseButton->setText(m_glWidget->paused ? "Continue" : "Pause");
 }

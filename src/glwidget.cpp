@@ -246,7 +246,7 @@ void GLWidget::initSimulation()
 
     m_testSimulation = new Simulation(m_lowResMesh);
     m_hairObject = new HairObject(
-                m_lowResMesh, m_hairDensity, ":/images/dude_hairmap.png", m_testSimulation, m_hairObject);
+                m_highResMesh, m_hairDensity, ":/images/dude_hairmap.jpg", m_testSimulation, m_hairObject);
 
     safeDelete(_oldHairObject);
 

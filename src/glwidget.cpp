@@ -11,6 +11,8 @@
 #include "hairshaderprogram.h"
 #include "meshshaderprogram.h"
 #include "hairopacityshaderprogram.h"
+#include "whitemeshshaderprogram.h"
+#include "whitehairshaderprogram.h"
 #include "hairinterface.h"
 #include "meshocttree.h"
 #include "texture.h"
@@ -28,14 +30,29 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     m_lowResMesh = NULL;
     m_hairObject = NULL;
     m_testSimulation = NULL;
-    m_hairProgram = new HairShaderProgram();
-    m_meshProgram = new MeshShaderProgram();
-    m_opacityMapProgram = new HairOpacityShaderProgram();
-    m_noiseTexture = new Texture();
-    m_shadowDepthTexture = new Texture();
-    m_opacityMapTexture = new Texture();
-    m_shadowFramebuffer = new Framebuffer();
-    m_opacityMapFramebuffer = new Framebuffer();
+
+    // Shader programs
+    m_programs = {
+        m_hairProgram = new HairShaderProgram(),
+        m_meshProgram = new MeshShaderProgram(),
+        m_opacityMapProgram = new HairOpacityShaderProgram(),
+        m_whiteHairProgram = new WhiteHairShaderProgram(),
+        m_whiteMeshProgram = new WhiteMeshShaderProgram(),
+    };
+
+    // Textures
+    m_textures = {
+        m_noiseTexture = new Texture(),
+        m_shadowDepthTexture = new Texture(),
+        m_opacityMapTexture = new Texture(),
+    };
+
+    // Framebuffers
+    m_framebuffers = {
+        m_shadowFramebuffer = new Framebuffer(),
+        m_opacityMapFramebuffer = new Framebuffer(),
+    };
+
     m_hairInterface->setGLWidget(this);
 
     // Set up 60 FPS draw loop.
@@ -45,15 +62,17 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
 
 GLWidget::~GLWidget()
 {
+    for (auto program = m_programs.begin(); program != m_programs.end(); ++program)
+        safeDelete(*program);
+    for (auto texture = m_textures.begin(); texture != m_textures.end(); ++texture)
+        safeDelete(*texture);
+    for (auto framebuffer = m_framebuffers.begin(); framebuffer != m_framebuffers.end(); ++framebuffer)
+        safeDelete(*framebuffer);
+
     safeDelete(m_highResMesh);
     safeDelete(m_lowResMesh);
     safeDelete(m_testSimulation);
     safeDelete(m_hairObject);
-    safeDelete(m_hairProgram);
-    safeDelete(m_meshProgram);
-    safeDelete(m_opacityMapTexture);
-    safeDelete(m_opacityMapFramebuffer);
-    safeDelete(m_noiseTexture);
 }
 
 void GLWidget::initializeGL()
@@ -64,9 +83,8 @@ void GLWidget::initializeGL()
     glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
 
     // Initialize shader programs.
-    m_hairProgram->create();
-    m_meshProgram->create();
-    m_opacityMapProgram->create();
+    for (auto program = m_programs.begin(); program != m_programs.end(); ++program)
+        (*program)->create();
 
     // Initialize textures.
     int shadowMapRes = 2048;
@@ -75,11 +93,11 @@ void GLWidget::initializeGL()
     m_opacityMapTexture->createColorTexture(shadowMapRes, shadowMapRes, GL_NEAREST, GL_NEAREST);
 
     // Initialize framebuffers.
-    m_shadowFramebuffer->create();
+    for (auto framebuffer = m_framebuffers.begin(); framebuffer != m_framebuffers.end(); ++framebuffer)
+        (*framebuffer)->create();
     m_shadowFramebuffer->attachDepthTexture(m_shadowDepthTexture->id);
-    m_opacityMapFramebuffer->create();
-    std::vector<GLuint> textures { m_opacityMapTexture->id };
-    m_opacityMapFramebuffer->attachColorTextures(textures);
+    std::vector<GLuint> opacityTextures { m_opacityMapTexture->id };
+    m_opacityMapFramebuffer->attachColorTextures(opacityTextures);
     m_opacityMapFramebuffer->generateDepthBuffer(shadowMapRes, shadowMapRes);
     
     // Initialize simulation.
@@ -127,7 +145,7 @@ void GLWidget::paintGL()
         m_shadowFramebuffer->bind();
         {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            program = m_meshProgram;
+            program = m_whiteMeshProgram;
             {
                 program->bind();
                 program->uniforms.projection = lightProjection;
@@ -138,7 +156,7 @@ void GLWidget::paintGL()
                 m_highResMesh->draw();
             }
 
-            program = m_hairProgram;
+            program = m_whiteHairProgram;
             {
                 program->bind();
                 program->uniforms.noiseTexture = 0;

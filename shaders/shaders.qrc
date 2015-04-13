@@ -10,5 +10,6 @@
         <file>hair.geom</file>
         <file>texturedquad.frag</file>
         <file>texturedquad.vert</file>
+        <file>white.frag</file>
     </qresource>
 </RCC>

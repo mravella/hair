@@ -77,7 +77,9 @@ HEADERS += \
     src/framebuffer.h \
     src/quad.h \
     src/shaderPrograms/hairopacityshaderprogram.h \
-    src/meshocttree.h
+    src/meshocttree.h \
+    src/shaderPrograms/whitemeshshaderprogram.h \
+    src/shaderPrograms/whitehairshaderprogram.h
 
 
 FORMS += src/mainwindow.ui
@@ -92,7 +94,8 @@ OTHER_FILES += \
     shaders/hair.vert \
     shaders/texturedquad.vert \
     shaders/texturedquad.frag \
-    shaders/hairOpacity.frag
+    shaders/hairOpacity.frag \
+    shaders/white.frag
 
 
 RESOURCES += \

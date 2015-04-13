@@ -48,8 +48,17 @@ private:
     HairObject *m_hairObject;
     Simulation *m_testSimulation;
 
-    ShaderProgram *m_hairProgram, *m_meshProgram, *m_opacityMapProgram;
+    std::vector<ShaderProgram*> m_programs;
+    ShaderProgram *m_hairProgram,
+                  *m_meshProgram,
+                  *m_opacityMapProgram,
+                  *m_whiteMeshProgram,
+                  *m_whiteHairProgram;
+
+    std::vector<Texture*> m_textures;
     Texture *m_noiseTexture, *m_shadowDepthTexture, *m_opacityMapTexture;
+
+    std::vector<Framebuffer*> m_framebuffers;
     Framebuffer *m_shadowFramebuffer, *m_opacityMapFramebuffer;
 
     // Camera parameters

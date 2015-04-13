@@ -60,13 +60,13 @@ HairObject::HairObject(
             // Generate random point on triangle.
             glm::vec3 pos; glm::vec2 uv; glm::vec3 normal;
             t.randPoint(pos, uv, normal);
-            uv = glm::min(uv, glm::vec2(0.999)); // Make UV in range [0,1) instead of [0,1]
+            uv = glm::vec2(MIN(uv.x, 0.999), MIN(uv.y, 0.999)); // Make UV in range [0,1) instead of [0,1]
 
             // If hair growth map is black, skip this hair.
             QColor hairGrowth = QColor(image.pixel(uv.x * image.width(), (1 - uv.y) * image.height()));
             if (hairGrowth.value() == 0) continue;
 
-            m_guideHairs.append(new Hair(20, 1, pos, normal));
+            m_guideHairs.append(new Hair(20, 0.4, pos, normal));
         }
     }
     

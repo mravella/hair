@@ -39,6 +39,9 @@ using std::endl;
 using std::max;
 using std::min;
 
+
+
+
 struct Triangle {
     Triangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3,
              glm::vec2 uv1, glm::vec2 uv2, glm::vec2 uv3,
@@ -90,6 +93,13 @@ struct Triangle {
     }
 
 };
+
+inline bool operator==(const Triangle& lhs, const Triangle& rhs){
+    if (lhs.v1 != rhs.v1) return false;
+    if (lhs.v2 != rhs.v2) return false;
+    if (lhs.v3 != rhs.v3) return false;
+    return true;
+}
 
 struct HairVertex
 {

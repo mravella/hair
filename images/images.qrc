@@ -5,5 +5,8 @@
         <file>white.jpg</file>
         <file>headHair.jpg</file>
         <file>noise128.jpg</file>
+        <file>dude_hairmap.jpg</file>
+        <file>dude_hairmap_inv.jpg</file>
+        <file>dude_hairmap.png</file>
     </qresource>
 </RCC>

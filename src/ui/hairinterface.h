@@ -31,6 +31,8 @@ public slots:
     void setHairColorR(int);
     void setHairColorG(int);
     void setHairColorB(int);
+    void setShadows(bool);
+    void togglePaused();
 
 private:
     void connectUserInputs();

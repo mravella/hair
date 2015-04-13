@@ -5,6 +5,8 @@
 #include "openglshape.h"
 #include <limits>
 
+class MeshOctTree;
+
 class ObjMesh
 {
 public:
@@ -27,6 +29,8 @@ private:
 
     glm::vec3 m_min = glm::vec3(std::numeric_limits<float>::max());
     glm::vec3 m_max = glm::vec3(std::numeric_limits<float>::min());
+
+    MeshOctTree *m_octTree;
 
 };
 

@@ -1,12 +1,13 @@
-#ifndef HAIRSHADERPROGRAM_H
-#define HAIRSHADERPROGRAM_H
+#ifndef HAIROPACITYSHADERPROGRAM_H
+#define HAIROPACITYSHADERPROGRAM_H
 
+#include "hairCommon.h"
 #include "shaderprogram.h"
 
-class HairShaderProgram : public ShaderProgram
+class HairOpacityShaderProgram : public ShaderProgram
 {
 public:
-    HairShaderProgram() {
+    HairOpacityShaderProgram() {
         // Default uniform values.
         uniforms.numGroupHairs = 1;
         uniforms.hairGroupSpread = 0.15f;
@@ -27,4 +28,4 @@ protected:
 
 };
 
-#endif // HAIRSHADERPROGRAM_H
+#endif // HAIROPACITYSHADERPROGRAM_H

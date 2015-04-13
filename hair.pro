@@ -51,7 +51,8 @@ SOURCES += \
     src/texture.cpp \
     src/framebuffer.cpp \
     src/quad.cpp \
-    src/shaderPrograms/hairopacityshaderprogram.cpp
+    src/shaderPrograms/hairopacityshaderprogram.cpp \
+    src/meshocttree.cpp
 
 
 HEADERS += \
@@ -75,7 +76,8 @@ HEADERS += \
     src/texture.h \
     src/framebuffer.h \
     src/quad.h \
-    src/shaderPrograms/hairopacityshaderprogram.h
+    src/shaderPrograms/hairopacityshaderprogram.h \
+    src/meshocttree.h
 
 
 FORMS += src/mainwindow.ui

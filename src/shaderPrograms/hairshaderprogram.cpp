@@ -9,6 +9,30 @@ GLuint HairShaderProgram::createShaderProgram()
                 ":/shaders/hair.tcs", ":/shaders/hair.tes");
 }
 
+std::vector<GLchar const *> HairShaderProgram::getUniformNames()
+{
+    std::vector<GLchar const *> uniformNames {
+        "model",
+        "view",
+        "projection",
+        "numPatchHairs",
+        "numHairSegments",
+        "numSplineVertices",
+        "vertexData",
+        "hairGroupSpread",
+        "hairRadius",
+        "taperExponent",
+        "noiseAmplitude",
+        "triangleFace",
+        "color",
+        "lightPosition",
+        "eyeToLight",
+        "shadowMap",
+        "noiseTexture",
+    };
+    return uniformNames;
+}
+
 void HairShaderProgram::setGlobalUniforms()
 {
     setUniformMatrix4f("view", uniforms.view);
@@ -16,9 +40,7 @@ void HairShaderProgram::setGlobalUniforms()
     setUniformMatrix4f("eyeToLight", uniforms.eyeToLight);
     setUniform3f("lightPosition", uniforms.lightPosition);
     setUniform1i("shadowMap", uniforms.shadowMap);
-    setUniform1i("opacityMap", uniforms.opacityMap);
     setUniform1i("noiseTexture", uniforms.noiseTexture);
-    setUniform1f("shadowIntensity", uniforms.shadowIntensity);
 }
 
 void HairShaderProgram::setPerObjectUniforms()

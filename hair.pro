@@ -50,9 +50,7 @@ SOURCES += \
     src/shaderPrograms/texturedquadshaderprogram.cpp \
     src/texture.cpp \
     src/framebuffer.cpp \
-    src/quad.cpp \
-    src/shaderPrograms/hairopacityshaderprogram.cpp \
-    src/meshocttree.cpp
+    src/quad.cpp
 
 
 HEADERS += \
@@ -75,9 +73,7 @@ HEADERS += \
     src/shaderPrograms/texturedquadshaderprogram.h \
     src/texture.h \
     src/framebuffer.h \
-    src/quad.h \
-    src/shaderPrograms/hairopacityshaderprogram.h \
-    src/meshocttree.h
+    src/quad.h
 
 
 FORMS += src/mainwindow.ui
@@ -91,8 +87,7 @@ OTHER_FILES += \
     shaders/hair.tes \
     shaders/hair.vert \
     shaders/texturedquad.vert \
-    shaders/texturedquad.frag \
-    shaders/hairOpacity.frag
+    shaders/texturedquad.frag
 
 
 RESOURCES += \

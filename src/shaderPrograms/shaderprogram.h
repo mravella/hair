@@ -37,10 +37,6 @@ struct Uniforms {
     int noiseTexture;
 
     int shadowMap;
-
-    int opacityMap;
-
-    float shadowIntensity; // Controls the shadow darkness
 };
 
 class ShaderProgram
@@ -73,6 +69,9 @@ protected:
     // Calls one of the program creation functions in ResourceLoader, and returns the program ID.
     virtual GLuint createShaderProgram() = 0;
 
+    // Returns a list of all uniforms used in the shader program.
+    virtual std::vector<GLchar const *> getUniformNames() = 0;
+
     void setUniform1i(GLchar const *name, int value);
     void setUniform1f(GLchar const *name, float value);
     void setUniform3f(GLchar const *name, glm::vec3 &value);
@@ -82,8 +81,6 @@ protected:
     std::map<std::string, int> m_uniformLocs;
 
 private:
-    GLint getUniformLocation(GLchar const *name);
-
     bool m_created = false;
 };
 

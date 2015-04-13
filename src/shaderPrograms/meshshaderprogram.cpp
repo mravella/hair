@@ -8,15 +8,21 @@ GLuint MeshShaderProgram::createShaderProgram()
     return ResourceLoader::createBasicShaderProgram(":/shaders/mesh.vert", ":/shaders/mesh.frag");
 }
 
+std::vector<GLchar const *> MeshShaderProgram::getUniformNames()
+{
+    std::vector<GLchar const *> uniformNames {
+        "model",
+        "view",
+        "projection",
+        "lightPosition"
+    };
+    return uniformNames;
+}
 void MeshShaderProgram::setGlobalUniforms()
 {
     setUniformMatrix4f("projection", uniforms.projection);
     setUniformMatrix4f("view", uniforms.view);
-    setUniformMatrix4f("eyeToLight", uniforms.eyeToLight);
-    setUniform1i("shadowMap", uniforms.shadowMap);
-    setUniform1i("opacityMap", uniforms.opacityMap);
     setUniform3f("lightPosition", uniforms.lightPosition);
-    setUniform1f("shadowIntensity", uniforms.shadowIntensity);
 }
 
 void MeshShaderProgram::setPerObjectUniforms()

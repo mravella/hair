@@ -31,9 +31,9 @@ public:
     void setAttributes(HairObject *_oldObject);
     void setAttributes(
             glm::vec3 _color = glm::vec3(.6f, .4f, .3f),
-            int _numGroupHairs = 64,
-            float _hairGroupSpread = 0.2,
-            float _hairRadius = 0.004f,
+            int _numGroupHairs = 15,
+            float _hairGroupSpread = 0.15,
+            float _hairRadius = 0.005f,
             float _noiseAmplitude = 0.1f,
             int _numSplineVertices = 20);
     

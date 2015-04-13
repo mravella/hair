@@ -13,6 +13,8 @@ public:
 protected:
     virtual GLuint createShaderProgram() override;
 
+    virtual std::vector<GLchar const *> getUniformNames() override;
+
 };
 
 #endif // MESHSHADERPROGRAM_H

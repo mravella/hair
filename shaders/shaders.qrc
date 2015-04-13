@@ -3,7 +3,6 @@
         <file>mesh.frag</file>
         <file>mesh.vert</file>
         <file>hair.frag</file>
-        <file>hairOpacity.frag</file>
         <file>hair.vert</file>
         <file>hair.tcs</file>
         <file>hair.tes</file>

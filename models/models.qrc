@@ -4,7 +4,5 @@
         <file>sphere.obj</file>
         <file>head.obj</file>
         <file>headLowRes.obj</file>
-        <file>dude_highres.obj</file>
-        <file>dude_lowres.obj</file>
     </qresource>
 </RCC>

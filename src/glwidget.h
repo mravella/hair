@@ -24,9 +24,6 @@ public:
 
     void resetSimulation();
 
-    bool useShadows = true;
-    bool paused = false;
-
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -48,9 +45,9 @@ private:
     HairObject *m_hairObject;
     Simulation *m_testSimulation;
 
-    ShaderProgram *m_hairProgram, *m_meshProgram, *m_opacityMapProgram;
-    Texture *m_noiseTexture, *m_shadowDepthTexture, *m_opacityMapTexture;
-    Framebuffer *m_shadowFramebuffer, *m_opacityMapFramebuffer;
+    ShaderProgram *m_hairProgram, *m_meshProgram;
+    Texture *m_noiseTexture, *m_shadowDepthTexture;
+    Framebuffer *m_shadowFramebuffer;
 
     // Camera parameters
     glm::mat4 m_projection, m_view;

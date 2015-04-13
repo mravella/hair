@@ -92,9 +92,9 @@ vec3 shiftedSpline(in vec2 tessCoord)
 
     // Noise texure
     tessCoord *= 0.4;
-    pos.x += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy).r);
-    pos.y += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy + .1).r);
-    pos.z += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy + .2).r);
+    pos.x += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy).r) * 0.5;
+    pos.y += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy + .1).r) * 0.5;
+    pos.z += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy + .2).r) * 0.5;
 
     return pos;
 }

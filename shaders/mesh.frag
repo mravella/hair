@@ -61,7 +61,7 @@ float getTransmittance(vec4 p)
 void main(){
     vec4 toLight = vec4(lightPosition, 1.0) - position_v;
     float diffuse = dot(normalize(toLight), normalize(normal_v));
-    fragColor = vec3(0.2 + 0.3 * diffuse);
+    fragColor = vec3(0.2 + 0.3 * diffuse) * vec3(221.0, 211.0, 242.0) / 255.0 * 1.3;
 
     fragColor *= getTransmittance(eyeToLight * view * position_v);
 }

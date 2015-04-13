@@ -71,7 +71,7 @@ void main()
     
     float specular = pow(sqrt(1. - abs(dot(tangent_N, h_N))), 40.);
     
-    fragColor = color * vec3(diffuse + specular);
+    fragColor = color * vec3(diffuse + 0.5 * specular);
 
     fragColor *= getTransmittance(eyeToLight * position_g);
 }

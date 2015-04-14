@@ -33,7 +33,7 @@ public:
             glm::vec3 _color = glm::vec3(.6f, .4f, .3f),
             int _numGroupHairs = 64,
             float _hairGroupSpread = 0.2,
-            float _hairRadius = 0.0025f,
+            float _hairRadius = 0.004f,
             float _noiseAmplitude = 0.1f,
             int _numSplineVertices = 20);
     

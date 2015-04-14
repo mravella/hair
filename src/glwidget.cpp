@@ -35,7 +35,7 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     m_programs = {
         m_hairProgram = new HairShaderProgram(),
         m_meshProgram = new MeshShaderProgram(),
-        m_hairOpacityProgram = new HairOpacityShaderProgram(),
+        m_opacityMapProgram = new HairOpacityShaderProgram(),
         m_whiteHairProgram = new WhiteHairShaderProgram(),
         m_whiteMeshProgram = new WhiteMeshShaderProgram(),
     };
@@ -43,15 +43,13 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     // Textures
     m_textures = {
         m_noiseTexture = new Texture(),
-        m_hairDepthTexture = new Texture(),
-        m_meshDepthTexture = new Texture(),
+        m_shadowDepthTexture = new Texture(),
         m_opacityMapTexture = new Texture(),
     };
 
     // Framebuffers
     m_framebuffers = {
-        m_hairShadowFramebuffer = new Framebuffer(),
-        m_meshShadowFramebuffer = new Framebuffer(),
+        m_shadowFramebuffer = new Framebuffer(),
         m_opacityMapFramebuffer = new Framebuffer(),
     };
 
@@ -91,15 +89,13 @@ void GLWidget::initializeGL()
     // Initialize textures.
     int shadowMapRes = 2048;
     m_noiseTexture->create(":/images/noise128.jpg", GL_LINEAR, GL_LINEAR);
-    m_hairDepthTexture->createDepthTexture(shadowMapRes, shadowMapRes);
-    m_meshDepthTexture->createDepthTexture(shadowMapRes, shadowMapRes);
+    m_shadowDepthTexture->createDepthTexture(shadowMapRes, shadowMapRes);
     m_opacityMapTexture->createColorTexture(shadowMapRes, shadowMapRes, GL_NEAREST, GL_NEAREST);
 
     // Initialize framebuffers.
     for (auto framebuffer = m_framebuffers.begin(); framebuffer != m_framebuffers.end(); ++framebuffer)
         (*framebuffer)->create();
-    m_hairShadowFramebuffer->attachDepthTexture(m_hairDepthTexture->id);
-    m_meshShadowFramebuffer->attachDepthTexture(m_meshDepthTexture->id);
+    m_shadowFramebuffer->attachDepthTexture(m_shadowDepthTexture->id);
     std::vector<GLuint> opacityTextures { m_opacityMapTexture->id };
     m_opacityMapFramebuffer->attachColorTextures(opacityTextures);
     m_opacityMapFramebuffer->generateDepthBuffer(shadowMapRes, shadowMapRes);
@@ -118,6 +114,8 @@ void GLWidget::paintGL()
 {
     ErrorChecker::printGLErrors("start of paintGL");
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     float time = m_increment++ / (float) m_targetFPS;      // Time in seconds.
 
     if (!paused)
@@ -135,36 +133,16 @@ void GLWidget::paintGL()
 
     // Bind textures.
     m_noiseTexture->bind(GL_TEXTURE0);
-    m_hairDepthTexture->bind(GL_TEXTURE1);
+    m_shadowDepthTexture->bind(GL_TEXTURE1);
     m_opacityMapTexture->bind(GL_TEXTURE2);
-    m_meshDepthTexture->bind(GL_TEXTURE3);
 
     ShaderProgram *program;
 
     if (useShadows)
     {
-        // Render hair shadow map.
-        glViewport(0, 0, m_hairDepthTexture->width(), m_hairDepthTexture->height());
-        m_hairShadowFramebuffer->bind();
-        {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            program = m_whiteHairProgram;
-            {
-                program->bind();
-                program->uniforms.noiseTexture = 0;
-                program->uniforms.hairShadowMap = 1;
-                program->uniforms.projection = lightProjection;
-                program->uniforms.view = lightView;
-                program->uniforms.model = model;
-                program->uniforms.eyeToLight = eyeToLight;
-                program->uniforms.lightPosition = lightPosition;
-                program->setGlobalUniforms();
-                m_hairObject->paint(program);
-            }
-        }
-
-        // Render mesh shadow map.
-        m_meshShadowFramebuffer->bind();
+        // Render shadow map.
+        glViewport(0, 0, m_shadowDepthTexture->width(), m_shadowDepthTexture->height());
+        m_shadowFramebuffer->bind();
         {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             program = m_whiteMeshProgram;
@@ -177,24 +155,38 @@ void GLWidget::paintGL()
                 program->setPerObjectUniforms();
                 m_highResMesh->draw();
             }
+
+            program = m_whiteHairProgram;
+            {
+                program->bind();
+                program->uniforms.noiseTexture = 0;
+                program->uniforms.shadowMap = 1;
+                program->uniforms.opacityMap = 2;
+                program->uniforms.projection = lightProjection;
+                program->uniforms.view = lightView;
+                program->uniforms.model = model;
+                program->uniforms.eyeToLight = eyeToLight;
+                program->uniforms.lightPosition = lightPosition;
+                program->setGlobalUniforms();
+                m_hairObject->paint(program);
+            }
         }
-        m_meshShadowFramebuffer->unbind();
+        m_shadowFramebuffer->unbind();
 
         // Render opacity map.
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         glBlendEquation(GL_FUNC_ADD);
-        glViewport(0, 0, m_hairDepthTexture->width(), m_hairDepthTexture->height());
+        glViewport(0, 0, m_shadowDepthTexture->width(), m_shadowDepthTexture->height());
         m_opacityMapFramebuffer->bind();
         {
-            glClearColor(0.f, 0.f, 0.f, 0.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            program = m_hairOpacityProgram;
+            program = m_opacityMapProgram;
             {
                 program->bind();
                 program->uniforms.noiseTexture = 0;
-                program->uniforms.hairShadowMap = 1;
+                program->uniforms.shadowMap = 1;
                 program->uniforms.projection = lightProjection;
                 program->uniforms.view = lightView;
                 program->uniforms.model = model;
@@ -211,23 +203,19 @@ void GLWidget::paintGL()
     } // if useShadows
 
     // Render hair.
-    glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glViewport(0, 0, width(), height());
     program = m_hairProgram;
     {
         program->bind();
         program->uniforms.noiseTexture = 0;
-        program->uniforms.hairShadowMap = 1;
+        program->uniforms.shadowMap = 1;
         program->uniforms.opacityMap = 2;
-        program->uniforms.meshShadowMap = 3;
         program->uniforms.projection = m_projection;
         program->uniforms.view = m_view;
         program->uniforms.model = model;
         program->uniforms.eyeToLight = eyeToLight;
         program->uniforms.lightPosition = lightPosition;
-        program->uniforms.shadowIntensity = 15;
-        program->uniforms.useShadows = useShadows;
+        program->uniforms.shadowIntensity = useShadows ? 1.2 : 0;
         program->setGlobalUniforms();
         m_hairObject->paint(program);
     }
@@ -236,16 +224,14 @@ void GLWidget::paintGL()
     program = m_meshProgram;
     {
         program->bind();
-        program->uniforms.hairShadowMap = 1;
+        program->uniforms.shadowMap = 1;
         program->uniforms.opacityMap = 2;
-        program->uniforms.meshShadowMap = 3;
         program->uniforms.projection = m_projection;
         program->uniforms.view = m_view;
         program->uniforms.model = model;
         program->uniforms.lightPosition = lightPosition;
         program->uniforms.eyeToLight = eyeToLight;
-        program->uniforms.shadowIntensity = 15;
-        program->uniforms.useShadows = useShadows;
+        program->uniforms.shadowIntensity = useShadows ? 0.8 : 0;
         program->setGlobalUniforms();
         program->setPerObjectUniforms();
         m_highResMesh->draw();
@@ -253,9 +239,8 @@ void GLWidget::paintGL()
 
     // Clean up.
     program->unbind();
-    m_meshDepthTexture->unbind(GL_TEXTURE3);
     m_opacityMapTexture->unbind(GL_TEXTURE2);
-    m_hairDepthTexture->unbind(GL_TEXTURE1);
+    m_shadowDepthTexture->unbind(GL_TEXTURE1);
     m_noiseTexture->unbind(GL_TEXTURE0);
 
     // Update UI.
@@ -272,14 +257,14 @@ void GLWidget::initSimulation()
     HairObject *_oldHairObject = m_hairObject;
 
     m_highResMesh = new ObjMesh();
-    m_highResMesh->init(":/models/head.obj");
+    m_highResMesh->init(":/models/sphere.obj");
 
     m_lowResMesh = new ObjMesh();
-    m_lowResMesh->init(":/models/headLowRes.obj", 1.1);
+    m_lowResMesh->init(":/models/sphere.obj", 1.1);
 
     m_testSimulation = new Simulation(m_lowResMesh);
     m_hairObject = new HairObject(
-                m_highResMesh, m_hairDensity, ":/images/headHair.jpg", m_testSimulation, m_hairObject);
+                m_highResMesh, m_hairDensity, ":/images/lower.png", m_testSimulation, m_hairObject);
 
     safeDelete(_oldHairObject);
 

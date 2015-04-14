@@ -15,13 +15,10 @@ void HairShaderProgram::setGlobalUniforms()
     setUniformMatrix4f("projection", uniforms.projection);
     setUniformMatrix4f("eyeToLight", uniforms.eyeToLight);
     setUniform3f("lightPosition", uniforms.lightPosition);
-    setUniform1i("hairShadowMap", uniforms.hairShadowMap);
-    setUniform1i("meshShadowMap", uniforms.meshShadowMap);
+    setUniform1i("shadowMap", uniforms.shadowMap);
     setUniform1i("opacityMap", uniforms.opacityMap);
     setUniform1i("noiseTexture", uniforms.noiseTexture);
     setUniform1f("shadowIntensity", uniforms.shadowIntensity);
-    setUniform1f("occlusionLayerSize", uniforms.occlusionLayerSize);
-    setUniform1i("useShadows", uniforms.useShadows);
 }
 
 void HairShaderProgram::setPerObjectUniforms()

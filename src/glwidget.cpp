@@ -244,7 +244,7 @@ void GLWidget::paintGL()
         program->uniforms.model = model;
         program->uniforms.lightPosition = lightPosition;
         program->uniforms.eyeToLight = eyeToLight;
-        program->uniforms.shadowIntensity = 10;
+        program->uniforms.shadowIntensity = 15;
         program->uniforms.useShadows = useShadows;
         program->setGlobalUniforms();
         program->setPerObjectUniforms();

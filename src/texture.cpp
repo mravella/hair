@@ -27,9 +27,9 @@ void Texture::createColorTexture(int width, int height, GLint magFilter, GLint m
     _create(0, GL_RGBA, width, height, GL_RGBA, GL_UNSIGNED_BYTE, magFilter, minFilter);
 }
 
-void Texture::createDepthTexture(int width, int height)
+void Texture::createDepthTexture(int width, int height, GLint magFilter, GLint minFilter)
 {
-    _create(0, GL_DEPTH_COMPONENT16, width, height, GL_DEPTH_COMPONENT, GL_FLOAT, GL_NEAREST, GL_NEAREST);
+    _create(0, GL_DEPTH_COMPONENT16, width, height, GL_DEPTH_COMPONENT, GL_FLOAT, magFilter, minFilter);
     bind(GL_TEXTURE0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);

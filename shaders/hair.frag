@@ -9,7 +9,7 @@ uniform vec3 color;
 uniform mat4 view;
 uniform vec3 lightPosition;
 uniform sampler2D hairShadowMap;
-uniform sampler2D meshShadowMap;
+uniform sampler2DShadow meshShadowMap;
 uniform sampler2D opacityMap;
 uniform mat4 eyeToLight;
 uniform float shadowIntensity;
@@ -17,6 +17,8 @@ uniform float occlusionLayerSize;
 uniform bool useShadows;
 
 float currDepth;
+
+const vec4 FILL_LIGHT_POS = vec4(-2.0, 1.0, -1.0, 1.0);
 
 // Samples all layers of the opacity map at the given UV coordinates. Returns a
 // number corresponding to the amount of occlusion from other hair fragments.
@@ -60,30 +62,30 @@ float getTransmittance(vec4 p)
     float s4 = occlusionSample(uv + texelSize * offset.yy);
     float occlusion = mix( mix(s1, s2, f.y), mix(s3, s4, f.y), f.x );
 
-    ivec2 iUV = ivec2(size * uv);
-    s1 = step(currDepth, texelFetch(meshShadowMap, iUV + offset.xx, 0).r);
-    s2 = step(currDepth, texelFetch(meshShadowMap, iUV + offset.xy, 0).r);
-    s3 = step(currDepth, texelFetch(meshShadowMap, iUV + offset.yx, 0).r);
-    s4 = step(currDepth, texelFetch(meshShadowMap, iUV + offset.yy, 0).r);
-    float meshVisibility = mix( mix(s1, s2, f.y), mix(s3, s4, f.y), f.x );
+    float meshVisibility = texture(meshShadowMap, shadowCoord.xyz);
 
     float transmittance = exp(- shadowIntensity * occlusion) * mix(0.2, 1.0, meshVisibility);
     return mix(1.0, transmittance, useShadows);
 }
 
-void main()
+vec3 colorContribution(vec4 lightPosition_ES)
 {
-    vec4 toLight_N = normalize((view * vec4(lightPosition, 1.)) - position_g);
+    vec4 toLight_N = normalize(view * lightPosition_ES - position_g);
     vec3 tangent_N = normalize(tangent_g);
-    
-    float diffuse = sqrt(1. - abs(dot(tangent_N, toLight_N.xyz)));
-
     vec3 toEye_N = normalize(-position_g.xyz);
     vec3 h_N = normalize(toEye_N + toLight_N.xyz);
-    
-    float specular = pow(sqrt(1. - abs(dot(tangent_N, h_N))), 40.);
-    
-    fragColor = color * (diffuse + 0.5 * specular);
+    float diffuse = sqrt(1. - abs(dot(tangent_N, toLight_N.xyz)));
 
+    float specular = pow(sqrt(1. - abs(dot(tangent_N, h_N))), 40.);
+    return (diffuse + 0.5 * specular) * color;
+}
+
+void main()
+{
+    // Key light
+    fragColor = colorContribution((view * vec4(lightPosition, 1.)));
     fragColor *= getTransmittance(eyeToLight * position_g);
+
+    // Fill light
+    fragColor += 0.4 * colorContribution(view * FILL_LIGHT_POS);
 }

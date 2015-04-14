@@ -91,8 +91,8 @@ void GLWidget::initializeGL()
     // Initialize textures.
     int shadowMapRes = 2048;
     m_noiseTexture->create(":/images/noise128.jpg", GL_LINEAR, GL_LINEAR);
-    m_hairDepthTexture->createDepthTexture(shadowMapRes, shadowMapRes);
-    m_meshDepthTexture->createDepthTexture(shadowMapRes, shadowMapRes);
+    m_hairDepthTexture->createDepthTexture(shadowMapRes, shadowMapRes, GL_NEAREST, GL_NEAREST);
+    m_meshDepthTexture->createDepthTexture(shadowMapRes, shadowMapRes, GL_LINEAR, GL_LINEAR);
     m_opacityMapTexture->createColorTexture(shadowMapRes, shadowMapRes, GL_NEAREST, GL_NEAREST);
 
     // Initialize framebuffers.
@@ -118,7 +118,8 @@ void GLWidget::paintGL()
 {
     ErrorChecker::printGLErrors("start of paintGL");
 
-    float time = m_increment++ / (float) m_targetFPS;      // Time in seconds.
+    m_increment++;
+    float time = m_increment / (float) m_targetFPS;      // Time in seconds.
 
     if (!paused)
     {
@@ -128,7 +129,7 @@ void GLWidget::paintGL()
 
     glm::mat4 model = glm::mat4(1.f);
     model = m_testSimulation->m_xform;
-    glm::vec3 lightPosition = glm::vec3(2, 1, 3);
+    glm::vec3 lightPosition = glm::vec3(1, 2, 4);
     glm::mat4 lightProjection = glm::perspective(1.3f, 1.f, .1f, 100.f);
     glm::mat4 lightView = glm::lookAt(lightPosition, glm::vec3(0), glm::vec3(0,1,0));
     glm::mat4 eyeToLight = lightProjection * lightView * glm::inverse(m_view);
@@ -278,6 +279,7 @@ void GLWidget::initSimulation()
     m_lowResMesh->init(":/models/headLowRes.obj", 1.1);
 
     m_testSimulation = new Simulation(m_lowResMesh);
+
     m_hairObject = new HairObject(
                 m_highResMesh, m_hairDensity, ":/images/headHair.jpg", m_testSimulation, m_hairObject);
 

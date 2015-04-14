@@ -2,19 +2,22 @@
 
 in vec4 position_v;
 in vec4 normal_v;
+in vec4 OS_position;
 
 out vec3 fragColor;
 
 uniform vec3 lightPosition;
 uniform mat4 view, eyeToLight;
 uniform sampler2D hairShadowMap;
-uniform sampler2D meshShadowMap;
+uniform sampler2DShadow meshShadowMap;
 uniform sampler2D opacityMap;
 uniform float shadowIntensity;
 uniform float occlusionLayerSize;
 uniform bool useShadows;
 
-const vec3 MESH_COLOR = vec3(221.0, 211.0, 242.0) / 255.0;
+const vec3 MESH_COLOR = vec3(221.0, 211.0, 238.0) / 255.0;
+
+const vec4 FILL_LIGHT_POS = vec4(-2.0, 1.0, 1.0, 1.0);
 
 float currDepth;
 
@@ -45,7 +48,7 @@ float getTransmittance(vec4 p)
 {
     vec4 shadowCoord = (p / p.w + 1.0) / 2.0;
     vec2 uv = shadowCoord.xy;
-    currDepth = shadowCoord.z - 0.001;
+    currDepth = shadowCoord.z - 0.0001;
 
     vec2 size = textureSize(hairShadowMap, 0); // Size of texture (e.g. 1024, 1024)
     vec2 texelSize = vec2(1.) / size; // Size of texel (e.g. 1/1024, 1/1024)
@@ -60,21 +63,26 @@ float getTransmittance(vec4 p)
     float s4 = occlusionSample(uv + texelSize * offset.yy);
     float occlusion = mix( mix(s1, s2, f.y), mix(s3, s4, f.y), f.x );
 
-    ivec2 iUV = ivec2(size * uv);
-    s1 = step(currDepth, texelFetch(meshShadowMap, iUV + offset.xx, 0).r);
-    s2 = step(currDepth, texelFetch(meshShadowMap, iUV + offset.xy, 0).r);
-    s3 = step(currDepth, texelFetch(meshShadowMap, iUV + offset.yx, 0).r);
-    s4 = step(currDepth, texelFetch(meshShadowMap, iUV + offset.yy, 0).r);
-    float meshVisibility = mix( mix(s1, s2, f.y), mix(s3, s4, f.y), f.x );
+    shadowCoord.z -= 0.0005;
+    float meshVisibility = texture(meshShadowMap, shadowCoord.xyz);
 
-    float transmittance = exp(- shadowIntensity * occlusion) * mix(0.2, 1.0, meshVisibility);
+    float transmittance = exp(- shadowIntensity * occlusion) * mix(0.5, 1.0, meshVisibility);
     return mix(1.0, transmittance, useShadows);
 }
 
-void main(){
-    vec4 toLight = vec4(lightPosition, 1.0) - position_v;
-    float diffuse = dot(normalize(toLight), normalize(normal_v));
-    fragColor = (0.2 + 0.3 * diffuse) * MESH_COLOR;
+vec3 colorContribution(vec4 lightPosition_WS)
+{
+    vec4 toLight = lightPosition_WS - position_v;
+    vec4 normal_N = normalize(normal_v);
+    float diffuse = max(0.f, dot(normalize(toLight), normal_N));
+    return (0.2 + 0.3 * diffuse) * MESH_COLOR;
+}
 
+void main(){
+    // Key light
+    fragColor = colorContribution(vec4(lightPosition, 1.0));
     fragColor *= getTransmittance(eyeToLight * view * position_v);
+
+    // Fill light
+    fragColor += 0.4 * colorContribution(FILL_LIGHT_POS);
 }

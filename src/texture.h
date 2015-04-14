@@ -19,7 +19,7 @@ public:
     // Creates a black texture with the given width and height.
     void createColorTexture(int width, int height, GLint magFilter, GLint minFilter);
 
-    void createDepthTexture(int width, int height);
+    void createDepthTexture(int width, int height, GLint magFilter, GLint minFilter);
 
     void bind(GLenum textureUnit);
 

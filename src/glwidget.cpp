@@ -164,7 +164,7 @@ void GLWidget::paintGL()
                 program->uniforms.opacityMap = 2;
                 program->uniforms.projection = lightProjection;
                 program->uniforms.view = lightView;
-                program->uniforms.model = glm::mat4(1.0);
+                program->uniforms.model = model;
                 program->uniforms.eyeToLight = eyeToLight;
                 program->uniforms.lightPosition = lightPosition;
                 program->setGlobalUniforms();

@@ -109,6 +109,7 @@ struct HairVertex
     glm::vec3 forces;
     glm::vec3 correctionVector;
     glm::vec3 startPosition;
+    glm::vec3 prevPos;
     double    theta;
     double    omega;
     float    segLen;
@@ -119,6 +120,7 @@ struct HairVertex
     {
         position = glm::vec3(0.0);
         velocity = glm::vec3(0.0);
+        prevPos = glm::vec3(0.0);
         omega = 0.0;
         theta = 0.0;
         segLen = 0.0;
@@ -135,6 +137,7 @@ struct HairVertex
         position = x;
         tempPos = x;
         startPosition = x;
+        prevPos = x;
         velocity = glm::vec3(0.0);
         omega = 0.0;
         theta = 0.0;

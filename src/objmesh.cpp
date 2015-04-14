@@ -7,6 +7,8 @@
 
 #include "meshocttree.h"
 
+#define _ELLIPSOID_COLISIONS_ true
+
 ObjMesh::ObjMesh()
 {
 }
@@ -47,8 +49,8 @@ void ObjMesh::init(const char *objFile, float scale)
         vboData.push_back(normals[i].z);
 
         // Set object boundaries.
-        m_min = glm::min(m_min, vertices[i]);
-        m_max = glm::max(m_max, vertices[i]);
+        m_min = glm::min(m_min, scale * vertices[i]);
+        m_max = glm::max(m_max, scale * vertices[i]);
     }
 
     m_shape.create();
@@ -70,6 +72,16 @@ void ObjMesh::draw()
  */
 bool ObjMesh::contains(glm::vec3 &normal, glm::vec3 ro)
 {
+#if _ELLIPSOID_COLISIONS_
+#define SQV(v) glm::pow(v, glm::vec3(2.f))
+#define SUM(v) glm::dot(v, glm::vec3(1.f))
+
+    normal = glm::normalize(ro / SQV(m_max));
+    return SUM(SQV(ro/m_max)) < 1;
+
+#undef SUM
+#undef SQV
+#else
     // Return false if point is outside bounding cube.
     if (glm::any(glm::lessThan(ro, m_min)) || glm::any(glm::greaterThan(ro, m_max)))
         return false;
@@ -95,4 +107,5 @@ bool ObjMesh::contains(glm::vec3 &normal, glm::vec3 ro)
         }
     }
     return (numIntersections % 2);
+#endif
 }

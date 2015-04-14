@@ -3,11 +3,15 @@
 
 #include "hairCommon.h"
 #include "openglshape.h"
+#include "worker.h"
+#include <QThread>
+#include <QtCore>
 #include <limits>
+#include <omp.h>
 
 class MeshOctTree;
 
-class ObjMesh
+class ObjMesh : public QObject
 {
 public:
     ObjMesh();

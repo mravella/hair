@@ -4,6 +4,7 @@
 #include "hairCommon.h"
 #include "integrator.h"
 #include "objmesh.h"
+#include <omp.h>
 
 class HairObject;
 

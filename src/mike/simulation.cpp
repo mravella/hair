@@ -49,6 +49,7 @@ void Simulation::simulate(HairObject *_object)
 
 void Simulation::moveObjects(HairObject *_object)
 {
+#pragma omp parallel for schedule(dynamic)
     for (int i = 0; i < _object->m_guideHairs.size(); ++i)
     {
         for (int j = 0; j < _object->m_guideHairs.at(j)->m_vertices.size(); ++j)
@@ -57,7 +58,7 @@ void Simulation::moveObjects(HairObject *_object)
         }
     }
     m_xform = glm::rotate((float) sin(m_time), glm::vec3(0, 1, 0));
-//    m_xform = glm::translate(glm::mat4(1.0), glm::vec3(sin(m_time), 0.0 , cos(m_time)));
+    m_xform = glm::translate(m_xform, glm::vec3(sin(m_time), 0.0 , sin(m_time)));
 //    float x = CLAMP(fabs(sin(m_time)), 0.5, 1.0); m_xform = glm::scale(glm::mat4(1.0), glm::vec3(x, x, x));
 
 

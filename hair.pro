@@ -52,7 +52,8 @@ SOURCES += \
     src/framebuffer.cpp \
     src/quad.cpp \
     src/shaderPrograms/hairopacityshaderprogram.cpp \
-    src/meshocttree.cpp
+    src/meshocttree.cpp \
+    src/worker.cpp
 
 
 HEADERS += \
@@ -79,7 +80,8 @@ HEADERS += \
     src/shaderPrograms/hairopacityshaderprogram.h \
     src/meshocttree.h \
     src/shaderPrograms/whitemeshshaderprogram.h \
-    src/shaderPrograms/whitehairshaderprogram.h
+    src/shaderPrograms/whitehairshaderprogram.h \
+    src/worker.h
 
 
 FORMS += src/mainwindow.ui
@@ -104,6 +106,9 @@ RESOURCES += \
     images/images.qrc
 
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unknown-pragmas
+
+QMAKE_CXXFLAGS += -fopenmp
+QMAKE_LFLAGS += -fopenmp
 
 LIBS += "-L$$PWD/glew-1.10.0/lib" -lGLEW
 

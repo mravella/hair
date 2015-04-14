@@ -56,8 +56,8 @@ void Simulation::moveObjects(HairObject *_object)
             _object->m_guideHairs.at(i)->m_vertices.at(j)->prevPos = glm::vec3(m_xform * glm::vec4(_object->m_guideHairs.at(i)->m_vertices.at(j)->startPosition, 1.0));
         }
     }
-//    m_xform = glm::rotate((float) sin(m_time), glm::vec3(0, 1, 0));
-    m_xform = glm::translate(glm::mat4(1.0), glm::vec3(sin(m_time), 0.0 , cos(m_time)));
+    m_xform = glm::rotate((float) sin(m_time), glm::vec3(0, 1, 0));
+//    m_xform = glm::translate(glm::mat4(1.0), glm::vec3(sin(m_time), 0.0 , cos(m_time)));
 //    float x = CLAMP(fabs(sin(m_time)), 0.5, 1.0); m_xform = glm::scale(glm::mat4(1.0), glm::vec3(x, x, x));
 
 

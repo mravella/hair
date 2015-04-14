@@ -36,9 +36,15 @@ struct Uniforms {
 
     int noiseTexture;
 
-    int shadowMap;
+    int hairShadowMap;
+
+    int meshShadowMap;
 
     int opacityMap;
+
+    bool useShadows;
+
+    float occlusionLayerSize = 0.0005;
 
     float shadowIntensity; // Controls the shadow darkness
 };

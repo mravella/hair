@@ -2,10 +2,9 @@
 
 uniform sampler2D shadowMap;
 uniform mat4 projection;
+uniform float occlusionLayerSize;
 
 in vec4 position_g;
-
-const float c = 0.0015;
 
 out vec4 opacityMap;
 
@@ -21,11 +20,11 @@ void main(){
     float currDepth = shadowCoord.z;
 
     opacityMap = vec4(0.0);
-    if (currDepth < shadowMapDepth + (1) * c)
+    if (currDepth < shadowMapDepth + (1) * occlusionLayerSize)
         opacityMap.r = A;
-    else if (currDepth < shadowMapDepth + (1 + 2) * c)
+    else if (currDepth < shadowMapDepth + (1 + 2) * occlusionLayerSize)
         opacityMap.g = A;
-    else if (currDepth < shadowMapDepth + (1 + 2 + 4) * c)
+    else if (currDepth < shadowMapDepth + (1 + 2 + 4) * occlusionLayerSize)
         opacityMap.b = A;
     else
         opacityMap.a = A;

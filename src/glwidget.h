@@ -51,15 +51,20 @@ private:
     std::vector<ShaderProgram*> m_programs;
     ShaderProgram *m_hairProgram,
                   *m_meshProgram,
-                  *m_opacityMapProgram,
+                  *m_hairOpacityProgram,
                   *m_whiteMeshProgram,
                   *m_whiteHairProgram;
 
     std::vector<Texture*> m_textures;
-    Texture *m_noiseTexture, *m_shadowDepthTexture, *m_opacityMapTexture;
+    Texture *m_noiseTexture,
+            *m_hairDepthTexture,
+            *m_meshDepthTexture,
+            *m_opacityMapTexture;
 
     std::vector<Framebuffer*> m_framebuffers;
-    Framebuffer *m_shadowFramebuffer, *m_opacityMapFramebuffer;
+    Framebuffer *m_hairShadowFramebuffer,
+                *m_meshShadowFramebuffer,
+                *m_opacityMapFramebuffer;
 
     // Camera parameters
     glm::mat4 m_projection, m_view;

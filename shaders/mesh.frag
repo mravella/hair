@@ -7,11 +7,14 @@ out vec3 fragColor;
 
 uniform vec3 lightPosition;
 uniform mat4 view, eyeToLight;
-uniform sampler2D shadowMap;
+uniform sampler2D hairShadowMap;
+uniform sampler2D meshShadowMap;
 uniform sampler2D opacityMap;
 uniform float shadowIntensity;
+uniform float occlusionLayerSize;
+uniform bool useShadows;
 
-const float occlusionLayerSize = 0.0015;
+const vec3 MESH_COLOR = vec3(221.0, 211.0, 242.0) / 255.0;
 
 float currDepth;
 
@@ -23,7 +26,7 @@ float occlusionSample(vec2 uv)
 
     float occlusion = 0.; // Amount of occlusion from opacity map layers
     float layerSize = occlusionLayerSize; // Size of current layer
-    float layerStart = texelFetch(shadowMap, ivec2(uv * textureSize(shadowMap, 0)), 0).r;
+    float layerStart = texelFetch(hairShadowMap, ivec2(uv * textureSize(hairShadowMap, 0)), 0).r;
 
     for (int layer = 0; layer < 4; layer++)
     {
@@ -42,26 +45,36 @@ float getTransmittance(vec4 p)
 {
     vec4 shadowCoord = (p / p.w + 1.0) / 2.0;
     vec2 uv = shadowCoord.xy;
-    currDepth = shadowCoord.z;
+    currDepth = shadowCoord.z - 0.001;
 
-    vec2 size = textureSize(shadowMap, 0); // Size of texture (e.g. 1024, 1024)
+    vec2 size = textureSize(hairShadowMap, 0); // Size of texture (e.g. 1024, 1024)
     vec2 texelSize = vec2(1.) / size; // Size of texel (e.g. 1/1024, 1/1024)
+
+    ivec2 offset = ivec2(0, 1);
 
     // Linearly interpolate between four samples of deep opacity map.
     vec2 f = fract(uv * size);
-    float s1 = occlusionSample(uv + texelSize * vec2(0., 0.));
-    float s2 = occlusionSample(uv + texelSize * vec2(0., 1.));
-    float s3 = occlusionSample(uv + texelSize * vec2(1., 0.));
-    float s4 = occlusionSample(uv + texelSize * vec2(1., 1.));
+    float s1 = occlusionSample(uv + texelSize * offset.xx);
+    float s2 = occlusionSample(uv + texelSize * offset.xy);
+    float s3 = occlusionSample(uv + texelSize * offset.yx);
+    float s4 = occlusionSample(uv + texelSize * offset.yy);
     float occlusion = mix( mix(s1, s2, f.y), mix(s3, s4, f.y), f.x );
 
-    return exp(- shadowIntensity * occlusion);
+    ivec2 iUV = ivec2(size * uv);
+    s1 = step(currDepth, texelFetch(meshShadowMap, iUV + offset.xx, 0).r);
+    s2 = step(currDepth, texelFetch(meshShadowMap, iUV + offset.xy, 0).r);
+    s3 = step(currDepth, texelFetch(meshShadowMap, iUV + offset.yx, 0).r);
+    s4 = step(currDepth, texelFetch(meshShadowMap, iUV + offset.yy, 0).r);
+    float meshVisibility = mix( mix(s1, s2, f.y), mix(s3, s4, f.y), f.x );
+
+    float transmittance = exp(- shadowIntensity * occlusion) * mix(0.2, 1.0, meshVisibility);
+    return mix(1.0, transmittance, useShadows);
 }
 
 void main(){
     vec4 toLight = vec4(lightPosition, 1.0) - position_v;
     float diffuse = dot(normalize(toLight), normalize(normal_v));
-    fragColor = vec3(0.2 + 0.3 * diffuse) * vec3(221.0, 211.0, 242.0) / 255.0 * 1.3;
+    fragColor = (0.2 + 0.3 * diffuse) * MESH_COLOR;
 
     fragColor *= getTransmittance(eyeToLight * view * position_v);
 }

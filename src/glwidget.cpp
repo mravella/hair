@@ -11,8 +11,8 @@
 #include "hairshaderprogram.h"
 #include "meshshaderprogram.h"
 #include "hairopacityshaderprogram.h"
-#include "whitemeshshaderprogram.h"
 #include "whitehairshaderprogram.h"
+#include "whitemeshshaderprogram.h"
 #include "hairinterface.h"
 #include "meshocttree.h"
 #include "texture.h"
@@ -164,7 +164,7 @@ void GLWidget::paintGL()
                 program->uniforms.opacityMap = 2;
                 program->uniforms.projection = lightProjection;
                 program->uniforms.view = lightView;
-                program->uniforms.model = model;
+                program->uniforms.model = glm::mat4(1.0);
                 program->uniforms.eyeToLight = eyeToLight;
                 program->uniforms.lightPosition = lightPosition;
                 program->setGlobalUniforms();
@@ -257,14 +257,14 @@ void GLWidget::initSimulation()
     HairObject *_oldHairObject = m_hairObject;
 
     m_highResMesh = new ObjMesh();
-    m_highResMesh->init(":/models/dude_highres.obj");
+    m_highResMesh->init(":/models/sphere.obj");
 
     m_lowResMesh = new ObjMesh();
-    m_lowResMesh->init(":/models/dude_lowres.obj", 1.1);
+    m_lowResMesh->init(":/models/sphere.obj", 1.1);
 
     m_testSimulation = new Simulation(m_lowResMesh);
     m_hairObject = new HairObject(
-                m_highResMesh, m_hairDensity, ":/images/dude_hairmap.jpg", m_testSimulation, m_hairObject);
+                m_highResMesh, m_hairDensity, ":/images/lower.png", m_testSimulation, m_hairObject);
 
     safeDelete(_oldHairObject);
 

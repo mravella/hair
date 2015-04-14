@@ -39,7 +39,7 @@ void Simulation::update(float _time){
 
 void Simulation::simulate(HairObject *_object)
 {
-    moveObjects();
+    moveObjects(_object);
 
     calculateExternalForces(_object);
     calculateConstraintForces(_object);
@@ -47,10 +47,18 @@ void Simulation::simulate(HairObject *_object)
     this->particleSimulation(_object);
 }
 
-void Simulation::moveObjects(void)
+void Simulation::moveObjects(HairObject *_object)
 {
-    m_prev = m_xform * glm::vec4(0.0, 0.0, 0.0, 1.0);
-    m_xform = glm::translate(glm::mat4(1.0), glm::vec3(sin(m_time), 0.0, 0.0));
+    for (int i = 0; i < _object->m_guideHairs.size(); ++i)
+    {
+        for (int j = 0; j < _object->m_guideHairs.at(j)->m_vertices.size(); ++j)
+        {
+            _object->m_guideHairs.at(i)->m_vertices.at(j)->tempPos = glm::vec3(m_xform * glm::vec4(_object->m_guideHairs.at(i)->m_vertices.at(j)->startPosition, 1.0));
+        }
+    }
+//    m_xform = glm::rotate(2.0f * (float) sin(m_time), glm::vec3(0, 1, 0));
+    m_xform = glm::translate(glm::mat4(1.0), glm::vec3(sin(m_time), 0.0 , 0.0));
+
 
 }
 
@@ -60,19 +68,41 @@ void Simulation::calculateExternalForces(HairObject *_object)
     for (int i = 0; i < _object->m_guideHairs.size(); i++)
     {
         float numVerts = _object->m_guideHairs.at(i)->m_vertices.size();
+
+//        HairVertex *currVert = _object->m_guideHairs.at(i)->m_vertices.at(0);
+
+//        glm::vec3 force = glm::vec3(0.0);
+//        glm::vec4 curr = m_xform * glm::vec4(currVert->startPosition, 1.0);
+//        m_prev = glm::vec4(currVert->position, 1.0);
+////        cout << "Velocity: " << glm::to_string(currVert->velocity) << endl;
+////        cout << "Prev: " << glm::to_string(m_prev) << endl;
+////        cout << "Curr: " << glm::to_string(curr) << endl;
+////        cout << "Pos change: " << glm::to_string(glm::vec3(m_prev -curr)) << endl;
+//        glm::vec3 acceleration = (glm::vec3(m_prev - curr) - currVert->velocity * TIMESTEP) / (TIMESTEP * TIMESTEP);
+//        currVert->velocity = glm::vec3(m_prev - curr) / TIMESTEP;
+//        force += acceleration * currVert->mass;
+//        currVert->forces = force;
+//        cout << "Force First: " << glm::to_string(force) << endl;
+
         for (int j = 1; j < numVerts; j++)
         {
             HairVertex *currVert = _object->m_guideHairs.at(i)->m_vertices.at(j);
 
             glm::vec3 force = glm::vec3(0.0);
-            glm::vec4 curr = m_xform * glm::vec4(0.0, 0.0, 0.0, 1.0);
-            glm::vec3 acceleration = (glm::vec3(m_prev - curr) - currVert->velocity * TIMESTEP) / (TIMESTEP * TIMESTEP);
-            force += acceleration * currVert->mass * 0.1f;
-
-            force += glm::vec3(0.0, -29.8, 0.0);
-            force += glm::vec3(0.0, 30.0, -5.0);
+            force += glm::vec3(0.0, -30.8, 0.0);
+//            force += glm::vec3(0.0, 30.0,m_prev -5.0);
             glm::vec3 normal;
-            if (m_mesh->contains(normal, currVert->position)) force = 10.0f * normal;
+            glm::vec4 curr = m_xform * glm::vec4(currVert->startPosition, 1.0);
+//            m_prev = glm::vec4(currVert->position, 1.0);
+//            cout << "Velocity: " << glm::to_string(currVert->velocity) << endl;
+//            cout << "Prev: " << glm::to_string(m_prev) << endl;
+//            cout << "Curr: " << glm::to_string(curr) << endl;
+//            cout << "Pos change: " << glm::to_string(glm::vec3(m_prev -curr)) << endl;
+            glm::vec3 acceleration = (glm::vec3(currVert->tempPos - glm::vec3(curr)) - currVert->velocity * TIMESTEP) / (TIMESTEP * TIMESTEP);
+//            cout << "Force: " << glm::to_string(acceleration * currVert->mass * 0.02f) << endl;
+            force += acceleration * currVert->mass * 0.1f;
+//            if (m_mesh->contains(normal, currVert->position)) force = 10.0f * normal;
+//            cout << "Force: " << glm::to_string(force) << endl;
             currVert->forces = force;
 
         }
@@ -556,7 +586,8 @@ void Simulation::particleSimulation(HairObject *obj)
         obj->m_guideHairs.at(i)->m_vertices.at(0)->tempPos = obj->m_guideHairs.at(i)->m_vertices.at(0)->position;
 
         // Update Velocities
-        for (int j = 1; j < numVerts; ++j){
+        for (int j = 1; j < numVerts; ++j)
+        {
             HairVertex *h = obj->m_guideHairs.at(i)->m_vertices.at(j);
 
             // TODO: Precompute the mass inverse

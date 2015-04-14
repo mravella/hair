@@ -21,7 +21,7 @@ public:
 
 
 private:
-    void moveObjects(void);
+    void moveObjects(HairObject *_object);
 
     void calculateExternalForces(HairObject *_object);
     void calculateConstraintForces(HairObject *_object);

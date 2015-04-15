@@ -2,6 +2,7 @@
 #include "errorchecker.h"
 #include <QFile>
 #include <QTextStream>
+#include <iostream>
 
 ResourceLoader::ResourceLoader()
 {
@@ -102,21 +103,41 @@ GLuint ResourceLoader::createProgramFromShaders(std::vector<GLuint> &shaders)
     return programId;
 }
 
+std::string ResourceLoader::readShaderFile(std::string filepath)
+{
+    std::string text;
+    QFile file(QString::fromStdString(filepath));
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream stream(&file);
+
+        while(!stream.atEnd())
+        {
+            QString line = stream.readLine();
+
+            if (line.startsWith("#include "))
+            {
+                QString includeFile = line.split(" ").at(1);
+                includeFile = includeFile.remove( QRegExp("^[\"]*") ).remove( QRegExp("[\"]*$") );
+                includeFile = ":/shaders/" + includeFile;
+                line = QString::fromStdString(readShaderFile(includeFile.toStdString()));
+            }
+
+            text += line.toStdString() + "\n";
+        }
+    } else {
+        std::cout << "Could not open file: " << filepath << std::endl;
+        exit(1);
+    }
+    return text;
+}
+
 GLuint ResourceLoader::createShader(GLenum shaderType, const char *filepath)
 {
     GLuint shaderID = glCreateShader(shaderType);
 
-    // Read shader file.
-    std::string code;
-    QString filepathStr = QString(filepath);
-    QFile file(filepathStr);
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream stream(&file);
-        code = stream.readAll().toStdString();
-    }
-
     // Compile shader code.
     printf("Compiling shader: %s\n", filepath);
+    std::string code = readShaderFile(filepath);
     const char *codePtr = code.c_str();
     glShaderSource(shaderID, 1, &codePtr, NULL);
     glCompileShader(shaderID);

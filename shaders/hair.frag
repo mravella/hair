@@ -1,5 +1,7 @@
 #version 400 core
 
+#include "constants.glsl"
+
 in vec4 position_g;
 in vec3 tangent_g;
 
@@ -17,8 +19,6 @@ uniform float occlusionLayerSize;
 uniform bool useShadows;
 
 float currDepth;
-
-const vec4 FILL_LIGHT_POS = vec4(-2.0, 1.0, -1.0, 1.0);
 
 // Samples all layers of the opacity map at the given UV coordinates. Returns a
 // number corresponding to the amount of occlusion from other hair fragments.

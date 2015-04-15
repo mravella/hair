@@ -1,5 +1,7 @@
 #version 400 core
 
+#include "constants.glsl"
+
 in vec4 position_v;
 in vec4 normal_v;
 in vec4 OS_position;
@@ -14,10 +16,6 @@ uniform sampler2D opacityMap;
 uniform float shadowIntensity;
 uniform float occlusionLayerSize;
 uniform bool useShadows;
-
-const vec3 MESH_COLOR = vec3(221.0, 211.0, 238.0) / 255.0;
-
-const vec4 FILL_LIGHT_POS = vec4(-2.0, 1.0, 1.0, 1.0);
 
 float currDepth;
 

@@ -20,7 +20,6 @@ void HairShaderProgram::setGlobalUniforms()
     setUniform1i("opacityMap", uniforms.opacityMap);
     setUniform1i("noiseTexture", uniforms.noiseTexture);
     setUniform1f("shadowIntensity", uniforms.shadowIntensity);
-    setUniform1f("occlusionLayerSize", uniforms.occlusionLayerSize);
     setUniform1i("useShadows", uniforms.useShadows);
 }
 

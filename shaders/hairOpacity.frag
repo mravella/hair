@@ -1,5 +1,7 @@
 #version 400 core
 
+#include "constants.glsl"
+
 uniform sampler2D shadowMap;
 uniform mat4 projection;
 uniform float occlusionLayerSize;
@@ -20,11 +22,11 @@ void main(){
     float currDepth = shadowCoord.z;
 
     opacityMap = vec4(0.0);
-    if (currDepth < shadowMapDepth + (1) * occlusionLayerSize)
+    if (currDepth < shadowMapDepth + (1) * OPACITY_MAP_LAYER_SIZE)
         opacityMap.r = A;
-    else if (currDepth < shadowMapDepth + (1 + 2) * occlusionLayerSize)
+    else if (currDepth < shadowMapDepth + (1 + 2) * OPACITY_MAP_LAYER_SIZE)
         opacityMap.g = A;
-    else if (currDepth < shadowMapDepth + (1 + 2 + 4) * occlusionLayerSize)
+    else if (currDepth < shadowMapDepth + (1 + 2 + 4) * OPACITY_MAP_LAYER_SIZE)
         opacityMap.b = A;
     else
         opacityMap.a = A;

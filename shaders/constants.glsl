@@ -17,3 +17,6 @@ const float MESH_AMBIENT_INTENSITY = 0.2;
 // Fill light properties
 const vec4 FILL_LIGHT_POS = vec4(-2.0, -1.0, 1.0, 1.0);
 const float FILL_LIGHT_INTENSITY = 0.4;
+
+// Opacity map constants
+const float OPACITY_MAP_LAYER_SIZE = 0.0005;

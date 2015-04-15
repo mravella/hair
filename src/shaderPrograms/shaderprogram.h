@@ -44,8 +44,6 @@ struct Uniforms {
 
     bool useShadows;
 
-    float occlusionLayerSize = 0.0005;
-
     float shadowIntensity; // Controls the shadow darkness
 };
 

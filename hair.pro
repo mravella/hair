@@ -96,7 +96,8 @@ OTHER_FILES += \
     shaders/texturedquad.frag \
     shaders/hairOpacity.frag \
     shaders/white.frag \
-    shaders/constants.glsl
+    shaders/constants.glsl \
+    shaders/opacitymapping.glsl
 
 
 RESOURCES += \

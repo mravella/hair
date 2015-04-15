@@ -18,7 +18,6 @@ void HairOpacityShaderProgram::setGlobalUniforms()
     setUniform3f("lightPosition", uniforms.lightPosition);
     setUniform1i("shadowMap", uniforms.hairShadowMap);
     setUniform1i("noiseTexture", uniforms.noiseTexture);
-    setUniform1f("occlusionLayerSize", uniforms.occlusionLayerSize);
 }
 
 void HairOpacityShaderProgram::setPerObjectUniforms()

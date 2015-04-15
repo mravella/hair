@@ -124,7 +124,7 @@ std::string ResourceLoader::readShaderFile(std::string filepath, int &additional
                 includeFile = ":/shaders/" + includeFile;
                 int throwaway;
                 line = QString::fromStdString(readShaderFile(includeFile.toStdString(), throwaway));
-                additionalLines = line.split("\n").size() - 1;
+                additionalLines += line.split("\n").size() - 1;
             }
 
             text += line.toStdString() + "\n";

@@ -77,6 +77,8 @@ GLuint ResourceLoader::createProgramFromShaders(std::vector<GLuint> &shaders)
         glAttachShader(programId, shaderID);
     }
 
+    printf("Linking shaders... \n");
+
     // Link program.
     glLinkProgram(programId);
 
@@ -103,8 +105,9 @@ GLuint ResourceLoader::createProgramFromShaders(std::vector<GLuint> &shaders)
     return programId;
 }
 
-std::string ResourceLoader::readShaderFile(std::string filepath)
+std::string ResourceLoader::readShaderFile(std::string filepath, int &additionalLines)
 {
+    additionalLines = 0;
     std::string text;
     QFile file(QString::fromStdString(filepath));
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -119,7 +122,9 @@ std::string ResourceLoader::readShaderFile(std::string filepath)
                 QString includeFile = line.split(" ").at(1);
                 includeFile = includeFile.remove( QRegExp("^[\"]*") ).remove( QRegExp("[\"]*$") );
                 includeFile = ":/shaders/" + includeFile;
-                line = QString::fromStdString(readShaderFile(includeFile.toStdString()));
+                int throwaway;
+                line = QString::fromStdString(readShaderFile(includeFile.toStdString(), throwaway));
+                additionalLines = line.split("\n").size() - 1;
             }
 
             text += line.toStdString() + "\n";
@@ -137,7 +142,8 @@ GLuint ResourceLoader::createShader(GLenum shaderType, const char *filepath)
 
     // Compile shader code.
     printf("Compiling shader: %s\n", filepath);
-    std::string code = readShaderFile(filepath);
+    int additionalLines;
+    std::string code = readShaderFile(filepath, additionalLines);
     const char *codePtr = code.c_str();
     glShaderSource(shaderID, 1, &codePtr, NULL);
     glCompileShader(shaderID);
@@ -153,7 +159,11 @@ GLuint ResourceLoader::createShader(GLenum shaderType, const char *filepath)
         fprintf(stdout, "%s\n", &infoLog[0]);
 
         // Exit if shader not compiled.
-        if (result == GL_FALSE) exit(1);
+        if (result == GL_FALSE)
+        {
+            fprintf(stdout, "%d additional lines from included files\n", additionalLines);
+            exit(1);
+        }
     }
 
     return shaderID;

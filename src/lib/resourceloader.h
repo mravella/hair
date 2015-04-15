@@ -33,7 +33,7 @@ public:
     static void initializeGlew();
 
 private:
-    static std::string readShaderFile(std::string filepath);
+    static std::string readShaderFile(std::string filepath, int &additionalLines);
     static GLuint createShader(GLenum shaderType, const char *filepath);
     static GLuint createProgramFromShaders(std::vector<GLuint> &shaders);
 };

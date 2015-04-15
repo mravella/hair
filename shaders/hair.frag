@@ -76,8 +76,8 @@ vec3 colorContribution(vec4 lightPosition_ES)
     vec3 h_N = normalize(toEye_N + toLight_N.xyz);
     float diffuse = sqrt(1. - abs(dot(tangent_N, toLight_N.xyz)));
 
-    float specular = pow(sqrt(1. - abs(dot(tangent_N, h_N))), 40.);
-    return (diffuse + 0.5 * specular) * color;
+    float specular = pow(sqrt(1. - abs(dot(tangent_N, h_N))), HAIR_SHININESS);
+    return (HAIR_DIFFUSE_INTENSITY * diffuse + HAIR_SPEC_INTENSITY * specular) * color;
 }
 
 void main()
@@ -87,5 +87,5 @@ void main()
     fragColor *= getTransmittance(eyeToLight * position_g);
 
     // Fill light
-    fragColor += 0.4 * colorContribution(view * FILL_LIGHT_POS);
+    fragColor += FILL_LIGHT_INTENSITY * colorContribution(view * FILL_LIGHT_POS);
 }

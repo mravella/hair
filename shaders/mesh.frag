@@ -73,7 +73,7 @@ vec3 colorContribution(vec4 lightPosition_WS)
     vec4 toLight = lightPosition_WS - position_v;
     vec4 normal_N = normalize(normal_v);
     float diffuse = max(0.f, dot(normalize(toLight), normal_N));
-    return (0.2 + 0.3 * diffuse) * MESH_COLOR;
+    return (MESH_AMBIENT_INTENSITY + MESH_DIFFUSE_INTENSITY * diffuse) * MESH_COLOR;
 }
 
 void main(){
@@ -82,5 +82,5 @@ void main(){
     fragColor *= getTransmittance(eyeToLight * view * position_v);
 
     // Fill light
-    fragColor += 0.4 * colorContribution(FILL_LIGHT_POS);
+    fragColor += FILL_LIGHT_INTENSITY * colorContribution(FILL_LIGHT_POS);
 }

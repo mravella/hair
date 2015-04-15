@@ -29,7 +29,7 @@ float occlusionSample(vec2 uv)
 
 // Calculates the transmittance of the light source to point p based on the deep
 // opacity map, where p is in the light source's clip space.
-float getTransmittance(vec4 p)
+float getHairTransmittance(vec4 p)
 {
     vec4 shadowCoord = (p / p.w + 1.0) / 2.0;
     vec2 uv = shadowCoord.xy;
@@ -48,9 +48,14 @@ float getTransmittance(vec4 p)
     float s4 = occlusionSample(uv + texelSize * offset.yy);
     float occlusion = mix( mix(s1, s2, f.y), mix(s3, s4, f.y), f.x );
 
-    shadowCoord.z -= 0.0005;
-    float meshVisibility = texture(meshShadowMap, shadowCoord.xyz);
-
-    float transmittance = exp(- shadowIntensity * occlusion) * mix(0.5, 1.0, meshVisibility);
+    float transmittance = exp(- shadowIntensity * occlusion);
     return mix(1.0, transmittance, useShadows);
+}
+
+float getMeshVisibility(vec4 p)
+{
+    vec4 shadowCoord = (p / p.w + 1.0) / 2.0;
+    shadowCoord.z -= 0.0003;
+    float meshVisibility = texture(meshShadowMap, shadowCoord.xyz);
+    return mix(1.0, meshVisibility, useShadows);
 }

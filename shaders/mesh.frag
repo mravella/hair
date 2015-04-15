@@ -16,14 +16,20 @@ vec3 colorContribution(vec4 lightPosition_WS)
     vec4 toLight = lightPosition_WS - position_v;
     vec4 normal_N = normalize(normal_v);
     float diffuse = max(0.f, dot(normalize(toLight), normal_N));
-    return (MESH_AMBIENT_INTENSITY + MESH_DIFFUSE_INTENSITY * diffuse) * MESH_COLOR;
+    return diffuse * MESH_DIFFUSE_INTENSITY * MESH_COLOR;
 }
 
 void main(){
+    vec4 position_lightSpace = eyeToLight * view * position_v;
+
     // Key light
     fragColor = colorContribution(vec4(lightPosition, 1.0));
-    fragColor *= getTransmittance(eyeToLight * view * position_v);
+    fragColor *= getHairTransmittance(position_lightSpace);
+    fragColor *= getMeshVisibility(position_lightSpace);
 
     // Fill light
-    fragColor += FILL_LIGHT_INTENSITY * colorContribution(FILL_LIGHT_POS);
+    fragColor += FILL_LIGHT_INTENSITY_MESH * colorContribution(FILL_LIGHT_POS);
+
+    // Ambient light
+    fragColor += MESH_AMBIENT_INTENSITY * MESH_COLOR;
 }

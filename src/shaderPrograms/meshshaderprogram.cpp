@@ -18,7 +18,6 @@ void MeshShaderProgram::setGlobalUniforms()
     setUniform1i("opacityMap", uniforms.opacityMap);
     setUniform3f("lightPosition", uniforms.lightPosition);
     setUniform1f("shadowIntensity", uniforms.shadowIntensity);
-    setUniform1f("occlusionLayerSize", uniforms.occlusionLayerSize);
     setUniform1i("useShadows", uniforms.useShadows);
 }
 

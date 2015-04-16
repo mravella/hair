@@ -62,8 +62,11 @@ HairObject::HairObject(
             t.randPoint(pos, uv, normal);
             uv = glm::vec2(MIN(uv.x, 0.999), MIN(uv.y, 0.999)); // Make UV in range [0,1) instead of [0,1]
 
+            QPoint p = QPoint(uv.x * image.width(), (1 - uv.y) * image.height());
+            if (!image.valid(p)) continue; // Don't put hair on neck......
+
             // If hair growth map is black, skip this hair.
-            QColor hairGrowth = QColor(image.pixel(uv.x * image.width(), (1 - uv.y) * image.height()));
+            QColor hairGrowth = QColor(image.pixel(p));
             if (hairGrowth.value() == 0) continue;
 
             m_guideHairs.append(new Hair(20, 0.4, pos, normal));

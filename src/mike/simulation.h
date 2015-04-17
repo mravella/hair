@@ -4,7 +4,8 @@
 #include "hairCommon.h"
 #include "integrator.h"
 #include "objmesh.h"
-#include <omp.h>
+#include <QMap>
+#include <tuple>
 
 class HairObject;
 
@@ -25,7 +26,8 @@ private:
     void moveObjects(HairObject *_object);
 
     void calculateExternalForces(HairObject *_object);
-    void calculateConstraintForces(HairObject *_object);
+    void calculateFluidGrid(HairObject *_object);
+    void calculateFrictionAndRepulsion(HairObject *_object);
 
     void integrate(HairObject *_object);
     void integrate2(HairObject *_object);
@@ -33,17 +35,20 @@ private:
     void integrate4(HairObject *_object);
 
     void particleSimulation(HairObject *obj);
+    void addToTable(QMap<std::tuple<double, double, double>, double> &grid, std::tuple<double, double, double> key, double value);
+    void addToTable(QMap<std::tuple<double, double, double>, glm::vec3> &grid, std::tuple<double, double, double> key, glm::vec3 value);
 
 
 public:
     QList<glm::vec3> m_externalForces;
+    QMap<std::tuple<double, double, double>, double> m_densityGrid;
+    QMap<std::tuple<double, double, double>, glm::vec3> m_velocityGrid;
 
 
 
 private:
     float m_time;
     ObjMesh *m_mesh;
-    glm::vec4 m_prev;
 
 };
 

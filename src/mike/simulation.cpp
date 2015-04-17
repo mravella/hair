@@ -14,6 +14,7 @@
 #define G   -29.8f
 #define B   0.35f
 #define MASS 1.0f
+#define GRID_WIDTH 0.1f
 
 #define DAMPENING 0.95f
 
@@ -26,7 +27,8 @@ Simulation::Simulation(ObjMesh *mesh)
     m_time = 0;
     m_mesh = mesh;
     m_xform = glm::mat4(1.0);
-    m_prev = glm::vec4(0.0, 0.0, 0.0, 1.0);
+    m_densityGrid = QMap<std::tuple<double, double, double>, double>();
+    m_velocityGrid = QMap<std::tuple<double, double, double>, glm::vec3>();
 }
 
 Simulation::~Simulation()
@@ -42,14 +44,14 @@ void Simulation::simulate(HairObject *_object)
     moveObjects(_object);
 
     calculateExternalForces(_object);
-    calculateConstraintForces(_object);
+    calculateFluidGrid(_object);
+    calculateFrictionAndRepulsion(_object);
 
-    this->particleSimulation(_object);
+    particleSimulation(_object);
 }
 
 void Simulation::moveObjects(HairObject *_object)
 {
-#pragma omp parallel for schedule(dynamic)
     for (int i = 0; i < _object->m_guideHairs.size(); ++i)
     {
         for (int j = 0; j < _object->m_guideHairs.at(j)->m_vertices.size(); ++j)
@@ -78,7 +80,6 @@ void Simulation::calculateExternalForces(HairObject *_object)
             glm::vec3 force = glm::vec3(0.0);
             force += glm::vec3(0.0, -9.8, 0.0);
             glm::vec4 curr = m_xform * glm::vec4(currVert->startPosition, 1.0);
-            m_prev = glm::vec4(currVert->position, 1.0);
             glm::vec3 acceleration = (glm::vec3(currVert->prevPos - glm::vec3(curr)) - currVert->velocity * TIMESTEP) / (TIMESTEP * TIMESTEP);
             force += acceleration * currVert->mass * 0.1f;
             glm::vec3 normal;
@@ -89,13 +90,110 @@ void Simulation::calculateExternalForces(HairObject *_object)
     }
 }
 
-// Calculate forces for maintaining position constraints
-void Simulation::calculateConstraintForces(HairObject *_object)
+// Convert the hair to a fluid
+void Simulation::calculateFluidGrid(HairObject *_object)
 {
+    m_densityGrid = QMap<std::tuple<double, double, double>, double>();
+    m_velocityGrid = QMap<std::tuple<double, double, double>, glm::vec3>();
+
+    for (int i = 0; i < _object->m_guideHairs.size(); ++i)
+    {
+        Hair *currHair = _object->m_guideHairs.at(i);
+        for (int j = 0; j < currHair->m_vertices.size(); ++j)
+        {
+            HairVertex *currVert = currHair->m_vertices.at(j);
+
+            float x = currVert->position.x;
+            float y = currVert->position.y;
+            float z = currVert->position.z;
+
+            float scaleFactor = (1.0f / GRID_WIDTH);
+
+            float xFloor = floor(x * scaleFactor) / scaleFactor;
+            float yFloor = floor(y * scaleFactor) / scaleFactor;
+            float zFloor = floor(z * scaleFactor) / scaleFactor;
+
+            float xCeil = ceil(x * scaleFactor) / scaleFactor;
+            float yCeil = ceil(y * scaleFactor) / scaleFactor;
+            float zCeil = ceil(z * scaleFactor) / scaleFactor;
+
+            float xPercentage = x - xFloor;
+            float yPercentage = y - yFloor;
+            float zPercentage = z - zFloor;
+
+            float XYZ = (1.0 - xPercentage) * (1.0 - yPercentage) * (1.0 - zPercentage);
+            float XYz = (1.0 - xPercentage) * (1.0 - yPercentage) * (zPercentage);
+            float XyZ = (1.0 - xPercentage) * (yPercentage) * (1.0 - zPercentage);
+            float Xyz = (1.0 - xPercentage) * (yPercentage) * (zPercentage);
+            float xYZ = (xPercentage) * (1.0 - yPercentage) * (1.0 - zPercentage);
+            float xYz = (xPercentage) * (1.0 - yPercentage) * (zPercentage);
+            float xyZ = (xPercentage) * (yPercentage) * (1.0 - zPercentage);
+            float xyz = (xPercentage) * (yPercentage) * (zPercentage);
+
+            this->addToTable(m_densityGrid, std::make_tuple(xCeil, yCeil, zCeil), XYZ);
+            this->addToTable(m_densityGrid, std::make_tuple(xCeil, yCeil, zFloor), XYz);
+            this->addToTable(m_densityGrid, std::make_tuple(xCeil, yFloor, zCeil), XyZ);
+            this->addToTable(m_densityGrid, std::make_tuple(xCeil, yFloor, zFloor), Xyz);
+            this->addToTable(m_densityGrid, std::make_tuple(xFloor, yCeil, zCeil), xYZ);
+            this->addToTable(m_densityGrid, std::make_tuple(xFloor, yCeil, zFloor), xYz);
+            this->addToTable(m_densityGrid, std::make_tuple(xFloor, yFloor, zCeil), xyZ);
+            this->addToTable(m_densityGrid, std::make_tuple(xFloor, yFloor, zFloor), xyz);
+
+            this->addToTable(m_velocityGrid, std::make_tuple(xCeil, yCeil, zCeil), XYZ * currVert->velocity);
+            this->addToTable(m_velocityGrid, std::make_tuple(xCeil, yCeil, zFloor), XYz * currVert->velocity);
+            this->addToTable(m_velocityGrid, std::make_tuple(xCeil, yFloor, zCeil), XyZ * currVert->velocity);
+            this->addToTable(m_velocityGrid, std::make_tuple(xCeil, yFloor, zFloor), Xyz * currVert->velocity);
+            this->addToTable(m_velocityGrid, std::make_tuple(xFloor, yCeil, zCeil), xYZ * currVert->velocity);
+            this->addToTable(m_velocityGrid, std::make_tuple(xFloor, yCeil, zFloor), xYz * currVert->velocity);
+            this->addToTable(m_velocityGrid, std::make_tuple(xFloor, yFloor, zCeil), xyZ * currVert->velocity);
+            this->addToTable(m_velocityGrid, std::make_tuple(xFloor, yFloor, zFloor), xyz * currVert->velocity);
+        }
+    }
+
 }
 
-// TODO:
-// Euler integration of forces, per vertex per hair
+void Simulation::calculateFrictionAndRepulsion(HairObject *_object)
+{
+    for (int i = 0; i < _object->m_guideHairs.size(); ++i)
+    {
+        Hair *currHair = _object->m_guideHairs.at(i);
+        for (int j = 0; j < currHair->m_vertices.size(); ++j)
+        {
+            HairVertex *currVert = currHair->m_vertices.at(j);
+
+            float x = currVert->position.x;
+            float y = currVert->position.y;
+            float z = currVert->position.z;
+
+            float scaleFactor = (1.0f / GRID_WIDTH);
+
+            float xFloor = floor(x * scaleFactor) / scaleFactor;
+            float yFloor = floor(y * scaleFactor) / scaleFactor;
+            float zFloor = floor(z * scaleFactor) / scaleFactor;
+
+            float xCeil = ceil(x * scaleFactor) / scaleFactor;
+            float yCeil = ceil(y * scaleFactor) / scaleFactor;
+            float zCeil = ceil(z * scaleFactor) / scaleFactor;
+
+            float xPercentage = x - xFloor;
+            float yPercentage = y - yFloor;
+            float zPercentage = z - zFloor;
+
+            float c00 = m_densityGrid.value(std::make_tuple(xFloor, yFloor, zFloor)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yFloor, zFloor)) * xPercentage;
+            float c10 = m_densityGrid.value(std::make_tuple(xFloor, yCeil, zFloor)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yCeil, zFloor)) * xPercentage;
+            float c01 = m_densityGrid.value(std::make_tuple(xFloor, yFloor, zCeil)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yFloor, zCeil)) * xPercentage;
+            float c11 = m_densityGrid.value(std::make_tuple(xFloor, yCeil, zCeil)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yCeil, zCeil)) * xPercentage;
+
+            float c0 = c00 * (1.0 - yPercentage) + c10 * (yPercentage);
+            float c1 = c01 * (1.0 - yPercentage) + c11 * (yPercentage);
+
+            float c = c0 * (1.0 - zPercentage) + c1 * (zPercentage);
+
+
+        }
+    }
+}
+
 void Simulation::integrate(HairObject *_object)
 {
     for (int i = 0; i < _object->m_guideHairs.size(); i++)
@@ -600,4 +698,14 @@ void Simulation::particleSimulation(HairObject *obj)
     }
 }
 
+
+void Simulation::addToTable(QMap<std::tuple<double, double, double>, double> &grid, std::tuple<double, double, double> key, double value)
+{
+    grid.insert(key, grid.value(key, 0.0) + value);
+}
+
+void Simulation::addToTable(QMap<std::tuple<double, double, double>, glm::vec3> &grid, std::tuple<double, double, double> key, glm::vec3 value)
+{
+    grid.insert(key, grid.value(key, glm::vec3(0.0)) + value);
+}
 

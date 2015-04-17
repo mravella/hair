@@ -2,6 +2,7 @@
 #define SHADER_H
 
 #include "GL/glew.h"
+#include "hairCommon.h"
 #include <vector>
 
 class ResourceLoader

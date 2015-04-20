@@ -14,7 +14,10 @@
 #define G   -29.8f
 #define B   0.35f
 #define MASS 1.0f
+
 #define GRID_WIDTH 0.1f
+#define FRICTION 0.07f
+#define REPULSION 0.000f
 
 #define DAMPENING 0.95f
 
@@ -44,8 +47,8 @@ void Simulation::simulate(HairObject *_object)
     moveObjects(_object);
 
     calculateExternalForces(_object);
-    calculateFluidGrid(_object);
-    calculateFrictionAndRepulsion(_object);
+//    calculateFluidGrid(_object);
+//    calculateFrictionAndRepulsion(_object);
 
     particleSimulation(_object);
 }
@@ -60,7 +63,7 @@ void Simulation::moveObjects(HairObject *_object)
         }
     }
     m_xform = glm::rotate((float) sin(m_time), glm::vec3(0, 1, 0));
-    m_xform = glm::translate(m_xform, glm::vec3(sin(m_time), 0.0 , sin(m_time)));
+//    m_xform = glm::translate(m_xform, glm::vec3(sin(m_time), 0.0 , sin(m_time)));
 //    float x = CLAMP(fabs(sin(m_time)), 0.5, 1.0); m_xform = glm::scale(glm::mat4(1.0), glm::vec3(x, x, x));
 
 
@@ -130,6 +133,10 @@ void Simulation::calculateFluidGrid(HairObject *_object)
             float xyZ = (xPercentage) * (yPercentage) * (1.0 - zPercentage);
             float xyz = (xPercentage) * (yPercentage) * (zPercentage);
 
+//            cout << "xOercentage: " << xPercentage << endl;
+//            cout << "yPercentage: " << yPercentage << endl;
+//            cout << "zPercentage: " << zPercentage << endl;
+
             this->addToTable(m_densityGrid, std::make_tuple(xCeil, yCeil, zCeil), XYZ);
             this->addToTable(m_densityGrid, std::make_tuple(xCeil, yCeil, zFloor), XYz);
             this->addToTable(m_densityGrid, std::make_tuple(xCeil, yFloor, zCeil), XyZ);
@@ -179,16 +186,46 @@ void Simulation::calculateFrictionAndRepulsion(HairObject *_object)
             float yPercentage = y - yFloor;
             float zPercentage = z - zFloor;
 
-            float c00 = m_densityGrid.value(std::make_tuple(xFloor, yFloor, zFloor)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yFloor, zFloor)) * xPercentage;
-            float c10 = m_densityGrid.value(std::make_tuple(xFloor, yCeil, zFloor)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yCeil, zFloor)) * xPercentage;
-            float c01 = m_densityGrid.value(std::make_tuple(xFloor, yFloor, zCeil)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yFloor, zCeil)) * xPercentage;
-            float c11 = m_densityGrid.value(std::make_tuple(xFloor, yCeil, zCeil)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yCeil, zCeil)) * xPercentage;
+//            float c00 = m_densityGrid.value(std::make_tuple(xFloor, yFloor, zFloor)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yFloor, zFloor)) * xPercentage;
+//            float c10 = m_densityGrid.value(std::make_tuple(xFloor, yCeil, zFloor)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yCeil, zFloor)) * xPercentage;
+//            float c01 = m_densityGrid.value(std::make_tuple(xFloor, yFloor, zCeil)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yFloor, zCeil)) * xPercentage;
+//            float c11 = m_densityGrid.value(std::make_tuple(xFloor, yCeil, zCeil)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yCeil, zCeil)) * xPercentage;
 
-            float c0 = c00 * (1.0 - yPercentage) + c10 * (yPercentage);
-            float c1 = c01 * (1.0 - yPercentage) + c11 * (yPercentage);
+//            float c0 = c00 * (1.0 - yPercentage) + c10 * (yPercentage);
+//            float c1 = c01 * (1.0 - yPercentage) + c11 * (yPercentage);
 
-            float c = c0 * (1.0 - zPercentage) + c1 * (zPercentage);
+//            // Density
+//            float c = c0 * (1.0 - zPercentage) + c1 * (zPercentage);
+            glm::vec3 gradient = this->gradient(m_densityGrid, currVert->position);
 
+            float XYZ = (1.0 - xPercentage) * (1.0 - yPercentage) * (1.0 - zPercentage);
+            float XYz = (1.0 - xPercentage) * (1.0 - yPercentage) * (zPercentage);
+            float XyZ = (1.0 - xPercentage) * (yPercentage) * (1.0 - zPercentage);
+            float Xyz = (1.0 - xPercentage) * (yPercentage) * (zPercentage);
+            float xYZ = (xPercentage) * (1.0 - yPercentage) * (1.0 - zPercentage);
+            float xYz = (xPercentage) * (1.0 - yPercentage) * (zPercentage);
+            float xyZ = (xPercentage) * (yPercentage) * (1.0 - zPercentage);
+            float xyz = (xPercentage) * (yPercentage) * (zPercentage);
+
+            glm::vec3 v00 = this->getVelocity(m_velocityGrid, m_densityGrid, glm::vec3(xFloor, yFloor, zFloor)) * (1.0f - xPercentage) * xyz
+                    + this->getVelocity(m_velocityGrid, m_densityGrid, glm::vec3(xCeil, yFloor, zFloor)) * (xPercentage) * Xyz;
+            glm::vec3 v10 = this->getVelocity(m_velocityGrid, m_densityGrid, glm::vec3(xFloor, yCeil, zFloor)) * (1.0f - xPercentage) * xYz
+                    + this->getVelocity(m_velocityGrid, m_densityGrid, glm::vec3(xCeil, yCeil, zFloor)) * (xPercentage) * XYz;
+            glm::vec3 v01 = this->getVelocity(m_velocityGrid, m_densityGrid, glm::vec3(xFloor, yFloor, zCeil)) * (1.0f - xPercentage) * xyZ
+                    + this->getVelocity(m_velocityGrid, m_densityGrid, glm::vec3(xCeil, yFloor, zCeil)) * (xPercentage) * XyZ;
+            glm::vec3 v11 = this->getVelocity(m_velocityGrid, m_densityGrid, glm::vec3(xFloor, yCeil, zCeil)) * (1.0f - xPercentage) * xYZ
+                    + this->getVelocity(m_velocityGrid, m_densityGrid, glm::vec3(xCeil, yCeil, zCeil)) * (xPercentage) * XYZ;
+
+            glm::vec3 v0 = v00 * (1.0f - yPercentage) + v10 * (yPercentage);
+            glm::vec3 v1 = v01 * (1.0f - yPercentage) + v11 * (yPercentage);
+
+            // Velocity
+            glm::vec3 v = v0 * (1.0f - zPercentage) + v1 * (zPercentage);
+
+            // Account for friction;
+            currVert->velocity = (1.0f - FRICTION) * currVert->velocity + FRICTION * v;
+
+            currVert->velocity = currVert->velocity + REPULSION * gradient / TIMESTEP;
 
         }
     }
@@ -709,3 +746,43 @@ void Simulation::addToTable(QMap<std::tuple<double, double, double>, glm::vec3> 
     grid.insert(key, grid.value(key, glm::vec3(0.0)) + value);
 }
 
+glm::vec3 Simulation::getVelocity(QMap<std::tuple<double, double, double>, glm::vec3> &velocityGrid, QMap<std::tuple<double, double, double>, double> &densityGrid, glm::vec3 pt)
+{
+    std::tuple<double, double, double> key = std::make_tuple(pt.x, pt.y, pt.z);
+
+    return velocityGrid.value(key) / (float) densityGrid.value(key);
+}
+
+glm::vec3 Simulation::gradient(QMap<std::tuple<double, double, double>, double> &grid, glm::vec3 pt)
+{
+    float scaleFactor = (1.0f / GRID_WIDTH);
+
+    float xFloor = floor(pt.x * scaleFactor) / scaleFactor;
+    float yFloor = floor(pt.y * scaleFactor) / scaleFactor;
+    float zFloor = floor(pt.z * scaleFactor) / scaleFactor;
+
+    float xCeil = ceil(pt.x * scaleFactor) / scaleFactor;
+    float yCeil = ceil(pt.y * scaleFactor) / scaleFactor;
+    float zCeil = ceil(pt.z * scaleFactor) / scaleFactor;
+
+    float XYZ = grid.value(std::make_tuple(xCeil, yCeil, zCeil), 0.0);
+    float XYz = grid.value(std::make_tuple(xCeil, yCeil, zFloor), 0.0);
+    float XyZ = grid.value(std::make_tuple(xCeil, yFloor, zCeil), 0.0);
+    float Xyz = grid.value(std::make_tuple(xCeil, yFloor, zFloor), 0.0);
+    float xYZ = grid.value(std::make_tuple(xFloor, yCeil, zCeil), 0.0);
+    float xYz = grid.value(std::make_tuple(xFloor, yCeil, xFloor), 0.0);
+    float xyZ = grid.value(std::make_tuple(xFloor, yFloor, zCeil), 0.0);
+    float xyz = grid.value(std::make_tuple(xFloor, yFloor, zFloor), 0.0);
+
+    float maxX = std::max(XYZ - xYZ, std::max(XyZ - xyZ, std::max(XYz - xYz, Xyz - xyz)));
+    float maxY = std::max(XYZ - XyZ, std::max(xYZ - xyZ, std::max(XYz - Xyz, xYz - xyz)));
+    float maxZ = std::max(XYZ - XYz, std::max(xYZ - xYz, std::max(XyZ - Xyz, xyZ - xyz)));
+
+    if (EQ(MAX3(maxX, maxY, maxZ), maxX))
+        return glm::vec3(1, 0, 0) * (float) sgn(maxX);
+    else if (EQ(MAX3(maxX, maxY, maxZ), maxY))
+        return glm::vec3(0, 1, 0) * (float) sgn(maxY);
+    else
+        return glm::vec3(0, 0, 1) * (float) sgn(maxZ);
+
+}

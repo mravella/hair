@@ -265,6 +265,12 @@ struct Joint
     (std::max(_y_, std::min(_x_, _z_))); \
 })
 
+template <typename T> int sgn(T val)
+{
+    return (T(0) < val) - (val < T(0));
+}
+
+
 #ifndef M_PI
     #define M_PI 3.14159265f
 #endif

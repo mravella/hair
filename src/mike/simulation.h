@@ -35,8 +35,12 @@ private:
     void integrate4(HairObject *_object);
 
     void particleSimulation(HairObject *obj);
+
+    glm::vec3 gradient(QMap<std::tuple<double, double, double>, double> &grid, glm::vec3 pt);
     void addToTable(QMap<std::tuple<double, double, double>, double> &grid, std::tuple<double, double, double> key, double value);
     void addToTable(QMap<std::tuple<double, double, double>, glm::vec3> &grid, std::tuple<double, double, double> key, glm::vec3 value);
+    glm::vec3 getVelocity(QMap<std::tuple<double, double, double>, glm::vec3> &velocityGrid, QMap<std::tuple<double, double, double>, double> &densityGrid, glm::vec3 pt);
+
 
 
 public:

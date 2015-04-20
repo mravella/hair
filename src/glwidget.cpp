@@ -21,7 +21,7 @@
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
     : QGLWidget(format, parent),
       m_hairInterface(hairInterface),
-      m_hairDensity(40),
+      m_hairDensity(50),
       m_timer(this),
       m_increment(0),
       m_targetFPS(60.f)
@@ -273,15 +273,15 @@ void GLWidget::initSimulation()
     HairObject *_oldHairObject = m_hairObject;
 
     m_highResMesh = new ObjMesh();
-    m_highResMesh->init(":/models/head.obj");
+    m_highResMesh->init(":/models/sphere.obj");
 
     m_lowResMesh = new ObjMesh();
-    m_lowResMesh->init(":/models/headLowRes.obj", 1.1);
+    m_lowResMesh->init(":/models/sphere.obj", 1.1);
 
     m_testSimulation = new Simulation(m_lowResMesh);
 
     m_hairObject = new HairObject(
-                m_highResMesh, m_hairDensity, ":/images/headHair.jpg", m_testSimulation, m_hairObject);
+                m_highResMesh, m_hairDensity, ":/images/lower.png", m_testSimulation, m_hairObject);
 
     safeDelete(_oldHairObject);
 

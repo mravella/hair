@@ -364,6 +364,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="frictionSimCheckBox">
+       <property name="text">
+        <string>Friction Sim</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QCheckBox" name="shadowCheckBox">
        <property name="text">
         <string>Shadows</string>

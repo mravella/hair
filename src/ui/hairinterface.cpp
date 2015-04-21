@@ -30,6 +30,7 @@ void HairInterface::connectUserInputs()
     connect(m_ui->sliderHairColorB, SIGNAL(valueChanged(int)), this, SLOT(setHairColorB(int)));
 
     // toggles
+    connect(m_ui->frictionSimCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFrictionSim(bool)));
     connect(m_ui->shadowCheckBox, SIGNAL(toggled(bool)), this, SLOT(setShadows(bool)));
     connect(m_ui->supersampleCheckBox, SIGNAL(toggled(bool)), this, SLOT(setSupersampling(bool)));
 
@@ -68,6 +69,7 @@ void HairInterface::setHairObject(HairObject *hairObject)
     m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 2));
 
     // Sync toggles
+    m_ui->frictionSimCheckBox->setChecked(m_glWidget->useFrictionSim);
     m_ui->shadowCheckBox->setChecked(m_glWidget->useShadows);
     m_ui->supersampleCheckBox->setChecked(m_glWidget->useSupersampling);
 
@@ -153,6 +155,11 @@ void HairInterface::setShadows(bool checked)
 void HairInterface::setSupersampling(bool checked)
 {
     m_glWidget->useSupersampling = checked;
+}
+
+void HairInterface::setFrictionSim(bool checked)
+{
+    m_glWidget->useFrictionSim = checked;
 }
 
 void HairInterface::togglePaused()

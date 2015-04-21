@@ -33,6 +33,7 @@ public slots:
     void setHairColorB(int);
     void setShadows(bool);
     void setSupersampling(bool);
+    void setFrictionSim(bool);
     void togglePaused();
 
 private:

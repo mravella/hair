@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <iostream>
+#include "QStringList"
 
 ResourceLoader::ResourceLoader()
 {

@@ -13,5 +13,8 @@
         <file>texturedquad.frag</file>
         <file>texturedquad.vert</file>
         <file>white.frag</file>
+        <file>kbuffer.frag</file>
+        <file>test.vert</file>
+        <file>renderkbuffer.frag</file>
     </qresource>
 </RCC>

@@ -31,7 +31,7 @@ public:
     int width();
     int height();
 
-    GLuint id;
+    GLuint id = 0;
 
 private:
     void _create(const GLvoid * data,

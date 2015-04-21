@@ -79,7 +79,8 @@ HEADERS += \
     src/shaderPrograms/hairopacityshaderprogram.h \
     src/meshocttree.h \
     src/shaderPrograms/whitemeshshaderprogram.h \
-    src/shaderPrograms/whitehairshaderprogram.h
+    src/shaderPrograms/whitehairshaderprogram.h \
+    src/shaderPrograms/hairkbufferprogram.h
 
 
 FORMS += src/mainwindow.ui
@@ -97,7 +98,10 @@ OTHER_FILES += \
     shaders/hairOpacity.frag \
     shaders/white.frag \
     shaders/constants.glsl \
-    shaders/opacitymapping.glsl
+    shaders/opacitymapping.glsl \
+    shaders/kbuffer.frag \
+    shaders/test.vert \
+    shaders/renderkbuffer.frag
 
 
 RESOURCES += \

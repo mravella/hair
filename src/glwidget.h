@@ -53,18 +53,23 @@ private:
                   *m_meshProgram,
                   *m_hairOpacityProgram,
                   *m_whiteMeshProgram,
-                  *m_whiteHairProgram;
+                  *m_whiteHairProgram,
+                  *m_hairKBufferProgram;
 
     std::vector<Texture*> m_textures;
+    std::vector<Texture*> m_kbufferTextures;
     Texture *m_noiseTexture,
             *m_hairDepthTexture,
             *m_meshDepthTexture,
-            *m_opacityMapTexture;
+            *m_opacityMapTexture,
+            *m_hairK1,
+            *m_hairK2;
 
     std::vector<Framebuffer*> m_framebuffers;
     Framebuffer *m_hairShadowFramebuffer,
                 *m_meshShadowFramebuffer,
-                *m_opacityMapFramebuffer;
+                *m_opacityMapFramebuffer,
+                *m_hairKFramebuffer;
 
     // Camera parameters
     glm::mat4 m_projection, m_view;

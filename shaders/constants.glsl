@@ -8,6 +8,7 @@
 const float HAIR_SHININESS = 30.0;
 const float HAIR_SPEC_INTENSITY = 0.5;
 const float HAIR_DIFFUSE_INTENSITY = 1.0;
+const float HAIR_OPACITY = 0.75;
 
 // Mesh material properties
 const vec3 MESH_COLOR = vec3(221.0, 211.0, 238.0) / 255.0;

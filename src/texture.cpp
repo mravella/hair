@@ -11,6 +11,7 @@ Texture::Texture()
 
 Texture::~Texture()
 {
+    glDeleteTextures(1, &id);
     safeDelete(m_quad);
     safeDelete(m_program);
 }

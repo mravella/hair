@@ -15,7 +15,7 @@ Texture::~Texture()
     safeDelete(m_program);
 }
 
-void Texture::create(const char *imageFile, GLint magFilter, GLint minFilter)
+void Texture::createColorTexture(const char *imageFile, GLint magFilter, GLint minFilter)
 {
     QImage image(imageFile);
     _create(image.bits(), GL_RGBA, image.width(), image.height(), GL_RGBA,
@@ -40,14 +40,27 @@ void Texture::_create(
         const GLvoid *data, GLint internalFormat, int width, int height, GLenum format,
         GLenum type, GLint magFilter, GLint minFilter)
 {
+    m_internalFormat = internalFormat;
     m_width = width;
     m_height = height;
+    m_format = format;
+    m_type = type;
+
     glGenTextures(1, &id);
-    glBindTexture(GL_TEXTURE_2D, id);
+    bind(GL_TEXTURE0);
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, data);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    unbind(GL_TEXTURE0);
+}
+
+void Texture::resize(int width, int height)
+{
+    m_width = width;
+    m_height = height;
+    bind(GL_TEXTURE0);
+    glTexImage2D(GL_TEXTURE_2D, 0, m_internalFormat, width, height, 0, m_format, m_type, 0);
+    unbind(GL_TEXTURE0);
 }
 
 void Texture::bind(GLenum textureUnit)

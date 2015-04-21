@@ -29,8 +29,9 @@ void HairInterface::connectUserInputs()
     connect(m_ui->sliderHairColorG, SIGNAL(valueChanged(int)), this, SLOT(setHairColorG(int)));
     connect(m_ui->sliderHairColorB, SIGNAL(valueChanged(int)), this, SLOT(setHairColorB(int)));
 
-    // shadows
+    // toggles
     connect(m_ui->shadowCheckBox, SIGNAL(toggled(bool)), this, SLOT(setShadows(bool)));
+    connect(m_ui->supersampleCheckBox, SIGNAL(toggled(bool)), this, SLOT(setSupersampling(bool)));
 
     // buttons
     connect(m_ui->pauseButton, SIGNAL(pressed()), this, SLOT(togglePaused()));
@@ -66,8 +67,9 @@ void HairInterface::setHairObject(HairObject *hairObject)
     m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y, 'g', 2));
     m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 2));
 
-    // Sync shadows button
+    // Sync toggles
     m_ui->shadowCheckBox->setChecked(m_glWidget->useShadows);
+    m_ui->supersampleCheckBox->setChecked(m_glWidget->useSupersampling);
 
     updateStatsLabel();
 }
@@ -146,6 +148,11 @@ void HairInterface::setHairColorB(int value)
 void HairInterface::setShadows(bool checked)
 {
     m_glWidget->useShadows = checked;
+}
+
+void HairInterface::setSupersampling(bool checked)
+{
+    m_glWidget->useSupersampling = checked;
 }
 
 void HairInterface::togglePaused()

@@ -25,6 +25,7 @@ public:
     void resetSimulation();
 
     bool useShadows = true;
+    bool useSupersampling = true;
     bool paused = false;
 
 protected:
@@ -59,12 +60,14 @@ private:
     Texture *m_noiseTexture,
             *m_hairDepthTexture,
             *m_meshDepthTexture,
-            *m_opacityMapTexture;
+            *m_opacityMapTexture,
+            *m_finalTexture;
 
     std::vector<Framebuffer*> m_framebuffers;
     Framebuffer *m_hairShadowFramebuffer,
                 *m_meshShadowFramebuffer,
-                *m_opacityMapFramebuffer;
+                *m_opacityMapFramebuffer,
+                *m_finalFramebuffer;
 
     // Camera parameters
     glm::mat4 m_projection, m_view;

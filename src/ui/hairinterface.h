@@ -32,6 +32,7 @@ public slots:
     void setHairColorG(int);
     void setHairColorB(int);
     void setShadows(bool);
+    void setSupersampling(bool);
     void togglePaused();
 
 private:

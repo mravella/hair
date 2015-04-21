@@ -6,7 +6,6 @@
 #include <QThread>
 #include <QtCore>
 #include <limits>
-#include <omp.h>
 
 class MeshOctTree;
 

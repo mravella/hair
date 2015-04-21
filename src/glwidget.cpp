@@ -46,6 +46,7 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
         m_hairDepthTexture = new Texture(),
         m_meshDepthTexture = new Texture(),
         m_opacityMapTexture = new Texture(),
+        m_finalTexture = new Texture(),
     };
 
     // Framebuffers
@@ -53,6 +54,7 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
         m_hairShadowFramebuffer = new Framebuffer(),
         m_meshShadowFramebuffer = new Framebuffer(),
         m_opacityMapFramebuffer = new Framebuffer(),
+        m_finalFramebuffer = new Framebuffer(),
     };
 
     m_hairInterface->setGLWidget(this);
@@ -90,19 +92,21 @@ void GLWidget::initializeGL()
 
     // Initialize textures.
     int shadowMapRes = 2048;
-    m_noiseTexture->create(":/images/noise128.jpg", GL_LINEAR, GL_LINEAR);
+    m_noiseTexture->createColorTexture(":/images/noise128.jpg", GL_LINEAR, GL_LINEAR);
     m_hairDepthTexture->createDepthTexture(shadowMapRes, shadowMapRes, GL_NEAREST, GL_NEAREST);
     m_meshDepthTexture->createDepthTexture(shadowMapRes, shadowMapRes, GL_LINEAR, GL_LINEAR);
     m_opacityMapTexture->createColorTexture(shadowMapRes, shadowMapRes, GL_NEAREST, GL_NEAREST);
+    m_finalTexture->createColorTexture(2 * width(), 2 * height(), GL_LINEAR, GL_LINEAR);
 
     // Initialize framebuffers.
     for (auto framebuffer = m_framebuffers.begin(); framebuffer != m_framebuffers.end(); ++framebuffer)
         (*framebuffer)->create();
     m_hairShadowFramebuffer->attachDepthTexture(m_hairDepthTexture->id);
     m_meshShadowFramebuffer->attachDepthTexture(m_meshDepthTexture->id);
-    std::vector<GLuint> opacityTextures { m_opacityMapTexture->id };
-    m_opacityMapFramebuffer->attachColorTextures(opacityTextures);
+    m_opacityMapFramebuffer->attachColorTexture(m_opacityMapTexture->id);
     m_opacityMapFramebuffer->generateDepthBuffer(shadowMapRes, shadowMapRes);
+    m_finalFramebuffer->attachColorTexture(m_finalTexture->id);
+    m_finalFramebuffer->generateDepthBuffer(m_finalTexture->width(), m_finalTexture->height());
     
     // Initialize simulation.
     initSimulation();
@@ -139,6 +143,7 @@ void GLWidget::paintGL()
     m_hairDepthTexture->bind(GL_TEXTURE1);
     m_opacityMapTexture->bind(GL_TEXTURE2);
     m_meshDepthTexture->bind(GL_TEXTURE3);
+    m_finalTexture->bind(GL_TEXTURE4);
 
     ShaderProgram *program;
 
@@ -211,10 +216,20 @@ void GLWidget::paintGL()
 
     } // if useShadows
 
+
+    if (useSupersampling)
+    {
+        m_finalFramebuffer->bind();
+        glViewport(0, 0, m_finalTexture->width(), m_finalTexture->height());
+    }
+    else
+    {
+        glViewport(0, 0, width(), height());
+    }
+
     // Render hair.
     glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glViewport(0, 0, width(), height());
     program = m_hairProgram;
     {
         program->bind();
@@ -252,16 +267,35 @@ void GLWidget::paintGL()
         m_highResMesh->draw();
     }
 
+    if (useSupersampling)
+    {
+        m_finalFramebuffer->unbind();
+        glViewport(0, 0, width(), height());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        m_finalTexture->renderFullScreen();
+    }
+
     // Clean up.
     program->unbind();
-    m_meshDepthTexture->unbind(GL_TEXTURE3);
-    m_opacityMapTexture->unbind(GL_TEXTURE2);
-    m_hairDepthTexture->unbind(GL_TEXTURE1);
     m_noiseTexture->unbind(GL_TEXTURE0);
+    m_hairDepthTexture->unbind(GL_TEXTURE1);
+    m_opacityMapTexture->unbind(GL_TEXTURE2);
+    m_meshDepthTexture->unbind(GL_TEXTURE3);
+    m_finalTexture->unbind(GL_TEXTURE4);
 
     // Update UI.
     m_hairInterface->updateFPSLabel(m_increment);
 
+}
+
+
+void GLWidget::resizeGL(int w, int h)
+{
+    glViewport(0, 0, w, h);
+    m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+
+    m_finalTexture->resize(2*w, 2*h);
+    m_finalFramebuffer->resizeDepthBuffer(2*w, 2*h);
 }
 
 
@@ -295,12 +329,6 @@ void GLWidget::resetSimulation()
     initSimulation();
 }
 
-
-void GLWidget::resizeGL(int w, int h)
-{
-    glViewport(0, 0, w, h);
-    m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
-}
 
 /** Repaints the canvas. Called 60 times per second. */
 void GLWidget::updateCanvas()

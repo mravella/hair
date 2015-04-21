@@ -25,27 +25,6 @@ float rand( vec2 p )
     return fract(sin(dot(p,vec2(12.9898,78.233))) * 43758.5453);
 }
 
-float noise( in vec2 p )
-{
-    vec2 i = floor( p );
-    vec2 f = fract( p );
-    vec2 u = f*f*(3.0-2.0*f);
-    return mix( mix( rand( i + vec2(0.0,0.0) ),
-                     rand( i + vec2(1.0,0.0) ), u.x),
-                mix( rand( i + vec2(0.0,1.0) ),
-                     rand( i + vec2(1.0,1.0) ), u.x), u.y);
-}
-
-float noiseWithOctaves( in vec2 p )
-{
-    float f = 0.0;
-    for (int i = 0; i < NOISE_OCTAVES; i++) {
-        float scale = pow(2.0, float(i));
-        f += noise(5.0 * scale * gl_TessCoord.xy) / (2.0*scale);
-    }
-    return 2.0 * f - 1.0;
-}
-
 vec3 spline(float tessCoordX)
 {
     // 0 -------- 1 -----X-- 2 -------- 3
@@ -84,13 +63,6 @@ vec3 shiftedSpline(in vec2 tessCoord)
 
     // Apply noise to offset position.
     float noise = noiseAmplitude * tessCoord.x;
-
-    // Procedural noise function
-//    pos.x += noise * noiseWithOctaves(tessCoord.xy);
-//    pos.y += noise * noiseWithOctaves(tessCoord.xy + 1);
-//    pos.z += noise * noiseWithOctaves(tessCoord.xy + 2);
-
-    // Noise texure
     tessCoord *= 0.4;
     pos.x += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy).r) * 0.5;
     pos.y += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy + .1).r) * 0.5;

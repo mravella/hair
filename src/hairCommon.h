@@ -13,7 +13,6 @@
 #include <string.h>
 #include <assert.h>
 #include <iostream>
-#include <QMessageBox>
 #include <vector>
 
 #define GLM_FORCE_RADIANS
@@ -29,6 +28,10 @@
 #else
 #include <GL/glu.h>
 #endif
+
+uint qHash ( std::tuple<double, double, double> key);
+
+#include <QMessageBox>
 
 // from http://en.wikipedia.org/wiki/Assertion_(computing)
 #define COMPILE_TIME_ASSERT(pred) switch(0){case 0:case pred:;}
@@ -296,3 +299,5 @@ template <typename T> int sgn(T val)
 #define PRINT_VEC(__name, __vec) cout << __name << glm::to_string(__vec) << endl;
 
 #endif
+
+

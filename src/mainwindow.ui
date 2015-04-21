@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>29</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -367,6 +367,13 @@
       <widget class="QCheckBox" name="shadowCheckBox">
        <property name="text">
         <string>Shadows</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="supersampleCheckBox">
+       <property name="text">
+        <string>Supersampling</string>
        </property>
       </widget>
      </item>

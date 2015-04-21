@@ -26,6 +26,8 @@ public:
 
     bool useShadows = true;
     bool useSupersampling = true;
+    bool useFrictionSim = true;
+    
     bool paused = false;
 
 protected:

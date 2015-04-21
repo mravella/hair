@@ -312,7 +312,7 @@ void GLWidget::initSimulation()
     m_lowResMesh = new ObjMesh();
     m_lowResMesh->init(":/models/sphere.obj", 1.1);
 
-    m_testSimulation = new Simulation(m_lowResMesh);
+    m_testSimulation = new Simulation(this, m_lowResMesh);
 
     m_hairObject = new HairObject(
                 m_highResMesh, m_hairDensity, ":/images/lower.png", m_testSimulation, m_hairObject);

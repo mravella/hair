@@ -10,6 +10,7 @@
 
 #include "hairobject.h"
 #include "mike/hair.h"
+#include "glwidget.h"
 
 #define G   -29.8f
 #define B   0.35f
@@ -26,14 +27,14 @@
 #define TIMESTEP 0.01f
 
 
-Simulation::Simulation(ObjMesh *mesh)
+Simulation::Simulation(GLWidget *widget, ObjMesh *mesh)
 {
     m_time = 0;
+    m_widget = widget;
     m_mesh = mesh;
     m_xform = glm::mat4(1.0);
     m_densityGrid = QMap<std::tuple<double, double, double>, double>(); 
     m_velocityGrid = QMap<std::tuple<double, double, double>, glm::vec3>();
-    
 }
 
 Simulation::~Simulation()
@@ -51,14 +52,16 @@ void Simulation::simulate(HairObject *_object)
     
     calculateExternalForces(_object);
     
-//    QTime t;
-//    t.start();
-    
-    calculateFluidGrid(_object);
-//    cout << "1: " << t.restart() << " ms"<< endl;
-    
-    calculateFrictionAndRepulsion(_object);
-//    cout << "2: " << t.restart() << " ms"<< endl;
+    if (m_widget->useFrictionSim){
+        //    QTime t;
+        //    t.start();
+        
+        calculateFluidGrid(_object);
+        //    cout << "1: " << t.restart() << " ms"<< endl;
+        
+        calculateFrictionAndRepulsion(_object);
+        //    cout << "2: " << t.restart() << " ms"<< endl;
+    }
     
     particleSimulation(_object);
     
@@ -113,11 +116,11 @@ void Simulation::calculateFluidGrid(HairObject *_object){
     QMap<std::tuple<double, double, double>, double> *densityGrid = &m_densityGrid;
     QMap<std::tuple<double, double, double>, glm::vec3> *velocityGrid = &m_velocityGrid;
     
-        
+    
     for (int i = 0; i < _object->m_guideHairs.size(); ++i)
     {
         Hair *currHair = _object->m_guideHairs.at(i);
-        //
+        
         for (int j = 0; j < currHair->m_vertices.size(); ++j)
         {
             HairVertex *currVert = currHair->m_vertices.at(j);
@@ -179,7 +182,7 @@ void Simulation::calculateFluidGrid(HairObject *_object){
 
 void Simulation::calculateFrictionAndRepulsion(HairObject *_object)
 {
-    // end normal function
+    //  start comment here to undo threading
     
     pthread_attr_t attr;
     
@@ -224,12 +227,23 @@ void* Simulation::calculateFrictionAndRepulsionThread(void *untypedInfoStruct){
     QMap<std::tuple<double, double, double>, double> *densityGrid = infoStruct->densityGrid;
     QMap<std::tuple<double, double, double>, glm::vec3> *velocityGrid = infoStruct->velocityGrid;
     
-    // begin normal function
     
     for (int i = 0; i < HAIRS_PER_THREAD; i++){
         
         Hair *currHair = infoStruct->hairs[i];
         if (currHair == NULL) break;
+        
+        //  uncomment the few lines below, comment all above to first message to undo threading
+        //  also comment pthread line at the end of this function
+        
+        
+        //    QMap<std::tuple<double, double, double>, double> *densityGrid = &m_densityGrid;
+        //    QMap<std::tuple<double, double, double>, glm::vec3> *velocityGrid = &m_velocityGrid;
+        
+        //        for (int i = 0; i < _object->m_guideHairs.size(); ++i)
+        //        {
+        //            Hair *currHair = _object->m_guideHairs.at(i);
+        
         
         for (int j = 0; j < currHair->m_vertices.size(); ++j)
         {
@@ -863,4 +877,5 @@ glm::vec3 Simulation::gradient(QMap<std::tuple<double, double, double>, double> 
         return glm::vec3(0, 0, 1) * (float) sgn(maxZ);
     
 }
+
 

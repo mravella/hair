@@ -12,6 +12,7 @@
 
 class HairObject;
 class Hair;
+class GLWidget;
 
 #define HAIRS_PER_THREAD 20
 
@@ -27,7 +28,7 @@ struct HairSimulationThreadInfo {
 class Simulation
 {
 public:
-    Simulation(ObjMesh *mesh);
+    Simulation(GLWidget *widget, ObjMesh *mesh);
     
     virtual ~Simulation();
     
@@ -72,14 +73,11 @@ public:
     
 private:
     float m_time;
+    GLWidget *m_widget;
     ObjMesh *m_mesh;
-    
+        
     pthread_t m_threads[200];
     HairSimulationThreadInfo m_threadData[200];
-    
-    pthread_t m_threads2[200];
-    HairSimulationThreadInfo m_threadData2[200];
-    
     
 };
 

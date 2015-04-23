@@ -31,6 +31,11 @@ public:
             const char * tess_control_file_path,
             const char * tess_eval_file_path);
 
+    static GLuint createTessFeedbackShaderProgram(
+            const char * vertex_file_path,
+            const char * tess_control_file_path,
+            const char * tess_eval_file_path,
+            const char ** varyings, int numVaryings);
 
     static GLuint createFullFeedbackShaderProgram(
             const char * vertex_file_path,

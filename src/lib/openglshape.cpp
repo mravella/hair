@@ -37,7 +37,7 @@ void OpenGLShape::setVertexData(float *data, int size, int numVertices)
 }
 
 void OpenGLShape::setAttribute(
-        GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, int offset)
+        GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, size_t offset)
 {
     if (!checkIfCreated()) return;
 

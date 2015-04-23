@@ -13,5 +13,6 @@
         <file>texturedquad.frag</file>
         <file>texturedquad.vert</file>
         <file>white.frag</file>
+        <file>hairrender.vert</file>
     </qresource>
 </RCC>

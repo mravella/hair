@@ -52,7 +52,9 @@ SOURCES += \
     src/framebuffer.cpp \
     src/quad.cpp \
     src/shaderPrograms/hairopacityshaderprogram.cpp \
-    src/meshocttree.cpp
+    src/meshocttree.cpp \
+    src/tessellator.cpp \
+    src/shaderPrograms/hairfeedbackshaderprogram.cpp
 
 
 HEADERS += \
@@ -79,7 +81,10 @@ HEADERS += \
     src/shaderPrograms/hairopacityshaderprogram.h \
     src/meshocttree.h \
     src/shaderPrograms/whitemeshshaderprogram.h \
-    src/shaderPrograms/whitehairshaderprogram.h
+    src/shaderPrograms/whitehairshaderprogram.h \
+    src/tessellator.h \
+    src/shaderPrograms/hairfeedbackshaderprogram.h \
+    src/shaderPrograms/hairrendershaderprogram.h
 
 
 FORMS += src/mainwindow.ui
@@ -97,7 +102,8 @@ OTHER_FILES += \
     shaders/hairOpacity.frag \
     shaders/white.frag \
     shaders/constants.glsl \
-    shaders/opacitymapping.glsl
+    shaders/opacitymapping.glsl \
+    shaders/hairrender.vert
 
 
 RESOURCES += \

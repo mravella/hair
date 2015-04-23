@@ -26,6 +26,21 @@ GLuint ResourceLoader::createFullFeedbackShaderProgram(
     return _createFeedbackProgramFromShaders(shaders, varyings, numVaryings);
 }
 
+GLuint ResourceLoader::createTessFeedbackShaderProgram(
+        const char *vertexFilePath,
+        const char *tessControlFilePath,
+        const char *tessEvalFilePath,
+        const char **varyings,
+        int numVaryings)
+{
+    std::vector<GLuint> shaders{
+        _createShader(GL_VERTEX_SHADER, vertexFilePath),
+        _createShader(GL_TESS_CONTROL_SHADER, tessControlFilePath),
+        _createShader(GL_TESS_EVALUATION_SHADER, tessEvalFilePath)
+    };
+    return _createFeedbackProgramFromShaders(shaders, varyings, numVaryings);
+}
+
 GLuint ResourceLoader::createFullShaderProgram(
         const char *vertexFilePath,
         const char *fragmentFilePath,

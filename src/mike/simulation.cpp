@@ -33,7 +33,7 @@ Simulation::Simulation(GLWidget *widget, ObjMesh *mesh)
     m_widget = widget;
     m_mesh = mesh;
     m_xform = glm::mat4(1.0);
-    m_densityGrid = QMap<std::tuple<double, double, double>, double>(); 
+    m_densityGrid = QMap<std::tuple<double, double, double>, double>();
     m_velocityGrid = QMap<std::tuple<double, double, double>, glm::vec3>();
 }
 
@@ -53,14 +53,14 @@ void Simulation::simulate(HairObject *_object)
     calculateExternalForces(_object);
     
     if (m_widget->useFrictionSim){
-        //    QTime t;
-        //    t.start();
+//            QTime t;
+//            t.start();
         
         calculateFluidGrid(_object);
-        //    cout << "1: " << t.restart() << " ms"<< endl;
+//            cout << "1: " << t.restart() << " ms"<< endl;
         
         calculateFrictionAndRepulsion(_object);
-        //    cout << "2: " << t.restart() << " ms"<< endl;
+//            cout << "2: " << t.restart() << " ms"<< endl;
     }
     
     particleSimulation(_object);
@@ -164,6 +164,15 @@ void Simulation::calculateFluidGrid(HairObject *_object){
             addToTable(*densityGrid, std::make_tuple(xFloor, yCeil, zFloor), xYz);
             addToTable(*densityGrid, std::make_tuple(xFloor, yFloor, zCeil), xyZ);
             addToTable(*densityGrid, std::make_tuple(xFloor, yFloor, zFloor), xyz);
+
+            this->insertFluid(m_fluidGrid, glm::vec3(xCeil, yCeil, zCeil), XYZ, currVert->velocity);
+            this->insertFluid(m_fluidGrid, glm::vec3(xCeil, yCeil, zFloor), XYz, currVert->velocity);
+            this->insertFluid(m_fluidGrid, glm::vec3(xCeil, yFloor, zCeil), XyZ, currVert->velocity);
+            this->insertFluid(m_fluidGrid, glm::vec3(xCeil, yFloor, zFloor), Xyz, currVert->velocity);
+            this->insertFluid(m_fluidGrid, glm::vec3(xFloor, yCeil, zCeil), xYZ, currVert->velocity);
+            this->insertFluid(m_fluidGrid, glm::vec3(xFloor, yCeil, zFloor), xYz, currVert->velocity);
+            this->insertFluid(m_fluidGrid, glm::vec3(xFloor, yFloor, zCeil), xyZ, currVert->velocity);
+            this->insertFluid(m_fluidGrid, glm::vec3(xFloor, yFloor, zFloor), XYZ, currVert->velocity);
             
             addToTable(*velocityGrid, std::make_tuple(xCeil, yCeil, zCeil), XYZ * currVert->velocity);
             addToTable(*velocityGrid, std::make_tuple(xCeil, yCeil, zFloor), XYz * currVert->velocity);
@@ -197,6 +206,7 @@ void Simulation::calculateFrictionAndRepulsion(HairObject *_object)
     {
         m_threadData[i].densityGrid = &m_densityGrid;
         m_threadData[i].velocityGrid = &m_velocityGrid;
+        m_threadData[i].fluidGrid = &m_fluidGrid;
         
         _index = HAIRS_PER_THREAD*i;
         for (int k = 0; k < HAIRS_PER_THREAD; k++){
@@ -226,6 +236,7 @@ void* Simulation::calculateFrictionAndRepulsionThread(void *untypedInfoStruct){
     
     QMap<std::tuple<double, double, double>, double> *densityGrid = infoStruct->densityGrid;
     QMap<std::tuple<double, double, double>, glm::vec3> *velocityGrid = infoStruct->velocityGrid;
+    std::unordered_map<grid_loc, fluid, grid_loc_hash> fluidGrid = *(infoStruct->fluidGrid);
     
     
     for (int i = 0; i < HAIRS_PER_THREAD; i++){
@@ -266,17 +277,7 @@ void* Simulation::calculateFrictionAndRepulsionThread(void *untypedInfoStruct){
             float xPercentage = x - xFloor;
             float yPercentage = y - yFloor;
             float zPercentage = z - zFloor;
-            
-            //            float c00 = m_densityGrid.value(std::make_tuple(xFloor, yFloor, zFloor)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yFloor, zFloor)) * xPercentage;
-            //            float c10 = m_densityGrid.value(std::make_tuple(xFloor, yCeil, zFloor)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yCeil, zFloor)) * xPercentage;
-            //            float c01 = m_densityGrid.value(std::make_tuple(xFloor, yFloor, zCeil)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yFloor, zCeil)) * xPercentage;
-            //            float c11 = m_densityGrid.value(std::make_tuple(xFloor, yCeil, zCeil)) * (1.0 - xPercentage) + m_densityGrid.value(std::make_tuple(xCeil, yCeil, zCeil)) * xPercentage;
-            
-            //            float c0 = c00 * (1.0 - yPercentage) + c10 * (yPercentage);
-            //            float c1 = c01 * (1.0 - yPercentage) + c11 * (yPercentage);
-            
-            //            // Density
-            //            float c = c0 * (1.0 - zPercentage) + c1 * (zPercentage);
+
             glm::vec3 currGradient = gradient(*densityGrid, currVert->position);
             
             float XYZ = (1.0 - xPercentage) * (1.0 - yPercentage) * (1.0 - zPercentage);
@@ -288,9 +289,9 @@ void* Simulation::calculateFrictionAndRepulsionThread(void *untypedInfoStruct){
             float xyZ = (xPercentage) * (yPercentage) * (1.0 - zPercentage);
             float xyz = (xPercentage) * (yPercentage) * (zPercentage);
             
-            glm::vec3 v00 = getVelocity(*velocityGrid, *densityGrid, glm::vec3(xFloor, yFloor, zFloor)) * (1.0f - xPercentage) * xyz
-                    + getVelocity(*velocityGrid, *densityGrid, glm::vec3(xCeil, yFloor, zFloor)) * (xPercentage) * Xyz;
-            glm::vec3 v10 = getVelocity(*velocityGrid, *densityGrid, glm::vec3(xFloor, yCeil, zFloor)) * (1.0f - xPercentage) * xYz
+            glm::vec3 v00 = getFluidVelocity(fluidGrid, glm::vec3(xFloor, yFloor, zFloor)) * (1.0f - xPercentage) * xyz
+                    + getFluidVelocity(fluidGrid, glm::vec3(xCeil, yFloor, zFloor)) * (xPercentage) * Xyz;
+            glm::vec3 v10 = getFluidVelocity(fluidGrid, glm::vec3(xFloor, yCeil, zFloor)) * (1.0f - xPercentage) * xYz
                     + getVelocity(*velocityGrid, *densityGrid, glm::vec3(xCeil, yCeil, zFloor)) * (xPercentage) * XYz;
             glm::vec3 v01 = getVelocity(*velocityGrid, *densityGrid, glm::vec3(xFloor, yFloor, zCeil)) * (1.0f - xPercentage) * xyZ
                     + getVelocity(*velocityGrid, *densityGrid, glm::vec3(xCeil, yFloor, zCeil)) * (xPercentage) * XyZ;
@@ -835,6 +836,33 @@ void Simulation::addToTable(QMap<std::tuple<double, double, double>, double> &gr
 void Simulation::addToTable(QMap<std::tuple<double, double, double>, glm::vec3> &grid, std::tuple<double, double, double> key, glm::vec3 value)
 {
     grid.insert(key, grid.value(key, glm::vec3(0.0)) + value);
+}
+
+void Simulation::insertFluid(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pos, double density, glm::vec3 vel)
+{
+    grid_loc key = grid_loc(pos);
+    fluid val = fluid(density, (float) density * vel);
+    std::pair<grid_loc, fluid> toInsert;
+    toInsert = std::make_pair(key, val);
+    map.insert(toInsert);
+}
+
+fluid Simulation::getFluid(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pos)
+{
+    grid_loc key = grid_loc(pos);
+    return map.at(key);
+}
+
+glm::vec3 Simulation::getFluidVelocity(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pos)
+{
+    fluid f = getFluid(map, pos);
+    return f.velocity / (float) f.density;
+}
+
+double Simulation::getFluidDensity(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pos)
+{
+    fluid f = getFluid(map, pos);
+    return f.density;
 }
 
 glm::vec3 Simulation::getVelocity(QMap<std::tuple<double, double, double>, glm::vec3> &velocityGrid, QMap<std::tuple<double, double, double>, double> &densityGrid, glm::vec3 pt)

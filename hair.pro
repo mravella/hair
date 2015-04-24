@@ -52,7 +52,8 @@ SOURCES += \
     src/framebuffer.cpp \
     src/quad.cpp \
     src/shaderPrograms/hairopacityshaderprogram.cpp \
-    src/meshocttree.cpp
+    src/meshocttree.cpp \
+    src/md5.cpp
 
 
 HEADERS += \
@@ -79,7 +80,8 @@ HEADERS += \
     src/shaderPrograms/hairopacityshaderprogram.h \
     src/meshocttree.h \
     src/shaderPrograms/whitemeshshaderprogram.h \
-    src/shaderPrograms/whitehairshaderprogram.h
+    src/shaderPrograms/whitehairshaderprogram.h \
+    src/md5.h
 
 
 FORMS += src/mainwindow.ui

@@ -307,15 +307,15 @@ void GLWidget::initSimulation()
     HairObject *_oldHairObject = m_hairObject;
 
     m_highResMesh = new ObjMesh();
-    m_highResMesh->init(":/models/sphere.obj");
+    m_highResMesh->init(":/models/head.obj");
 
     m_lowResMesh = new ObjMesh();
-    m_lowResMesh->init(":/models/sphere.obj", 1.1);
+    m_lowResMesh->init(":/models/headLowRes.obj", 1.1);
 
     m_testSimulation = new Simulation(this, m_lowResMesh);
 
     m_hairObject = new HairObject(
-                m_highResMesh, m_hairDensity, ":/images/lower.png", m_testSimulation, m_hairObject);
+                m_highResMesh, m_hairDensity, ":/images/headHair.jpg", m_testSimulation, m_hairObject);
 
     safeDelete(_oldHairObject);
 

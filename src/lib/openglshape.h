@@ -21,7 +21,7 @@ public:
 
     /** Enables the specified attribute and calls glVertexAttribPointer with the given arguments. */
     void setAttribute(GLuint index, GLint size, GLenum type, GLboolean normalized,
-                      GLsizei stride, int offset);
+                      GLsizei stride, size_t offset);
 
     /** Draw the initialized geometry. */
     void draw(GLenum drawMode);

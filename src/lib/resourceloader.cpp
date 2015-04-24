@@ -9,6 +9,38 @@ ResourceLoader::ResourceLoader()
 {
 }
 
+GLuint ResourceLoader::createFullFeedbackShaderProgram(
+        const char *vertexFilePath,
+        const char *geomFilePath,
+        const char *tessControlFilePath,
+        const char *tessEvalFilePath,
+        const char **varyings,
+        int numVaryings)
+{
+    std::vector<GLuint> shaders{
+        _createShader(GL_VERTEX_SHADER, vertexFilePath),
+        _createShader(GL_GEOMETRY_SHADER, geomFilePath),
+        _createShader(GL_TESS_CONTROL_SHADER, tessControlFilePath),
+        _createShader(GL_TESS_EVALUATION_SHADER, tessEvalFilePath)
+    };
+    return _createFeedbackProgramFromShaders(shaders, varyings, numVaryings);
+}
+
+GLuint ResourceLoader::createTessFeedbackShaderProgram(
+        const char *vertexFilePath,
+        const char *tessControlFilePath,
+        const char *tessEvalFilePath,
+        const char **varyings,
+        int numVaryings)
+{
+    std::vector<GLuint> shaders{
+        _createShader(GL_VERTEX_SHADER, vertexFilePath),
+        _createShader(GL_TESS_CONTROL_SHADER, tessControlFilePath),
+        _createShader(GL_TESS_EVALUATION_SHADER, tessEvalFilePath)
+    };
+    return _createFeedbackProgramFromShaders(shaders, varyings, numVaryings);
+}
+
 GLuint ResourceLoader::createFullShaderProgram(
         const char *vertexFilePath,
         const char *fragmentFilePath,
@@ -18,14 +50,14 @@ GLuint ResourceLoader::createFullShaderProgram(
 {
     // Create and compile the shaders.
     std::vector<GLuint> shaders{
-        createShader(GL_VERTEX_SHADER, vertexFilePath),
-        createShader(GL_FRAGMENT_SHADER, fragmentFilePath),
-        createShader(GL_GEOMETRY_SHADER, geomFilePath),
-        createShader(GL_TESS_CONTROL_SHADER, tessControlFilePath),
-        createShader(GL_TESS_EVALUATION_SHADER, tessEvalFilePath)
+        _createShader(GL_VERTEX_SHADER, vertexFilePath),
+        _createShader(GL_FRAGMENT_SHADER, fragmentFilePath),
+        _createShader(GL_GEOMETRY_SHADER, geomFilePath),
+        _createShader(GL_TESS_CONTROL_SHADER, tessControlFilePath),
+        _createShader(GL_TESS_EVALUATION_SHADER, tessEvalFilePath)
     };
 
-    return createProgramFromShaders(shaders);
+    return _createProgramFromShaders(shaders);
 }
 
 GLuint ResourceLoader::createGeomShaderProgram(
@@ -35,11 +67,11 @@ GLuint ResourceLoader::createGeomShaderProgram(
 {
     // Create and compile the shaders.
     std::vector<GLuint> shaders{
-        createShader(GL_VERTEX_SHADER, vertexFilePath),
-        createShader(GL_FRAGMENT_SHADER, fragmentFilePath),
-        createShader(GL_GEOMETRY_SHADER, geomFilePath)
+        _createShader(GL_VERTEX_SHADER, vertexFilePath),
+        _createShader(GL_FRAGMENT_SHADER, fragmentFilePath),
+        _createShader(GL_GEOMETRY_SHADER, geomFilePath)
     };
-    return createProgramFromShaders(shaders);
+    return _createProgramFromShaders(shaders);
 }
 
 GLuint ResourceLoader::createTessShaderProgram(
@@ -50,63 +82,83 @@ GLuint ResourceLoader::createTessShaderProgram(
 {
     // Create and compile the shaders.
     std::vector<GLuint> shaders{
-        createShader(GL_VERTEX_SHADER, vertexFilePath),
-        createShader(GL_FRAGMENT_SHADER, fragmentFilePath),
-        createShader(GL_TESS_CONTROL_SHADER, tessControlFilePath),
-        createShader(GL_TESS_EVALUATION_SHADER, tessEvalFilePath)
+        _createShader(GL_VERTEX_SHADER, vertexFilePath),
+        _createShader(GL_FRAGMENT_SHADER, fragmentFilePath),
+        _createShader(GL_TESS_CONTROL_SHADER, tessControlFilePath),
+        _createShader(GL_TESS_EVALUATION_SHADER, tessEvalFilePath)
     };
-    return createProgramFromShaders(shaders);
+    return _createProgramFromShaders(shaders);
 }
 
 GLuint ResourceLoader::createBasicShaderProgram(const char *vertexFilePath,const char *fragmentFilePath)
 {
     // Create and compile the shaders.
     std::vector<GLuint> shaders{
-        createShader(GL_VERTEX_SHADER, vertexFilePath),
-        createShader(GL_FRAGMENT_SHADER, fragmentFilePath),
+        _createShader(GL_VERTEX_SHADER, vertexFilePath),
+        _createShader(GL_FRAGMENT_SHADER, fragmentFilePath),
     };
-    return createProgramFromShaders(shaders);
+    return _createProgramFromShaders(shaders);
 }
 
-GLuint ResourceLoader::createProgramFromShaders(std::vector<GLuint> &shaders)
+void ResourceLoader::_attachShaders(GLuint program, std::vector<GLuint> &shaders)
 {
-    GLuint programId = glCreateProgram();
-
-    // Attach shaders.
     for (std::vector<GLuint>::iterator iter = shaders.begin(); iter != shaders.end(); iter++) {
         GLuint shaderID = (*iter);
-        glAttachShader(programId, shaderID);
+        glAttachShader(program, shaderID);
     }
+}
 
+void ResourceLoader::_linkProgram(GLuint program)
+{
     printf("Linking shaders... \n");
 
     // Link program.
-    glLinkProgram(programId);
+    glLinkProgram(program);
 
     // Print the info log.
     GLint result;
     GLint infoLogLength;
-    glGetProgramiv(programId, GL_LINK_STATUS, &result);
-    glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
+    glGetProgramiv(program, GL_LINK_STATUS, &result);
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
     if (infoLogLength > 0) {
         std::vector<char> infoLog( std::max(infoLogLength, int(1)) );
-        glGetProgramInfoLog(programId, infoLogLength, NULL, &infoLog[0]);
+        glGetProgramInfoLog(program, infoLogLength, NULL, &infoLog[0]);
         fprintf(stdout, "%s\n", &infoLog[0]);
 
         // Exit if shader program not linked.
         if (result == GL_FALSE) exit(1);
     }
+}
 
-    // Delete shaders.
+void ResourceLoader::_deleteShaders(std::vector<GLuint> &shaders)
+{
     for (std::vector<GLuint>::iterator iter = shaders.begin(); iter != shaders.end(); iter++) {
         GLuint shaderID = (*iter);
         glDeleteShader(shaderID);
     }
+}
 
+GLuint ResourceLoader::_createProgramFromShaders(std::vector<GLuint> &shaders)
+{
+    GLuint programId = glCreateProgram();
+    _attachShaders(programId, shaders);
+    _linkProgram(programId);
+    _deleteShaders(shaders);
     return programId;
 }
 
-std::string ResourceLoader::readShaderFile(std::string filepath, int &additionalLines)
+GLuint ResourceLoader::_createFeedbackProgramFromShaders(
+        std::vector<GLuint> &shaders, const GLchar **varyings, int numVaryings)
+{
+    GLuint programId = glCreateProgram();
+    _attachShaders(programId, shaders);
+    glTransformFeedbackVaryings(programId, numVaryings, varyings, GL_INTERLEAVED_ATTRIBS);
+    _linkProgram(programId);
+    _deleteShaders(shaders);
+    return programId;
+}
+
+std::string ResourceLoader::_readShaderFile(std::string filepath, int &additionalLines)
 {
     additionalLines = 0;
     std::string text;
@@ -124,7 +176,7 @@ std::string ResourceLoader::readShaderFile(std::string filepath, int &additional
                 includeFile = includeFile.remove( QRegExp("^[\"]*") ).remove( QRegExp("[\"]*$") );
                 includeFile = ":/shaders/" + includeFile;
                 int throwaway;
-                line = QString::fromStdString(readShaderFile(includeFile.toStdString(), throwaway));
+                line = QString::fromStdString(_readShaderFile(includeFile.toStdString(), throwaway));
                 additionalLines += line.split("\n").size() - 1;
             }
 
@@ -137,14 +189,14 @@ std::string ResourceLoader::readShaderFile(std::string filepath, int &additional
     return text;
 }
 
-GLuint ResourceLoader::createShader(GLenum shaderType, const char *filepath)
+GLuint ResourceLoader::_createShader(GLenum shaderType, const char *filepath)
 {
     GLuint shaderID = glCreateShader(shaderType);
 
     // Compile shader code.
     printf("Compiling shader: %s\n", filepath);
     int additionalLines;
-    std::string code = readShaderFile(filepath, additionalLines);
+    std::string code = _readShaderFile(filepath, additionalLines);
     const char *codePtr = code.c_str();
     glShaderSource(shaderID, 1, &codePtr, NULL);
     glCompileShader(shaderID);

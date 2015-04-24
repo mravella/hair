@@ -54,11 +54,11 @@ public:
 
     virtual ~ShaderProgram() { }
 
-    void create();
+    virtual void create();
 
-    void bind();
+    virtual void bind();
 
-    void unbind();
+    virtual void unbind();
 
     // Sets all uniforms that do not change between objects.
     virtual void setGlobalUniforms() { }

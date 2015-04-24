@@ -9,6 +9,7 @@
 #include <tuple>
 #include <iostream>
 #include <unordered_map>
+#include <string>
 
 #include <pthread.h>
 
@@ -17,6 +18,7 @@ class Hair;
 class GLWidget;
 
 #define HAIRS_PER_THREAD 20
+
 
 struct fluid
 {
@@ -66,9 +68,9 @@ typedef struct
 
         glm::vec4 toHash = glm::vec4(key->velocity, key->density);
         const char *hashString = md5(glm::to_string(toHash)).c_str();
-        returnValue = strtol(hashString, NULL, 16);
+        returnValue = strtol(hashString, NULL, 16) % 64577;
 
-        cout << "Hashed value: " << hashString << endl;
+        cout << "return value: " << returnValue << endl;
 
         return returnValue;
     }
@@ -78,10 +80,14 @@ struct grid_loc_hash
 {
     std::size_t operator() (const grid_loc &key) const
     {
-        const char *hashString = md5(glm::to_string(key.pos)).c_str();
-        size_t returnValue = strtol(hashString, NULL, 16);
+        std::string keyString = glm::to_string(key.pos);
+        const char *hashString = md5(keyString).c_str();
+        std::string hString = std::string(hashString);
+        hString.insert(0, "0x");
+        const char *newHashString = hString.substr(0,10).c_str();
+        size_t returnValue = (unsigned int) strtol(newHashString, NULL, 0);
 
-        cout << "Hashed value: " << hashString << endl;
+//        cout << keyString << " -> " << newHashString << " -> " << returnValue << endl;
 
         return returnValue;
     }
@@ -106,11 +112,12 @@ typedef struct
 struct HairSimulationThreadInfo {
     Hair *hairs[HAIRS_PER_THREAD];
 
-    QMap<std::tuple<double, double, double>, double> *densityGrid;
-    QMap<std::tuple<double, double, double>, glm::vec3> *velocityGrid;
+//    QMap<std::tuple<double, double, double>, double> *densityGrid;
+//    QMap<std::tuple<double, double, double>, glm::vec3> *velocityGrid;
     std::unordered_map<grid_loc, fluid, grid_loc_hash> *fluidGrid;
 
 };
+
 
 class Simulation
 {
@@ -136,7 +143,7 @@ private:
     void calculateFrictionAndRepulsion(HairObject *_object);
     static void* calculateFrictionAndRepulsionThread(void *untypedInfoStruct);
     
-    static glm::vec3 gradient(QMap<std::tuple<double, double, double>, double> &grid, glm::vec3 pt);
+    static glm::vec3 gradient(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pt);
     static glm::vec3 getVelocity(QMap<std::tuple<double, double, double>, glm::vec3> &velocityGrid, QMap<std::tuple<double, double, double>, double> &densityGrid, glm::vec3 pt);
     
     void integrate(HairObject *_object);

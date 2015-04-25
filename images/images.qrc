@@ -8,5 +8,7 @@
         <file>dude_hairmap.jpg</file>
         <file>dude_hairmap_inv.jpg</file>
         <file>dude_hairmap.png</file>
+        <file>chevron_up.png</file>
+        <file>chevron_down.png</file>
     </qresource>
 </RCC>

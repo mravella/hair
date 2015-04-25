@@ -53,7 +53,7 @@ SOURCES += \
     src/quad.cpp \
     src/shaderPrograms/hairopacityshaderprogram.cpp \
     src/meshocttree.cpp \
-    src/md5.cpp
+    src/md5.cpp \
     src/tessellator.cpp \
     src/shaderPrograms/hairfeedbackshaderprogram.cpp
 
@@ -83,7 +83,7 @@ HEADERS += \
     src/meshocttree.h \
     src/shaderPrograms/whitemeshshaderprogram.h \
     src/shaderPrograms/whitehairshaderprogram.h \
-    src/md5.h
+    src/md5.h \
     src/tessellator.h \
     src/shaderPrograms/hairfeedbackshaderprogram.h \
     src/shaderPrograms/hairrendershaderprogram.h

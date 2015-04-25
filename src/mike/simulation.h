@@ -80,14 +80,12 @@ struct grid_loc_hash
 {
     std::size_t operator() (const grid_loc &key) const
     {
-        std::string keyString = glm::to_string(key.pos);
-        const char *hashString = md5(keyString).c_str();
-        std::string hString = std::string(hashString);
-        hString.insert(0, "0x");
-        const char *newHashString = hString.substr(0,10).c_str();
-        size_t returnValue = (unsigned int) strtol(newHashString, NULL, 0);
+        std::string s = md5(glm::to_string(key.pos));
+        const char *x = s.c_str();
 
-//        cout << keyString << " -> " << newHashString << " -> " << returnValue << endl;
+        size_t returnValue = htoi(x);
+
+//        cout << glm::to_string(key.pos) << " -> " << x << " -> " << returnValue << endl;
 
         return returnValue;
     }

@@ -34,8 +34,6 @@ void ObjMesh::init(const char *objFile, float scale)
         triangles.push_back(t);
     }
 
-    m_octTree = new MeshOctTree(this);
-
     // Initialize vbo
     std::vector<GLfloat> vboData;
     for (unsigned int i=0; i < vertices.size(); i++) {

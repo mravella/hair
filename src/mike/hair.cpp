@@ -55,6 +55,8 @@ Hair::Hair(int numSegments, double length, glm::vec3 location, glm::vec3 dir)
 Hair::~Hair()
 {
     m_patch.destroy();
+    for (int i = 0; i < m_vertices.size(); ++i)
+        delete m_vertices.at(i);
 }
 
 

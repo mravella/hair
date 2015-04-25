@@ -97,6 +97,36 @@ struct Triangle {
 
 };
 
+inline unsigned int htoi(const char s[])
+{
+    unsigned int val = 0;
+    int x = 0;
+
+    if(s[x] == '0' && (s[x+1]=='x' || s[x+1]=='X')) x+=2;
+
+    while(s[x]!='\0')
+    {
+       if(val > UINT_MAX) return 0;
+       else if(s[x] >= '0' && s[x] <='9')
+       {
+          val = val * 16 + s[x] - '0';
+       }
+       else if(s[x]>='A' && s[x] <='F')
+       {
+          val = val * 16 + s[x] - 'A' + 10;
+       }
+       else if(s[x]>='a' && s[x] <='f')
+       {
+          val = val * 16 + s[x] - 'a' + 10;
+       }
+       else return 0;
+
+       x++;
+    }
+    return val;
+}
+
+
 inline bool operator==(const Triangle& lhs, const Triangle& rhs){
     if (lhs.v1 != rhs.v1) return false;
     if (lhs.v2 != rhs.v2) return false;

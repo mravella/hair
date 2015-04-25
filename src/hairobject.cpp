@@ -34,6 +34,11 @@ HairObject::HairObject(HairObject *_oldObject, Simulation *_simulation)
     m_simulation = _simulation;
 }
 
+HairObject::~HairObject()
+{
+    for (int i = 0; i < m_guideHairs.size(); ++i)
+        delete m_guideHairs.at(i);
+}
 
 HairObject::HairObject(
         ObjMesh *_mesh,

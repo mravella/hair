@@ -11,10 +11,19 @@ HairInterface::HairInterface(Ui::MainWindow *ui)
     m_glWidget = NULL;
     m_hairObject = NULL;
     connectUserInputs();
+    
+    showHideGroupSim();
+    showHideGroupTess();
+    showHideGroupRender();
 }
 
 void HairInterface::connectUserInputs()
 {
+    connect(m_ui->showHideGroupSim, SIGNAL(pressed()), this, SLOT(showHideGroupSim()));
+    connect(m_ui->showHideGroupTess, SIGNAL(pressed()), this, SLOT(showHideGroupTess()));
+    connect(m_ui->showHideGroupRender, SIGNAL(pressed()), this, SLOT(showHideGroupRender()));
+    
+            
     // hairs per patch
     connect(m_ui->sliderHairsPerPatch, SIGNAL(valueChanged(int)), this, SLOT(setHairsPerPatch(int)));
 
@@ -23,6 +32,9 @@ void HairInterface::connectUserInputs()
     
     // hair radius
     connect(m_ui->sliderHairRadius, SIGNAL(valueChanged(int)), this, SLOT(setHairRadius(int)));
+    
+    // noise amp
+    connect(m_ui->sliderNoiseAmp, SIGNAL(valueChanged(int)), this, SLOT(setNoiseAmp(int)));
 
     // rgb
     connect(m_ui->sliderHairColorR, SIGNAL(valueChanged(int)), this, SLOT(setHairColorR(int)));
@@ -59,6 +71,10 @@ void HairInterface::setHairObject(HairObject *hairObject)
     // Sync hair radius slider
     m_ui->sliderHairRadius->setValue(m_hairObject->m_hairRadius*10000);
     m_ui->inputHairRadius->setText(QString::number(m_hairObject->m_hairRadius));
+    
+    // Sync noise amplitude slider
+    m_ui->sliderNoiseAmp->setValue(m_hairObject->m_noiseAmplitude*100);
+    m_ui->inputNoiseAmp->setText(QString::number(m_hairObject->m_noiseAmplitude));
     
     // Sync rgb sliders
     m_ui->sliderHairColorR->setValue(m_hairObject->m_color.x*2550);
@@ -108,6 +124,40 @@ void HairInterface::resetSimulation()
     updateStatsLabel();
 }
 
+
+void HairInterface::showHideGroupSim()
+{
+    if (m_ui->groupSim->isVisible()){
+        m_ui->groupSim->hide();
+        m_ui->showHideGroupSim->setIcon(QIcon(":/images/chevron_up"));
+    } else {
+        m_ui->groupSim->show();
+        m_ui->showHideGroupSim->setIcon(QIcon(":/images/chevron_down"));
+    }
+}
+
+void HairInterface::showHideGroupTess()
+{
+    if (m_ui->groupTess->isVisible()){
+        m_ui->groupTess->hide();
+        m_ui->showHideGroupTess->setIcon(QIcon(":/images/chevron_up"));
+    } else {
+        m_ui->groupTess->show();
+        m_ui->showHideGroupTess->setIcon(QIcon(":/images/chevron_down"));
+    }
+}
+
+void HairInterface::showHideGroupRender()
+{
+    if (m_ui->groupRender->isVisible()){
+        m_ui->groupRender->hide();
+        m_ui->showHideGroupRender->setIcon(QIcon(":/images/chevron_up"));
+    } else {
+        m_ui->groupRender->show();
+        m_ui->showHideGroupRender->setIcon(QIcon(":/images/chevron_down"));
+    }
+}
+
 void HairInterface::setHairsPerPatch(int numHairs)
 {
     m_hairObject->m_numGroupHairs = numHairs;
@@ -126,6 +176,12 @@ void HairInterface::setHairRadius(int value)
 {
     m_hairObject->m_hairRadius = value/10000.;
     m_ui->inputHairRadius->setText(QString::number(m_hairObject->m_hairRadius, 'g', 3));
+}
+
+void HairInterface::setNoiseAmp(int value)
+{
+    m_hairObject->m_noiseAmplitude = value/100.;
+    m_ui->inputNoiseAmp->setText(QString::number(m_hairObject->m_noiseAmplitude, 'g', 3));
 }
 
 

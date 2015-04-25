@@ -24,10 +24,16 @@ public:
     void updateStatsLabel();
 
 public slots:
+    void showHideGroupSim();
+    void showHideGroupTess();
+    void showHideGroupRender();
+    
     void resetSimulation();
     void setHairsPerPatch(int);
     void setSplineVertices(int);
     void setHairRadius(int);
+    void setNoiseAmp(int);
+    
     void setHairColorR(int);
     void setHairColorG(int);
     void setHairColorB(int);

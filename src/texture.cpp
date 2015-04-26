@@ -2,6 +2,7 @@
 
 #include "texturedquadshaderprogram.h"
 #include "quad.h"
+#include <QImage>
 
 Texture::Texture()
 {
@@ -18,6 +19,12 @@ Texture::~Texture()
 void Texture::createColorTexture(const char *imageFile, GLint magFilter, GLint minFilter)
 {
     QImage image(imageFile);
+    _create(image.bits(), GL_RGBA, image.width(), image.height(), GL_RGBA,
+            GL_UNSIGNED_BYTE, magFilter, minFilter);
+}
+
+void Texture::createColorTexture(QImage &image, GLint magFilter, GLint minFilter)
+{
     _create(image.bits(), GL_RGBA, image.width(), image.height(), GL_RGBA,
             GL_UNSIGNED_BYTE, magFilter, minFilter);
 }

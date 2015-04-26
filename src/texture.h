@@ -5,6 +5,7 @@
 
 class Quad;
 class TexturedQuadShaderProgram;
+class QImage;
 
 class Texture
 {
@@ -15,6 +16,7 @@ public:
 
     // Creates a texture containing the given image.
     void createColorTexture(const char *imageFile, GLint magFilter, GLint minFilter);
+    void createColorTexture(QImage &image, GLint magFilter, GLint minFilter);
 
     // Creates a black texture with the given width and height.
     void createColorTexture(int width, int height, GLint magFilter, GLint minFilter);

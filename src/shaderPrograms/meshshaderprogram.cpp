@@ -24,4 +24,6 @@ void MeshShaderProgram::setGlobalUniforms()
 void MeshShaderProgram::setPerObjectUniforms()
 {
     setUniformMatrix4f("model", uniforms.model);
+    setUniform1i("hairGrowthMap", uniforms.hairGrowthMap);
+    setUniform3f("hairColor", uniforms.color);
 }

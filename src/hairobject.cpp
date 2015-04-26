@@ -3,6 +3,7 @@
 #include "hair.h"
 #include "errorchecker.h"
 #include "simulation.h"
+#include "texture.h"
 
 HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
 {
@@ -38,6 +39,7 @@ HairObject::~HairObject()
 {
     for (int i = 0; i < m_guideHairs.size(); ++i)
         delete m_guideHairs.at(i);
+    safeDelete(m_hairGrowthMapTexture);
 }
 
 HairObject::HairObject(
@@ -53,6 +55,9 @@ HairObject::HairObject(
         std::cout << _hairGrowthMap << " does not appear to be a valid image." << std::endl;
         exit(1);
     }
+
+    m_hairGrowthMapTexture = new Texture();
+    m_hairGrowthMapTexture->createColorTexture(image, GL_LINEAR, GL_LINEAR);
 
     for (unsigned int i = 0; i < _mesh->triangles.size(); i++)
     {

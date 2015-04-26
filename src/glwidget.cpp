@@ -145,6 +145,7 @@ void GLWidget::paintGL()
     m_opacityMapTexture->bind(GL_TEXTURE2);
     m_meshDepthTexture->bind(GL_TEXTURE3);
     m_finalTexture->bind(GL_TEXTURE4);
+    m_hairObject->m_hairGrowthMapTexture->bind(GL_TEXTURE5);
 
     if (useShadows)
     {
@@ -258,6 +259,7 @@ void GLWidget::_drawMesh(ShaderProgram *program, glm::mat4 model, glm::mat4 view
     program->uniforms.hairShadowMap = 1;
     program->uniforms.opacityMap = 2;
     program->uniforms.meshShadowMap = 3;
+    program->uniforms.hairGrowthMap = 5;
     program->uniforms.projection = projection;
     program->uniforms.view = view;
     program->uniforms.model = model;
@@ -265,6 +267,7 @@ void GLWidget::_drawMesh(ShaderProgram *program, glm::mat4 model, glm::mat4 view
     program->uniforms.eyeToLight = m_eyeToLight;
     program->uniforms.shadowIntensity = 15;
     program->uniforms.useShadows = useShadows;
+    program->uniforms.color = 2.f * m_hairObject->m_color; // multiplying by 2 because it looks better...
     program->setGlobalUniforms();
     program->setPerObjectUniforms();
     m_highResMesh->draw();

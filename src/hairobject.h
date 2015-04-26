@@ -8,6 +8,7 @@
 
 class Hair;
 class Simulation;
+class Texture;
 
 class HairObject
 {
@@ -43,6 +44,8 @@ public:
     QList<Hair*> m_guideHairs;
 
     Simulation *m_simulation;
+
+    Texture *m_hairGrowthMapTexture;
     
     int m_numGuideHairs;
     int m_numHairVertices;

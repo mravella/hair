@@ -34,13 +34,12 @@ struct Uniforms {
 
     glm::vec3 color;
 
+    // Texture uniforms
     int noiseTexture;
-
     int hairShadowMap;
-
     int meshShadowMap;
-
     int opacityMap;
+    int hairGrowthMap;
 
     bool useShadows;
 

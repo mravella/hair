@@ -41,7 +41,7 @@ void ObjMesh::init(const char *objFile, float scale)
         vboData.push_back(vertices[i].y);
         vboData.push_back(vertices[i].z);
         vboData.push_back(uvs[i].x);
-        vboData.push_back(uvs[i].y);
+        vboData.push_back(1 - uvs[i].y);
         vboData.push_back(normals[i].x);
         vboData.push_back(normals[i].y);
         vboData.push_back(normals[i].z);

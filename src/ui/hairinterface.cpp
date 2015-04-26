@@ -26,20 +26,27 @@ void HairInterface::connectUserInputs()
             
     // hairs per patch
     connect(m_ui->sliderHairsPerPatch, SIGNAL(valueChanged(int)), this, SLOT(setHairsPerPatch(int)));
+    connect(m_ui->inputHairsPerPatch, SIGNAL(textChanged(QString)), this, SLOT(inputHairsPerPatchText(QString)));
 
     // spline vertices
     connect(m_ui->sliderSplineVertices, SIGNAL(valueChanged(int)), this, SLOT(setSplineVertices(int)));
+    connect(m_ui->inputSplineVertices, SIGNAL(textChanged(QString)), this, SLOT(inputSplineVerticesText(QString)));
     
     // hair radius
     connect(m_ui->sliderHairRadius, SIGNAL(valueChanged(int)), this, SLOT(setHairRadius(int)));
+    connect(m_ui->inputHairRadius, SIGNAL(textChanged(QString)), this, SLOT(inputHairRadiusText(QString)));
     
     // noise amp
     connect(m_ui->sliderNoiseAmp, SIGNAL(valueChanged(int)), this, SLOT(setNoiseAmp(int)));
+    connect(m_ui->inputNoiseAmp, SIGNAL(textChanged(QString)), this, SLOT(inputNoiseAmpText(QString)));
 
     // rgb
     connect(m_ui->sliderHairColorR, SIGNAL(valueChanged(int)), this, SLOT(setHairColorR(int)));
+    connect(m_ui->inputHairColorR, SIGNAL(textChanged(QString)), this, SLOT(inputHairColorRText(QString)));
     connect(m_ui->sliderHairColorG, SIGNAL(valueChanged(int)), this, SLOT(setHairColorG(int)));
+    connect(m_ui->inputHairColorG, SIGNAL(textChanged(QString)), this, SLOT(inputHairColorGText(QString)));
     connect(m_ui->sliderHairColorB, SIGNAL(valueChanged(int)), this, SLOT(setHairColorB(int)));
+    connect(m_ui->inputHairColorB, SIGNAL(textChanged(QString)), this, SLOT(inputHairColorBText(QString)));
 
     // toggles
     connect(m_ui->frictionSimCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFrictionSim(bool)));
@@ -158,49 +165,133 @@ void HairInterface::showHideGroupRender()
     }
 }
 
+
+void HairInterface::inputHairsPerPatchText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    int value = text.toInt(&ok);
+    if (!ok){
+        value = m_hairObject->m_numGroupHairs;
+    } else if (value == m_hairObject->m_numGroupHairs) return;
+    setHairsPerPatch(value);
+}
 void HairInterface::setHairsPerPatch(int numHairs)
 {
     m_hairObject->m_numGroupHairs = numHairs;
     m_ui->inputHairsPerPatch->setText(QString::number(numHairs));
+    m_ui->sliderHairsPerPatch->setValue(numHairs);
     updateStatsLabel();
 }
 
+void HairInterface::inputSplineVerticesText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    int value = text.toInt(&ok);
+    if (!ok){
+        value = m_hairObject->m_numSplineVertices;
+    } else if (value == m_hairObject->m_numSplineVertices) return;
+    setSplineVertices(value);
+}
 void HairInterface::setSplineVertices(int numVertices)
 {
+//    if (value <= 0) return;
     m_hairObject->m_numSplineVertices = numVertices;
     m_ui->inputSplineVertices->setText(QString::number(numVertices));
+    m_ui->sliderSplineVertices->setValue(numVertices);
     updateStatsLabel();
 }
 
+void HairInterface::inputHairRadiusText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_hairObject->m_hairRadius;
+    } else if (value == m_hairObject->m_hairRadius) return;
+    if (value == 0) return;
+    setHairRadius(10000*value);
+    m_ui->sliderHairRadius->setValue(10000*value);
+}
 void HairInterface::setHairRadius(int value)
 {
     m_hairObject->m_hairRadius = value/10000.;
-    m_ui->inputHairRadius->setText(QString::number(m_hairObject->m_hairRadius, 'g', 3));
+    m_ui->inputHairRadius->setText(QString::number(m_hairObject->m_hairRadius, 'g', 4));
 }
 
+void HairInterface::inputNoiseAmpText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_hairObject->m_noiseAmplitude;
+    } else if (value == m_hairObject->m_noiseAmplitude) return;
+    setNoiseAmp(100*value);
+    m_ui->sliderNoiseAmp->setValue(100*value);
+}
 void HairInterface::setNoiseAmp(int value)
 {
+    if (value < 0) return;
     m_hairObject->m_noiseAmplitude = value/100.;
     m_ui->inputNoiseAmp->setText(QString::number(m_hairObject->m_noiseAmplitude, 'g', 3));
 }
 
 
+void HairInterface::inputHairColorRText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_hairObject->m_color.x;
+    } else if (value == m_hairObject->m_color.x) return;
+    setHairColorR(2550*value);
+    m_ui->sliderHairColorR->setValue(2550*value);
+}
 void HairInterface::setHairColorR(int value)
 {
+    if (value < 0) return;
     m_hairObject->m_color.x = value/2550.;
-    m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x, 'g', 2));
+    m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x, 'g', 3));
 }
 
+void HairInterface::inputHairColorGText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_hairObject->m_color.y;
+    } else if (value == m_hairObject->m_color.y) return;
+    setHairColorG(2550*value);
+    m_ui->sliderHairColorG->setValue(2550*value);
+}
 void HairInterface::setHairColorG(int value)
 {
+    if (value < 0) return;    
     m_hairObject->m_color.y = value/2550.;
-    m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y, 'g', 2));
+    m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y, 'g', 3));
 }
 
+void HairInterface::inputHairColorBText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_hairObject->m_color.z;
+    } else if (value == m_hairObject->m_color.z) return;
+    setHairColorB(2550*value);
+    m_ui->sliderHairColorB->setValue(2550*value);
+}
 void HairInterface::setHairColorB(int value)
 {
+    if (value < 0) return;
     m_hairObject->m_color.z = value/2550.;
-    m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 2));
+    m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 3));
 }
 
 void HairInterface::setShadows(bool checked)

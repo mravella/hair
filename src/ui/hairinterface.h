@@ -29,14 +29,26 @@ public slots:
     void showHideGroupRender();
     
     void resetSimulation();
-    void setHairsPerPatch(int);
-    void setSplineVertices(int);
-    void setHairRadius(int);
-    void setNoiseAmp(int);
     
-    void setHairColorR(int);
-    void setHairColorG(int);
-    void setHairColorB(int);
+    void inputHairsPerPatchText(QString text);
+    void setHairsPerPatch(int);
+    
+    void inputSplineVerticesText(QString text);
+    void setSplineVertices(int numVertices);
+    
+    void inputHairRadiusText(QString text);
+    void setHairRadius(int value);
+    
+    void inputNoiseAmpText(QString text);
+    void setNoiseAmp(int value);
+    
+    void inputHairColorRText(QString text);
+    void setHairColorR(int value);
+    void inputHairColorGText(QString text);
+    void setHairColorG(int value);
+    void inputHairColorBText(QString text);
+    void setHairColorB(int value);
+
     void setShadows(bool);
     void setSupersampling(bool);
     void setFrictionSim(bool);

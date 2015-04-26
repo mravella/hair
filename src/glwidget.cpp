@@ -123,7 +123,7 @@ void GLWidget::paintGL()
     ErrorChecker::printGLErrors("start of paintGL");
 
     m_increment++;
-    float time = m_increment / (float) m_targetFPS;      // Time in seconds.
+    float time = m_increment / (float) m_targetFPS;      // Time in seconds (assuming 60 FPS).
 
     if (!paused)
     {
@@ -131,12 +131,13 @@ void GLWidget::paintGL()
         m_hairObject->update(time);
     }
 
+    // Update transformation matrices.
     glm::mat4 model = glm::mat4(1.f);
     model = m_testSimulation->m_xform;
-    glm::vec3 lightPosition = glm::vec3(1, 2, 4);
+    m_lightPosition = glm::vec3(1, 2, 4);
     glm::mat4 lightProjection = glm::perspective(1.3f, 1.f, .1f, 100.f);
-    glm::mat4 lightView = glm::lookAt(lightPosition, glm::vec3(0), glm::vec3(0,1,0));
-    glm::mat4 eyeToLight = lightProjection * lightView * glm::inverse(m_view);
+    glm::mat4 lightView = glm::lookAt(m_lightPosition, glm::vec3(0), glm::vec3(0,1,0));
+    m_eyeToLight = lightProjection * lightView * glm::inverse(m_view);
 
     // Bind textures.
     m_noiseTexture->bind(GL_TEXTURE0);
@@ -145,138 +146,71 @@ void GLWidget::paintGL()
     m_meshDepthTexture->bind(GL_TEXTURE3);
     m_finalTexture->bind(GL_TEXTURE4);
 
-    ShaderProgram *program;
-
     if (useShadows)
     {
         // Render hair shadow map.
-        glViewport(0, 0, m_hairDepthTexture->width(), m_hairDepthTexture->height());
         m_hairShadowFramebuffer->bind();
-        {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            program = m_whiteHairProgram;
-            {
-                program->bind();
-                program->uniforms.noiseTexture = 0;
-                program->uniforms.hairShadowMap = 1;
-                program->uniforms.projection = lightProjection;
-                program->uniforms.view = lightView;
-                program->uniforms.model = model;
-                program->uniforms.eyeToLight = eyeToLight;
-                program->uniforms.lightPosition = lightPosition;
-                program->setGlobalUniforms();
-                m_hairObject->paint(program);
-            }
-        }
+        glViewport(0, 0, m_hairDepthTexture->width(), m_hairDepthTexture->height());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        _drawHair(m_whiteHairProgram, model, lightView, lightProjection);
 
         // Render mesh shadow map.
         m_meshShadowFramebuffer->bind();
-        {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            program = m_whiteMeshProgram;
-            {
-                program->bind();
-                program->uniforms.projection = lightProjection;
-                program->uniforms.view = lightView;
-                program->uniforms.model = model;
-                program->setGlobalUniforms();
-                program->setPerObjectUniforms();
-                m_highResMesh->draw();
-            }
-        }
-        m_meshShadowFramebuffer->unbind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        _drawMesh(m_whiteMeshProgram, model, lightView, lightProjection);
 
-        // Render opacity map.
+        // Enable additive blending for opacity map.
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         glBlendEquation(GL_FUNC_ADD);
-        glViewport(0, 0, m_hairDepthTexture->width(), m_hairDepthTexture->height());
+
+        // Render opacity map.
         m_opacityMapFramebuffer->bind();
-        {
-            glClearColor(0.f, 0.f, 0.f, 0.f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            program = m_hairOpacityProgram;
-            {
-                program->bind();
-                program->uniforms.noiseTexture = 0;
-                program->uniforms.hairShadowMap = 1;
-                program->uniforms.projection = lightProjection;
-                program->uniforms.view = lightView;
-                program->uniforms.model = model;
-                program->uniforms.eyeToLight = eyeToLight;
-                program->uniforms.lightPosition = lightPosition;
-                program->setGlobalUniforms();
-                m_hairObject->paint(program);
-            }
-        }
+        glViewport(0, 0, m_hairDepthTexture->width(), m_hairDepthTexture->height());
+        glClearColor(0.f, 0.f, 0.f, 0.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        _drawHair(m_hairOpacityProgram, model, lightView, lightProjection);
+
+        // Restore previous state.
         m_opacityMapFramebuffer->unbind();
         glEnable(GL_DEPTH_TEST);
         glDisable(GL_BLEND);
 
-    } // if useShadows
+    }
 
 
     if (useSupersampling)
     {
+        // Render into supersample framebuffer.
         m_finalFramebuffer->bind();
         glViewport(0, 0, m_finalTexture->width(), m_finalTexture->height());
     }
     else
     {
+        // Render into default framebuffer.
         glViewport(0, 0, width(), height());
     }
 
-    // Render hair.
+
+    // Render scene.
     glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    program = m_hairProgram;
-    {
-        program->bind();
-        program->uniforms.noiseTexture = 0;
-        program->uniforms.hairShadowMap = 1;
-        program->uniforms.opacityMap = 2;
-        program->uniforms.meshShadowMap = 3;
-        program->uniforms.projection = m_projection;
-        program->uniforms.view = m_view;
-        program->uniforms.model = model;
-        program->uniforms.eyeToLight = eyeToLight;
-        program->uniforms.lightPosition = lightPosition;
-        program->uniforms.shadowIntensity = 15;
-        program->uniforms.useShadows = useShadows;
-        program->setGlobalUniforms();
-        m_hairObject->paint(program);
-    }
-    
-    // Render mesh.
-    program = m_meshProgram;
-    {
-        program->bind();
-        program->uniforms.hairShadowMap = 1;
-        program->uniforms.opacityMap = 2;
-        program->uniforms.meshShadowMap = 3;
-        program->uniforms.projection = m_projection;
-        program->uniforms.view = m_view;
-        program->uniforms.model = model;
-        program->uniforms.lightPosition = lightPosition;
-        program->uniforms.eyeToLight = eyeToLight;
-        program->uniforms.shadowIntensity = 15;
-        program->uniforms.useShadows = useShadows;
-        program->setGlobalUniforms();
-        program->setPerObjectUniforms();
-        m_highResMesh->draw();
-    }
+    _drawHair(m_hairProgram, model, m_view, m_projection);
+    _drawMesh(m_meshProgram, model, m_view, m_projection);
+
 
     if (useSupersampling)
     {
+        // Render supersampled texture.
         m_finalFramebuffer->unbind();
         glViewport(0, 0, width(), height());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_finalTexture->renderFullScreen();
     }
 
+
     // Clean up.
-    program->unbind();
     m_noiseTexture->unbind(GL_TEXTURE0);
     m_hairDepthTexture->unbind(GL_TEXTURE1);
     m_opacityMapTexture->unbind(GL_TEXTURE2);
@@ -296,6 +230,44 @@ void GLWidget::resizeGL(int w, int h)
 
     m_finalTexture->resize(2*w, 2*h);
     m_finalFramebuffer->resizeDepthBuffer(2*w, 2*h);
+}
+
+
+void GLWidget::_drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view, glm::mat4 projection)
+{
+    program->bind();
+    program->uniforms.noiseTexture = 0;
+    program->uniforms.hairShadowMap = 1;
+    program->uniforms.opacityMap = 2;
+    program->uniforms.meshShadowMap = 3;
+    program->uniforms.projection = projection;
+    program->uniforms.view = view;
+    program->uniforms.model = model;
+    program->uniforms.eyeToLight = m_eyeToLight;
+    program->uniforms.lightPosition = m_lightPosition;
+    program->uniforms.shadowIntensity = 15;
+    program->uniforms.useShadows = useShadows;
+    program->setGlobalUniforms();
+    m_hairObject->paint(program);
+}
+
+
+void GLWidget::_drawMesh(ShaderProgram *program, glm::mat4 model, glm::mat4 view, glm::mat4 projection)
+{
+    program->bind();
+    program->uniforms.hairShadowMap = 1;
+    program->uniforms.opacityMap = 2;
+    program->uniforms.meshShadowMap = 3;
+    program->uniforms.projection = projection;
+    program->uniforms.view = view;
+    program->uniforms.model = model;
+    program->uniforms.lightPosition = m_lightPosition;
+    program->uniforms.eyeToLight = m_eyeToLight;
+    program->uniforms.shadowIntensity = 15;
+    program->uniforms.useShadows = useShadows;
+    program->setGlobalUniforms();
+    program->setPerObjectUniforms();
+    m_highResMesh->draw();
 }
 
 

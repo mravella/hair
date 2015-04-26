@@ -45,6 +45,9 @@ protected slots:
     void updateCanvas();
 
 private:
+    void _drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+    void _drawMesh(ShaderProgram *program, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+
     HairInterface *m_hairInterface;
 
     ObjMesh *m_highResMesh, *m_lowResMesh;
@@ -75,6 +78,11 @@ private:
     glm::mat4 m_projection, m_view;
     float m_zoom = 5, m_angleX = 0, m_angleY = 0;
     QPoint m_prevMousePos;
+
+    // Light parameters
+    glm::vec3 m_lightPosition;
+    glm::mat4 m_eyeToLight;
+
 
     float m_hairDensity;
 

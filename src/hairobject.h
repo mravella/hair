@@ -35,7 +35,7 @@ public:
             int _numGroupHairs = 64,
             float _hairGroupSpread = 0.2,
             float _hairRadius = 0.003f,
-            float _noiseAmplitude = 0.54f,
+            float _noiseAmplitude = 0.3f,
             int _numSplineVertices = 20);
     
 public:

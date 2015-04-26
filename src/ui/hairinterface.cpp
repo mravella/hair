@@ -115,7 +115,7 @@ void HairInterface::updateStatsLabel()
                 QString::number(numGuideHairs) + " guide hairs\n" +
                 QString::number(numGuideHairs * numGroupHairs) + " rendered hairs\n" +
                 QString::number(numGuideHairs * numGuideVertices) + " simulated vertices\n" +
-                QString::number(numGuideHairs * numGroupHairs * numSplineVertices * 4) + " rendered vertices");
+                QString::number(numGuideHairs * numGroupHairs * (numSplineVertices-1) * 2) + " rendered triangles");
 }
 
 void HairInterface::resetSimulation()

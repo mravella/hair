@@ -33,7 +33,7 @@ Simulation::Simulation(GLWidget *widget, ObjMesh *mesh)
     m_widget = widget;
     m_mesh = mesh;
     m_xform = glm::mat4(1.0);
-    m_fluidGrid = std::unordered_map<grid_loc, fluid, grid_loc_hash>();
+    m_fluidGrid = std::map<grid_loc, fluid>();
 }
 
 Simulation::~Simulation()
@@ -47,8 +47,8 @@ void Simulation::update(float _time){
 void Simulation::simulate(HairObject *_object)
 {
 
-    QTime t;
-    t.start();
+//    QTime t;
+//    t.start();
     moveObjects(_object);
     
     calculateExternalForces(_object);
@@ -56,10 +56,10 @@ void Simulation::simulate(HairObject *_object)
     if (m_widget->useFrictionSim){
         
         calculateFluidGrid(_object);
-            cout << "1: " << t.restart() << " ms"<< endl;
+//            cout << "1: " << t.restart() << " ms"<< endl;
         
         calculateFrictionAndRepulsion(_object);
-            cout << "2: " << t.restart() << " ms"<< endl;
+//            cout << "2: " << t.restart() << " ms"<< endl;
     }
     
     particleSimulation(_object);
@@ -109,9 +109,9 @@ void Simulation::calculateExternalForces(HairObject *_object)
 // Convert the hair to a fluid
 void Simulation::calculateFluidGrid(HairObject *_object){
     
-    m_fluidGrid = std::unordered_map<grid_loc, fluid, grid_loc_hash>(100 * 100);
+    m_fluidGrid = std::map<grid_loc, fluid>();
     
-    std::unordered_map<grid_loc, fluid, grid_loc_hash> *fluidGrid = &m_fluidGrid;
+    std::map<grid_loc, fluid> *fluidGrid = &m_fluidGrid;
     
     
     for (int i = 0; i < _object->m_guideHairs.size(); ++i)
@@ -139,29 +139,20 @@ void Simulation::calculateFluidGrid(HairObject *_object){
             float xPercentage = x - xFloor;
             float yPercentage = y - yFloor;
             float zPercentage = z - zFloor;
-            
-            float XYZ = (1.0 - xPercentage) * (1.0 - yPercentage) * (1.0 - zPercentage);
-            float XYz = (1.0 - xPercentage) * (1.0 - yPercentage) * (zPercentage);
-            float XyZ = (1.0 - xPercentage) * (yPercentage) * (1.0 - zPercentage);
-            float Xyz = (1.0 - xPercentage) * (yPercentage) * (zPercentage);
-            float xYZ = (xPercentage) * (1.0 - yPercentage) * (1.0 - zPercentage);
-            float xYz = (xPercentage) * (1.0 - yPercentage) * (zPercentage);
-            float xyZ = (xPercentage) * (yPercentage) * (1.0 - zPercentage);
-            float xyz = (xPercentage) * (yPercentage) * (zPercentage);
-            
-            //            cout << "xOercentage: " << xPercentage << endl;
-            //            cout << "yPercentage: " << yPercentage << endl;
-            //            cout << "zPercentage: " << zPercentage << endl;
-            
-            this->insertFluid(*fluidGrid, glm::vec3(xCeil, yCeil, zCeil), XYZ, currVert->velocity);
-            this->insertFluid(*fluidGrid, glm::vec3(xCeil, yCeil, zFloor), XYz, currVert->velocity);
-            this->insertFluid(*fluidGrid, glm::vec3(xCeil, yFloor, zCeil), XyZ, currVert->velocity);
-            this->insertFluid(*fluidGrid, glm::vec3(xCeil, yFloor, zFloor), Xyz, currVert->velocity);
-            this->insertFluid(*fluidGrid, glm::vec3(xFloor, yCeil, zCeil), xYZ, currVert->velocity);
-            this->insertFluid(*fluidGrid, glm::vec3(xFloor, yCeil, zFloor), xYz, currVert->velocity);
-            this->insertFluid(*fluidGrid, glm::vec3(xFloor, yFloor, zCeil), xyZ, currVert->velocity);
-            this->insertFluid(*fluidGrid, glm::vec3(xFloor, yFloor, zFloor), XYZ, currVert->velocity);
-            
+
+            for (int i = 0; i < 8; ++i)
+            {
+                float currFrac = (((i & 1) >> 0) * (1.0 - xPercentage) + (1 - ((i & 1) >> 0)) * (xPercentage))
+                               * (((i & 2) >> 1) * (1.0 - yPercentage) + (1 - ((i & 2) >> 1)) * (yPercentage))
+                               * (((i & 4) >> 2) * (1.0 - zPercentage) + (1 - ((i & 4) >> 2)) * (zPercentage));
+
+                float x, y, z;
+                if ((i & 1) >> 0) x = xCeil; else x = xFloor;
+                if ((i & 2) >> 1) y = yCeil; else y = yFloor;
+                if ((i & 4) >> 2) z = zCeil; else z = zFloor;
+
+                this->insertFluid(*fluidGrid, glm::vec3(x, y, z), currFrac, currVert->velocity * currFrac);
+            }
         }
     }
     
@@ -212,7 +203,7 @@ void* Simulation::calculateFrictionAndRepulsionThread(void *untypedInfoStruct){
     
     HairSimulationThreadInfo *infoStruct = (HairSimulationThreadInfo *) untypedInfoStruct;
     
-    std::unordered_map<grid_loc, fluid, grid_loc_hash> *fluidGrid = infoStruct->fluidGrid;
+    std::map<grid_loc, fluid> *fluidGrid = infoStruct->fluidGrid;
     
     
     for (int i = 0; i < HAIRS_PER_THREAD; i++){
@@ -803,36 +794,36 @@ void Simulation::particleSimulation(HairObject *obj)
     }
 }
 
-void Simulation::insertFluid(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pos, double density, glm::vec3 vel)
+void Simulation::insertFluid(std::map<grid_loc, fluid> &map, glm::vec3 pos, double density, glm::vec3 vel)
 {
     grid_loc key = grid_loc(pos);
     fluid val = fluid(density, (float) density * vel);
     map[key] = val;
 }
 
-fluid Simulation::getFluid(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pos)
+fluid Simulation::getFluid(std::map<grid_loc, fluid> &map, glm::vec3 pos)
 {
     grid_loc key = grid_loc(pos);
-    std::unordered_map<grid_loc, fluid, grid_loc_hash>::const_iterator ret = map.find(key);
+    std::map<grid_loc, fluid>::const_iterator ret = map.find(key);
     if (ret == map.end())
         return fluid();
     return ret->second;
 }
 
-glm::vec3 Simulation::getFluidVelocity(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pos)
+glm::vec3 Simulation::getFluidVelocity(std::map<grid_loc, fluid> &map, glm::vec3 pos)
 {
     fluid f = getFluid(map, pos);
     return f.velocity / (float) f.density;
 }
 
-double Simulation::getFluidDensity(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pos)
+double Simulation::getFluidDensity(std::map<grid_loc, fluid> &map, glm::vec3 pos)
 {
     fluid f = getFluid(map, pos);
     return f.density;
 }
 
 
-glm::vec3 Simulation::gradient(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pt)
+glm::vec3 Simulation::gradient(std::map<grid_loc, fluid> &map, glm::vec3 pt)
 {
     float scaleFactor = (1.0f / GRID_WIDTH);
     

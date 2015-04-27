@@ -5,6 +5,7 @@
 #include "hairobject.h"
 #include "hair.h"
 
+
 HairInterface::HairInterface(Ui::MainWindow *ui)
 {
     m_ui = ui;
@@ -65,6 +66,9 @@ void HairInterface::connectUserInputs()
     // buttons
     connect(m_ui->pauseButton, SIGNAL(pressed()), this, SLOT(togglePaused()));
     connect(m_ui->buttonResetSim, SIGNAL(pressed()), this, SLOT(resetSimulation()));
+    
+    
+    connect(m_ui->editScene, SIGNAL(pressed()), this, SLOT(startEditScene()));
 }
 
 void HairInterface::setGLWidget(GLWidget *glWidget)
@@ -322,4 +326,8 @@ void HairInterface::togglePaused()
 {
     m_glWidget->paused = !m_glWidget->paused;
     m_ui->pauseButton->setText(m_glWidget->paused ? "Continue" : "Pause");
+}
+
+void HairInterface::startEditScene(){
+    
 }

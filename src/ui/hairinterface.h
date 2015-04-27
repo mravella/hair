@@ -53,6 +53,8 @@ public slots:
     void setSupersampling(bool);
     void setFrictionSim(bool);
     void togglePaused();
+    
+    void startEditScene();
 
 private:
     void connectUserInputs();

@@ -55,7 +55,8 @@ SOURCES += \
     src/meshocttree.cpp \
     src/md5.cpp \
     src/tessellator.cpp \
-    src/shaderPrograms/hairfeedbackshaderprogram.cpp
+    src/shaderPrograms/hairfeedbackshaderprogram.cpp \
+    src/ui/sceneeditor.cpp
 
 
 HEADERS += \
@@ -86,10 +87,12 @@ HEADERS += \
     src/md5.h \
     src/tessellator.h \
     src/shaderPrograms/hairfeedbackshaderprogram.h \
-    src/shaderPrograms/hairrendershaderprogram.h
+    src/shaderPrograms/hairrendershaderprogram.h \
+    src/ui/sceneeditor.h
 
 
-FORMS += src/mainwindow.ui
+FORMS += src/mainwindow.ui \
+    src/ui/sceneeditor.ui
 
 OTHER_FILES += \
     shaders/mesh.frag \

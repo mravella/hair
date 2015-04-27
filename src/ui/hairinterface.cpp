@@ -12,9 +12,18 @@ HairInterface::HairInterface(Ui::MainWindow *ui)
     m_hairObject = NULL;
     connectUserInputs();
     
-    showHideGroupSim();
-    showHideGroupTess();
-    showHideGroupRender();
+    m_ui->testHolder->setAlignment(Qt::AlignTop);
+    m_ui->scrollArea->setWidget(m_ui->controlsBox);
+    m_ui->controlsBox->setStyleSheet("QGroupBox { background-color: none; }");
+    m_ui->scrollArea->setFrameShape(QFrame::NoFrame);
+    
+//    showHideGroupSim();
+//    showHideGroupTess();
+//    showHideGroupRender();
+    
+    m_ui->groupTess->hide();
+    m_ui->groupRender->hide();
+    m_ui->groupSim->hide();
 }
 
 void HairInterface::connectUserInputs()

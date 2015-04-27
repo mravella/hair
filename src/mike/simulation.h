@@ -9,6 +9,7 @@
 #include <tuple>
 #include <iostream>
 #include <unordered_map>
+#include <map>
 #include <string>
 
 #include <pthread.h>
@@ -58,19 +59,21 @@ struct grid_loc
         return (pos == other.pos);
     }
 
+    bool operator<(const grid_loc &rhs) const {
+        return (glm::length(pos) < glm::length(rhs.pos));
+    }
 };
 
 struct grid_loc_hash
 {
     std::size_t operator() (const grid_loc &key) const
     {
+        QTime t;
+        t.start();
         std::string s = md5(glm::to_string(key.pos));
         const char *x = s.c_str();
 
         size_t returnValue = htoi(x);
-
-//        cout << glm::to_string(key.pos) << " -> " << x << " -> " << returnValue << endl;
-
         return returnValue;
     }
 };
@@ -80,7 +83,7 @@ struct HairSimulationThreadInfo {
 
 //    QMap<std::tuple<double, double, double>, double> *densityGrid;
 //    QMap<std::tuple<double, double, double>, glm::vec3> *velocityGrid;
-    std::unordered_map<grid_loc, fluid, grid_loc_hash> *fluidGrid;
+    std::map<grid_loc, fluid> *fluidGrid;
 
 };
 
@@ -109,7 +112,7 @@ private:
     void calculateFrictionAndRepulsion(HairObject *_object);
     static void* calculateFrictionAndRepulsionThread(void *untypedInfoStruct);
     
-    static glm::vec3 gradient(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pt);
+    static glm::vec3 gradient(std::map<grid_loc, fluid> &map, glm::vec3 pt);
     
     void integrate(HairObject *_object);
     void integrate2(HairObject *_object);
@@ -118,17 +121,17 @@ private:
     
     void particleSimulation(HairObject *obj);
     
-    void insertFluid(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pos, double density, glm::vec3 vel);
-    static fluid getFluid(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pos);
-    static glm::vec3 getFluidVelocity(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pos);
-    static double getFluidDensity(std::unordered_map<grid_loc, fluid, grid_loc_hash> &map, glm::vec3 pos);
+    void insertFluid(std::map<grid_loc, fluid> &map, glm::vec3 pos, double density, glm::vec3 vel);
+    static fluid getFluid(std::map<grid_loc, fluid> &map, glm::vec3 pos);
+    static glm::vec3 getFluidVelocity(std::map<grid_loc, fluid> &map, glm::vec3 pos);
+    static double getFluidDensity(std::map<grid_loc, fluid> &map, glm::vec3 pos);
 
     
     
     
 public:
     QList<glm::vec3> m_externalForces;
-    std::unordered_map<grid_loc, fluid, grid_loc_hash> m_fluidGrid;
+    std::map<grid_loc, fluid> m_fluidGrid;
     
     
     

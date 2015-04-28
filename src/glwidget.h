@@ -27,7 +27,7 @@ public:
 
     bool useShadows = true;
     bool useSupersampling = true;
-    bool useFrictionSim = false;
+    bool useFrictionSim = true;
     
     bool paused = false;
 
@@ -37,6 +37,7 @@ protected:
     void resizeGL(int w, int h) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
 
     void initSimulation();
@@ -79,6 +80,7 @@ private:
     glm::mat4 m_projection, m_view;
     float m_zoom = 5, m_angleX = 0, m_angleY = 0;
     QPoint m_prevMousePos;
+    QPoint m_prevXformPos;
 
     // Light parameters
     glm::vec3 m_lightPosition;

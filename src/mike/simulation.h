@@ -12,6 +12,11 @@
 #include <string>
 
 #include <pthread.h>
+#include <XnOS.h>
+#include <XnCppWrapper.h>
+
+
+
 
 class HairObject;
 class Hair;
@@ -96,6 +101,7 @@ public:
     
     void update(float _time);
     void simulate(HairObject *_object);
+    void updatePosition(HairObject *object, glm::vec3 xform);
     
     glm::mat4 m_xform;
     
@@ -131,6 +137,10 @@ private:
 public:
     QList<glm::vec3> m_externalForces;
     std::map<grid_loc, fluid> m_fluidGrid;
+    bool m_headMoving;
+
+    glm::vec3 m_windDir;
+    float m_windMagnitude;
     
     
     

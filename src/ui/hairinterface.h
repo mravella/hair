@@ -41,7 +41,9 @@ public slots:
     
     void inputNoiseAmpText(QString text);
     void setNoiseAmp(int value);
-    
+    void inputNoiseFreqText(QString text);
+    void setNoiseFreq(int value);
+
     void inputHairColorRText(QString text);
     void setHairColorR(int value);
     void inputHairColorGText(QString text);

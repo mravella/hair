@@ -122,5 +122,11 @@ QMAKE_CXXFLAGS_WARN_ON += -Wno-unknown-pragmas
 
 LIBS += "-L$$PWD/glew-1.10.0/lib" -lGLEW
 
+INCLUDEPATH += kinect/OpenNI-Bin-Dev-MacOSX-v1.5.7.10/Include
+DEPENDPATH += kinect/OpenNI-Bin-Dev-MacOSX-v1.5.7.10/Include
+
+INCLUDEPATH += kinect/NITE-Bin-Dev-MacOSX-v1.5.2.21/Include
+DEPENDPATH += kinect/NITE-Bin-Dev-MacOSX-v1.5.2.21/Include
+
 INCLUDEPATH += glew-1.10.0/include
 DEPENDPATH += glew-1.10.0/include

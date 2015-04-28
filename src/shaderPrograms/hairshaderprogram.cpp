@@ -32,6 +32,7 @@ void HairShaderProgram::setPerObjectUniforms()
     setUniform1f("hairRadius", uniforms.hairRadius);
     setUniform1f("taperExponent", uniforms.taperExponent);
     setUniform1f("noiseAmplitude", uniforms.noiseAmplitude);
+    setUniform1f("noiseFrequency", uniforms.noiseFrequency);
     setUniform3f("color", uniforms.color);
 }
 

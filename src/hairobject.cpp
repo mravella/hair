@@ -4,6 +4,11 @@
 #include "errorchecker.h"
 #include "simulation.h"
 #include "texture.h"
+#include <QPainter>
+
+QT_BEGIN_NAMESPACE
+  extern Q_WIDGETS_EXPORT void qt_blurImage( QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0 );
+QT_END_NAMESPACE
 
 HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
 {
@@ -56,9 +61,6 @@ HairObject::HairObject(
         exit(1);
     }
 
-    m_hairGrowthMapTexture = new Texture();
-    m_hairGrowthMapTexture->createColorTexture(image, GL_LINEAR, GL_LINEAR);
-
     for (unsigned int i = 0; i < _mesh->triangles.size(); i++)
     {
         Triangle t = _mesh->triangles[i];
@@ -86,22 +88,40 @@ HairObject::HairObject(
     setAttributes(_oldObject);
 
     m_simulation = _simulation;
+
+    // Blur the hair growth map.
+    QPixmap blurredPixmap( image.size() );
+    blurredPixmap.fill( Qt::transparent );
+    QPainter painter( &blurredPixmap );
+    qt_blurImage( &painter, image, 0.1 * image.width(), true, false );
+    QImage blurredImage = blurredPixmap.toImage();
+
+    // Initialize mesh texture with blurred hair growth map.
+    m_hairGrowthMapTexture = new Texture();
+    m_hairGrowthMapTexture->createColorTexture(blurredImage, GL_LINEAR, GL_LINEAR);
 }
 
 void HairObject::setAttributes(HairObject *_oldObject){
     if (_oldObject == NULL){
         setAttributes();
     } else {
-        setAttributes(_oldObject->m_color, _oldObject->m_numGroupHairs, _oldObject->m_hairGroupSpread, _oldObject->m_hairRadius, _oldObject->m_noiseAmplitude, _oldObject->m_numSplineVertices);
+        setAttributes(
+                    _oldObject->m_color,
+                    _oldObject->m_numGroupHairs,
+                    _oldObject->m_hairGroupSpread,
+                    _oldObject->m_hairRadius,
+                    _oldObject->m_noiseAmplitude,
+                    _oldObject->m_numSplineVertices);
     }
 }
 
-void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hairGroupSpread, float _hairRadius, float _noiseAmplitude, int _numSplineVertices){
+void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hairGroupSpread, float _hairRadius, float _noiseAmplitude, float _noiseFrequency, int _numSplineVertices){
     m_color = _color;
     m_numGroupHairs = _numGroupHairs;
     m_hairGroupSpread = _hairGroupSpread;
     m_hairRadius = _hairRadius;
     m_noiseAmplitude = _noiseAmplitude;
+    m_noiseFrequency = _noiseFrequency;
     m_numSplineVertices = _numSplineVertices;
 }
 
@@ -125,6 +145,7 @@ void HairObject::paint(ShaderProgram *program){
     program->uniforms.hairGroupSpread = m_hairGroupSpread;
     program->uniforms.hairRadius = m_hairRadius;
     program->uniforms.noiseAmplitude = m_noiseAmplitude;
+    program->uniforms.noiseFrequency = m_noiseFrequency;
     program->uniforms.numSplineVertices = m_numSplineVertices;
     program->setPerObjectUniforms();
 

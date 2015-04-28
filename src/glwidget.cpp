@@ -21,7 +21,7 @@
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
     : QGLWidget(format, parent),
       m_hairInterface(hairInterface),
-      m_hairDensity(100),
+      m_hairDensity(150),
       m_timer(this),
       m_increment(0),
       m_targetFPS(60.f)
@@ -316,17 +316,51 @@ void GLWidget::updateCanvas()
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
-    m_prevMousePos = event->pos();
+    if (event->button() == Qt::RightButton)
+    {
+        m_prevMousePos = event->pos();
+    }
+    if (event->button() == Qt::LeftButton)
+    {
+        m_prevXformPos = event->pos();
+        m_testSimulation->m_headMoving = true;
+    }
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    m_angleX += 10 * (event->x() - m_prevMousePos.x()) / (float) width();
-    m_angleY += 10 * (event->y() - m_prevMousePos.y()) / (float) height();
-    m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
-            glm::rotate(m_angleY, glm::vec3(1, 0, 0)) *
-            glm::rotate(m_angleX, glm::vec3(0, 1, 0));
-    m_prevMousePos = event->pos();
+    if (event->buttons() == Qt::RightButton)
+    {
+        m_angleX += 10 * (event->x() - m_prevMousePos.x()) / (float) width();
+        m_angleY += 10 * (event->y() - m_prevMousePos.y()) / (float) height();
+        m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
+                glm::rotate(m_angleY, glm::vec3(1, 0, 0)) *
+                glm::rotate(m_angleX, glm::vec3(0, 1, 0));
+        m_prevMousePos = event->pos();
+    }
+    if (event->buttons() == Qt::LeftButton)
+    {
+        glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
+        glm::mat4 inverseView = glm::inverse(m_view);
+        glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, -1, 1)));
+        cout << "up: " << glm::to_string(up) << endl;
+        cout << "look: " << glm::to_string(look) << endl;
+        glm::vec3 right = glm::cross(up, look);
+        QPoint delta = event->pos() - m_prevXformPos;
+        glm::vec3 xform = glm::vec3();
+        xform += (float) delta.x() * 0.005f * right;
+        xform += (float) -delta.y() * 0.005f * up;
+        m_testSimulation->updatePosition(m_hairObject, xform);
+        m_prevXformPos = event->pos();
+    }
+}
+
+void GLWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        m_testSimulation->m_headMoving = false;
+    }
 }
 
 void GLWidget::wheelEvent(QWheelEvent *event)

@@ -99,7 +99,9 @@ public:
     
     void update(float _time);
     void simulate(HairObject *_object);
+    void updateHairPosition(HairObject *object);
     void updatePosition(HairObject *object, glm::vec3 xform);
+    void updateRotation(HairObject *object, float angle, glm::vec3 axis);
     
     glm::mat4 m_xform;
     

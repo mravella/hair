@@ -24,13 +24,7 @@
 
 #define EULER false
 #define __BMONTELL_MODE__ false
-#define TIMESTEP 0.01f
-
-float* g_pDepthHist;
-XnRGB24Pixel* g_pTexMap = NULL;
-unsigned int g_nTexMapX = 0;
-unsigned int g_nTexMapY = 0;
-XnDepthPixel g_nZRes;
+#define TIMESTEP 0.02f
 
 
 
@@ -60,7 +54,7 @@ void Simulation::simulate(HairObject *_object)
 //    QTime t;
 //    t.start();
 //    moveObjects(_object);
-    
+
     calculateExternalForces(_object);
     
     if (m_widget->useFrictionSim){
@@ -74,6 +68,17 @@ void Simulation::simulate(HairObject *_object)
     
     particleSimulation(_object);
     
+}
+
+void Simulation::updateHairPosition(HairObject *object)
+{
+    for (int i = 0; i < object->m_guideHairs.size(); ++i)
+    {
+        for (int j = 0; j < object->m_guideHairs.at(j)->m_vertices.size(); ++j)
+        {
+            object->m_guideHairs.at(i)->m_vertices.at(j)->prevPos = glm::vec3(m_xform * glm::vec4(object->m_guideHairs.at(i)->m_vertices.at(j)->startPosition, 1.0));
+        }
+    }
 }
 
 void Simulation::moveObjects(HairObject *_object)
@@ -92,18 +97,16 @@ void Simulation::moveObjects(HairObject *_object)
 
 void Simulation::updatePosition(HairObject *object, glm::vec3 xform)
 {
-    for (int i = 0; i < object->m_guideHairs.size(); ++i)
-    {
-        for (int j = 0; j < object->m_guideHairs.at(j)->m_vertices.size(); ++j)
-        {
-            object->m_guideHairs.at(i)->m_vertices.at(j)->prevPos = glm::vec3(m_xform * glm::vec4(object->m_guideHairs.at(i)->m_vertices.at(j)->startPosition, 1.0));
-        }
-    }
-
+    updateHairPosition(object);
     m_xform = glm::translate(m_xform, xform);
 }
 
 
+void Simulation::updateRotation(HairObject *object, float angle, glm::vec3 axis)
+{
+    updateHairPosition(object);
+    m_xform = glm::rotate(m_xform, angle, axis);
+}
 
 // Calculate forces for each joint, for each external force included in the simulation
 void Simulation::calculateExternalForces(HairObject *_object)

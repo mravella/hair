@@ -82,6 +82,7 @@ private:
     float m_zoom = 5, m_angleX = 0, m_angleY = 0;
     QPoint m_prevMousePos;
     QPoint m_prevXformPos;
+    QPoint m_prevRotPos;
 
     // Light parameters
     glm::vec3 m_lightPosition;

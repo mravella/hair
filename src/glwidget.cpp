@@ -294,7 +294,7 @@ void GLWidget::initSimulation()
     m_testSimulation = new Simulation(this, m_lowResMesh);
     
     m_hairObject = new HairObject(
-                m_highResMesh, m_hairDensity, ":/images/headHair.jpg", m_testSimulation, m_hairObject);
+                m_highResMesh, m_hairDensity, ":/images/lower.png", m_testSimulation, m_hairObject);
     
     safeDelete(_oldHairObject);
     
@@ -346,6 +346,11 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
         m_prevXformPos = event->pos();
         m_testSimulation->m_headMoving = true;
     }
+    if (event->button() == Qt::MiddleButton)
+    {
+        m_prevRotPos = event->pos();
+        m_testSimulation->m_headMoving = true;
+    }
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
@@ -363,7 +368,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
     {
         glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
         glm::mat4 inverseView = glm::inverse(m_view);
-        glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, -1, 1)));
+        glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, 0, 1)));
         cout << "up: " << glm::to_string(up) << endl;
         cout << "look: " << glm::to_string(look) << endl;
         glm::vec3 right = glm::cross(up, look);
@@ -371,14 +376,40 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         glm::vec3 xform = glm::vec3();
         xform += (float) delta.x() * 0.005f * right;
         xform += (float) -delta.y() * 0.005f * up;
+        if (look.z < 0.0) xform = -xform;
         m_testSimulation->updatePosition(m_hairObject, xform);
         m_prevXformPos = event->pos();
+    }
+    if (event->buttons() == Qt::MiddleButton)
+    {
+        QPoint delta = event->pos() - m_prevRotPos;
+        if (fabs(delta.x()) > fabs(delta.y()))
+        {
+            // Rotate in up
+            glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
+            float angle = delta.x() * 0.005f;
+            m_testSimulation->updateRotation(m_hairObject, angle, up);
+        }
+        else
+        {
+            // Rotate in right
+            glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
+            glm::mat4 inverseView = glm::inverse(m_view);
+            glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, 0, 1)));
+            glm::vec3 right = glm::cross(up, look);
+            float angle = delta.y() * 0.005f;
+            m_testSimulation->updateRotation(m_hairObject, angle, right);
+        }
     }
 }
 
 void GLWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
+    {
+        m_testSimulation->m_headMoving = false;
+    }
+    if (event->button() == Qt::MiddleButton)
     {
         m_testSimulation->m_headMoving = false;
     }

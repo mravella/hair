@@ -6,9 +6,9 @@
 #include "texture.h"
 #include <QPainter>
 
-QT_BEGIN_NAMESPACE
-  extern Q_WIDGETS_EXPORT void qt_blurImage( QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0 );
-QT_END_NAMESPACE
+//QT_BEGIN_NAMESPACE
+//  extern Q_WIDGETS_EXPORT void qt_blurImage(QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0 );
+//QT_END_NAMESPACE
 
 HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
 {
@@ -114,7 +114,7 @@ HairObject::HairObject(
     QPixmap blurredPixmap( image.size() );
     blurredPixmap.fill( Qt::transparent );
     QPainter painter( &blurredPixmap );
-    qt_blurImage( &painter, image, 0.1 * image.width(), true, false );
+//    qt_blurImage( &painter, image, 0.1 * image.width(), true, false );
     QImage blurredImage = blurredPixmap.toImage();
 
     // Initialize mesh texture with blurred hair growth map.

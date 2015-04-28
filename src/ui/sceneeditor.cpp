@@ -42,16 +42,15 @@ SceneEditor::SceneEditor(GLWidget *parent) :
     connect(m_ui->sliderOpacity, SIGNAL(valueChanged(int)), this, SLOT(setOpacity(int)));
     connect(m_ui->inputOpacity, SIGNAL(textChanged(QString)), this, SLOT(inputOpacityText(QString)));
     
-    /*
-    // toggles
-    connect(m_ui->frictionSimCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFrictionSim(bool)));
-    connect(m_ui->shadowCheckBox, SIGNAL(toggled(bool)), this, SLOT(setShadows(bool)));
-    connect(m_ui->supersampleCheckBox, SIGNAL(toggled(bool)), this, SLOT(setSupersampling(bool)));
-*/
+    
+    connect(m_ui->falloffConstant, SIGNAL(clicked()), this, SLOT(setFalloffConstant()));
+    connect(m_ui->falloffLinear, SIGNAL(clicked()), this, SLOT(setFalloffLinear()));
+    connect(m_ui->falloffQuadratic, SIGNAL(clicked()), this, SLOT(setFalloffQuadratic()));
+    
     
     // buttons
     connect(m_ui->applyButton, SIGNAL(pressed()), this, SLOT(applyEditor()));
-//    connect(m_ui->cancelButton, SIGNAL(pressed()), this, SLOT(cancelEditor()));
+    connect(m_ui->cancelButton, SIGNAL(pressed()), this, SLOT(cancelEditor()));
     
     
     // init ui values
@@ -160,6 +159,21 @@ void SceneEditor::setOpacity(int value)
     m_ui->inputOpacity->setText(QString::number(m_sceneWidget->m_opacity, 'g', 3));
 }
 
+void SceneEditor::setFalloffConstant(){
+    m_sceneWidget->m_brushFalloffType = CONSTANT;
+    m_sceneWidget->updateBrushSettings();
+}
+
+void SceneEditor::setFalloffLinear(){
+    m_sceneWidget->m_brushFalloffType = LINEAR;
+    m_sceneWidget->updateBrushSettings();
+}
+
+void SceneEditor::setFalloffQuadratic(){
+    m_sceneWidget->m_brushFalloffType = QUADRATIC;
+    m_sceneWidget->updateBrushSettings();
+}
+
 
 void SceneEditor::applyEditor()
 {
@@ -167,6 +181,6 @@ void SceneEditor::applyEditor()
 }
 void SceneEditor::cancelEditor()
 {
-    
+    this->close();
 }
 

@@ -24,6 +24,7 @@ public:
     ~GLWidget();
 
     void resetSimulation();
+    void partialResetSim(Texture *texture);
 
     bool useShadows = true;
     bool useSupersampling = true;

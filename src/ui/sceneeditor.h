@@ -31,6 +31,10 @@ public slots:
     void inputOpacityText(QString text);
     void setOpacity(int value);
     
+    void setFalloffConstant();
+    void setFalloffLinear();
+    void setFalloffQuadratic();
+    
     void applyEditor();
     void cancelEditor();
     

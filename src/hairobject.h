@@ -24,6 +24,14 @@ public:
             Simulation *_simulation,
             HairObject *_oldObject = NULL);
 
+    HairObject(
+            ObjMesh *_mesh,
+            float _hairsPerUnitArea,
+            QImage image,
+            Simulation *_simulation,
+            HairObject *_oldObject = NULL);
+    
+    
     // Generates hair all over the given mesh.
     HairObject(ObjMesh *_mesh, float _hairsPerUnitArea, Simulation *_simulation)
         : HairObject(_mesh, _hairsPerUnitArea, ":/images/white.jpg", _simulation) { }

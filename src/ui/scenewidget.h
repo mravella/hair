@@ -35,7 +35,9 @@ public:
     
     void apply();
     
+    void makeConstantMask();
     void makeLinearMask();
+    void makeQuadraticMask();
     
 signals:
     

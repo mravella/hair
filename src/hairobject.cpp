@@ -52,15 +52,30 @@ HairObject::HairObject(
         float _hairsPerUnitArea,
         const char * _hairGrowthMap,
         Simulation *_simulation,
+        HairObject *_oldObject) :
+    
+    HairObject(_mesh, _hairsPerUnitArea, QImage(_hairGrowthMap), _simulation, _oldObject)
+    
+{
+    
+}
+
+HairObject::HairObject(
+        ObjMesh *_mesh,
+        float _hairsPerUnitArea,
+        QImage image,
+        Simulation *_simulation,
         HairObject *_oldObject)
 {
-    QImage image(_hairGrowthMap);
+
     if (image.width() == 0)
     {
-        std::cout << _hairGrowthMap << " does not appear to be a valid image." << std::endl;
+//        std::cout << _hairGrowthMap << " does not appear to be a valid image." << std::endl;
         exit(1);
     }
-
+    
+    int _failures = 0;
+    int _emptyPoints = 0;
     for (unsigned int i = 0; i < _mesh->triangles.size(); i++)
     {
         Triangle t = _mesh->triangles[i];
@@ -75,11 +90,17 @@ HairObject::HairObject(
             uv = glm::vec2(MIN(uv.x, 0.999), MIN(uv.y, 0.999)); // Make UV in range [0,1) instead of [0,1]
 
             QPoint p = QPoint(uv.x * image.width(), (1 - uv.y) * image.height());
-            if (!image.valid(p)) continue; // Don't put hair on neck......
+            if (!image.valid(p)){
+                _failures++;
+                continue; // Don't put hair on neck......
+            }
 
             // If hair growth map is black, skip this hair.
             QColor hairGrowth = QColor(image.pixel(p));
-            if (hairGrowth.value() == 0) continue;
+            if (hairGrowth.value() == 0){
+                _emptyPoints++;
+                continue;
+            }
 
             m_guideHairs.append(new Hair(20, 0.4, pos, normal));
         }

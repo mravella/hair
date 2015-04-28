@@ -1,0 +1,2 @@
+Main-Class: com.primesense.NITE.Samples.Boxes.BoxesApplication
+Class-Path:  ../Bin/x64-Debug/com.primesense.NITE.jar /usr/share/java/com.primesense.NITE.jar  ../Bin/x64-Debug/org.OpenNI.jar /usr/share/java/org.OpenNI.jar

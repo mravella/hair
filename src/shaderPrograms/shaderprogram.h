@@ -29,6 +29,7 @@ struct Uniforms {
     float taperExponent; // Controls how far along the hair it starts tapering at the end.
 
     float noiseAmplitude; // Amount of noise added to each hair vertex poistion.
+    float noiseFrequency;
 
     glm::vec3 triangleFace[2]; // Basis vectors for the plane orthogonal to the hair's normal vector.
 

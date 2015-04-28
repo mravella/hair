@@ -37,6 +37,7 @@ public:
             float _hairGroupSpread = 0.2,
             float _hairRadius = 0.001f,
             float _noiseAmplitude = 0.15f,
+            float _noiseFrequency = 0.2f,
             int _numSplineVertices = 20);
     
 public:
@@ -56,6 +57,7 @@ public:
     float m_hairGroupSpread;
     float m_hairRadius;
     float m_noiseAmplitude;
+    float m_noiseFrequency;
     int m_numSplineVertices;
 
 };

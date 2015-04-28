@@ -56,7 +56,8 @@ SOURCES += \
     src/md5.cpp \
     src/tessellator.cpp \
     src/shaderPrograms/hairfeedbackshaderprogram.cpp \
-    src/ui/sceneeditor.cpp
+    src/ui/sceneeditor.cpp \
+    src/ui/scenewidget.cpp
 
 
 HEADERS += \
@@ -88,7 +89,8 @@ HEADERS += \
     src/tessellator.h \
     src/shaderPrograms/hairfeedbackshaderprogram.h \
     src/shaderPrograms/hairrendershaderprogram.h \
-    src/ui/sceneeditor.h
+    src/ui/sceneeditor.h \
+    src/ui/scenewidget.h
 
 
 FORMS += src/mainwindow.ui \

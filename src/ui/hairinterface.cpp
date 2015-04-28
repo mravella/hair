@@ -1,6 +1,8 @@
 #include "hairinterface.h"
 
 #include "ui_mainwindow.h"
+#include "ui_sceneeditor.h"
+#include "sceneeditor.h"
 #include "glwidget.h"
 #include "hairobject.h"
 #include "hair.h"
@@ -15,7 +17,6 @@ HairInterface::HairInterface(Ui::MainWindow *ui)
     
     m_ui->testHolder->setAlignment(Qt::AlignTop);
     m_ui->scrollArea->setWidget(m_ui->controlsBox);
-    m_ui->controlsBox->setStyleSheet("QGroupBox { background-color: none; }");
     m_ui->scrollArea->setFrameShape(QFrame::NoFrame);
     
 //    showHideGroupSim();
@@ -329,5 +330,13 @@ void HairInterface::togglePaused()
 }
 
 void HairInterface::startEditScene(){
+    if (!m_glWidget->paused){
+        togglePaused();
+    }
     
+    SceneEditor *newSceneEditor = new SceneEditor(m_glWidget);
+    
+    newSceneEditor->show();
+    newSceneEditor->raise();
+    newSceneEditor->activateWindow();
 }

@@ -20,19 +20,19 @@
       <x>30</x>
       <y>10</y>
       <width>182</width>
-      <height>600</height>
+      <height>500</height>
      </rect>
     </property>
     <property name="minimumSize">
      <size>
       <width>182</width>
-      <height>400</height>
+      <height>500</height>
      </size>
     </property>
     <property name="maximumSize">
      <size>
       <width>182</width>
-      <height>700</height>
+      <height>400</height>
      </size>
     </property>
     <property name="title">
@@ -49,7 +49,7 @@
      </property>
      <layout class="QVBoxLayout" name="testHolder">
       <item>
-       <widget class="QPushButton" name="showHideGroupSim">
+       <widget class="QPushButton" name="showHideGroupMaps">
         <property name="maximumSize">
          <size>
           <width>190</width>
@@ -57,7 +57,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Simulation </string>
+         <string>Maps</string>
         </property>
         <property name="icon">
          <iconset resource="../../images/images.qrc">
@@ -67,184 +67,52 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupSim">
+       <widget class="QGroupBox" name="groupMaps">
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>133</height>
+          <height>60</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>160</height>
+          <height>60</height>
          </size>
         </property>
         <property name="title">
          <string/>
         </property>
-        <widget class="QLabel" name="label_4">
+        <widget class="QPushButton" name="editScene_2">
          <property name="geometry">
           <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>166</width>
-           <height>20</height>
+           <x>20</x>
+           <y>0</y>
+           <width>131</width>
+           <height>32</height>
           </rect>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>180</width>
-           <height>20</height>
-          </size>
-         </property>
          <property name="text">
-          <string>Gravity:</string>
+          <string>Density</string>
          </property>
         </widget>
-        <widget class="QLineEdit" name="inputHairRadius_2">
+        <widget class="QPushButton" name="editScene_3">
          <property name="geometry">
           <rect>
-           <x>110</x>
-           <y>10</y>
-           <width>50</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>TODO</string>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QSlider" name="sliderHairsPerPatch_2">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
+           <x>20</x>
            <y>30</y>
-           <width>151</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>64</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_6">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>50</y>
-           <width>166</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>180</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Wind:</string>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="inputHairRadius_4">
-         <property name="geometry">
-          <rect>
-           <x>110</x>
-           <y>50</y>
-           <width>50</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>TODO</string>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QSlider" name="sliderHairsPerPatch_4">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>70</y>
-           <width>151</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>64</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-        <widget class="QCheckBox" name="frictionSimCheckBox">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>100</y>
-           <width>187</width>
-           <height>21</height>
+           <width>131</width>
+           <height>32</height>
           </rect>
          </property>
          <property name="text">
-          <string>Friction Sim</string>
+          <string>Length</string>
          </property>
         </widget>
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="showHideGroupTess">
+       <widget class="QPushButton" name="showHideGroupBrush">
         <property name="maximumSize">
          <size>
           <width>190</width>
@@ -252,7 +120,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Tesselation</string>
+         <string>Brush</string>
         </property>
         <property name="icon">
          <iconset resource="../../images/images.qrc">
@@ -262,7 +130,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupTess">
+       <widget class="QGroupBox" name="groupBrush">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -278,102 +146,26 @@
         <property name="title">
          <string/>
         </property>
-        <widget class="QLabel" name="label_2">
+        <widget class="QSlider" name="sliderBrushGrayscale">
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>90</y>
-           <width>166</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>180</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Spline Verts:</string>
-         </property>
-        </widget>
-        <widget class="QSlider" name="sliderHairRadius">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>70</y>
+           <y>80</y>
            <width>150</width>
            <height>22</height>
           </rect>
          </property>
          <property name="minimum">
-          <number>1</number>
+          <number>0</number>
          </property>
          <property name="maximum">
-          <number>100</number>
+          <number>2550</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
-        <widget class="QLineEdit" name="inputSplineVertices">
-         <property name="geometry">
-          <rect>
-           <x>110</x>
-           <y>90</y>
-           <width>50</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="readOnly">
-          <bool>false</bool>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_3">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>50</y>
-           <width>166</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>180</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Hair Radius:</string>
-         </property>
-        </widget>
-        <widget class="QSlider" name="sliderSplineVertices">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>110</y>
-           <width>150</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="minimum">
-          <number>2</number>
-         </property>
-         <property name="maximum">
-          <number>64</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="inputHairsPerPatch">
+        <widget class="QLineEdit" name="inputRadius">
          <property name="geometry">
           <rect>
            <x>120</x>
@@ -385,6 +177,25 @@
          <property name="maximumSize">
           <size>
            <width>40</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="inputBrushGrayscale">
+         <property name="geometry">
+          <rect>
+           <x>109</x>
+           <y>60</y>
+           <width>51</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>80</width>
            <height>16777215</height>
           </size>
          </property>
@@ -408,35 +219,29 @@
           </size>
          </property>
          <property name="text">
-          <string>Hairs per patch:</string>
+          <string>Radius</string>
          </property>
         </widget>
-        <widget class="QLineEdit" name="inputHairRadius">
+        <widget class="QLabel" name="label_2">
          <property name="geometry">
           <rect>
-           <x>100</x>
-           <y>50</y>
-           <width>60</width>
+           <x>10</x>
+           <y>60</y>
+           <width>100</width>
            <height>20</height>
           </rect>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
          <property name="maximumSize">
           <size>
-           <width>60</width>
-           <height>16777215</height>
+           <width>110</width>
+           <height>20</height>
           </size>
          </property>
-         <property name="readOnly">
-          <bool>false</bool>
+         <property name="text">
+          <string>Color (gray)</string>
          </property>
         </widget>
-        <widget class="QSlider" name="sliderHairsPerPatch">
+        <widget class="QSlider" name="sliderRadius">
          <property name="geometry">
           <rect>
            <x>10</x>
@@ -449,355 +254,67 @@
           <number>1</number>
          </property>
          <property name="maximum">
-          <number>64</number>
+          <number>200</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
-        <widget class="QLabel" name="label_5">
+        <widget class="QLineEdit" name="inputOpacity">
          <property name="geometry">
           <rect>
-           <x>10</x>
-           <y>130</y>
-           <width>166</width>
-           <height>20</height>
+           <x>120</x>
+           <y>110</y>
+           <width>40</width>
+           <height>21</height>
           </rect>
          </property>
          <property name="maximumSize">
           <size>
-           <width>180</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Noise Amp:</string>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="inputNoiseAmp">
-         <property name="geometry">
-          <rect>
-           <x>110</x>
-           <y>130</y>
-           <width>50</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
+           <width>40</width>
            <height>16777215</height>
           </size>
-         </property>
-         <property name="text">
-          <string/>
          </property>
          <property name="readOnly">
           <bool>false</bool>
          </property>
         </widget>
-        <widget class="QLabel" name="label_7">
+        <widget class="QSlider" name="sliderOpacity">
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>170</y>
-           <width>166</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>180</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Noise Freq:</string>
-         </property>
-        </widget>
-        <widget class="QSlider" name="sliderNoiseAmp">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>150</y>
+           <y>130</y>
            <width>150</width>
            <height>22</height>
           </rect>
          </property>
          <property name="minimum">
-          <number>1</number>
+          <number>0</number>
          </property>
          <property name="maximum">
-          <number>100</number>
+          <number>2550</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
-        <widget class="QLineEdit" name="inputHairRadius_5">
-         <property name="geometry">
-          <rect>
-           <x>110</x>
-           <y>170</y>
-           <width>50</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>TODO</string>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QSlider" name="sliderHairRadius_3">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>190</y>
-           <width>150</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>100</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="editScene">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>210</y>
-           <width>131</width>
-           <height>32</height>
-          </rect>
-         </property>
-         <property name="text">
-          <string>Edit Scene</string>
-         </property>
-        </widget>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="showHideGroupRender">
-        <property name="maximumSize">
-         <size>
-          <width>190</width>
-          <height>21</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Rendering  </string>
-        </property>
-        <property name="icon">
-         <iconset resource="../../images/images.qrc">
-          <normaloff>:/images/chevron_up.png</normaloff>
-          <normalon>:/images/chevron_down.png</normalon>:/images/chevron_up.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupRender">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>180</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>200</height>
-         </size>
-        </property>
-        <property name="title">
-         <string/>
-        </property>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>181</width>
-           <height>100</height>
-          </rect>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>100</height>
-          </size>
-         </property>
-         <property name="title">
-          <string>Hair Color (rgb)</string>
-         </property>
-         <widget class="QSlider" name="sliderHairColorR">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>30</y>
-            <width>111</width>
-            <height>22</height>
-           </rect>
-          </property>
-          <property name="maximum">
-           <number>2550</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-         <widget class="QSlider" name="sliderHairColorG">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>50</y>
-            <width>111</width>
-            <height>22</height>
-           </rect>
-          </property>
-          <property name="maximum">
-           <number>2550</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-         <widget class="QSlider" name="sliderHairColorB">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>70</y>
-            <width>111</width>
-            <height>22</height>
-           </rect>
-          </property>
-          <property name="maximum">
-           <number>2550</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-         <widget class="QLineEdit" name="inputHairColorR">
-          <property name="geometry">
-           <rect>
-            <x>130</x>
-            <y>30</y>
-            <width>40</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>40</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="readOnly">
-           <bool>false</bool>
-          </property>
-         </widget>
-         <widget class="QLineEdit" name="inputHairColorG">
-          <property name="geometry">
-           <rect>
-            <x>130</x>
-            <y>50</y>
-            <width>40</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>40</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="readOnly">
-           <bool>false</bool>
-          </property>
-         </widget>
-         <widget class="QLineEdit" name="inputHairColorB">
-          <property name="geometry">
-           <rect>
-            <x>130</x>
-            <y>70</y>
-            <width>40</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>40</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="readOnly">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </widget>
-        <widget class="QCheckBox" name="shadowCheckBox">
+        <widget class="QLabel" name="label_3">
          <property name="geometry">
           <rect>
            <x>10</x>
            <y>110</y>
-           <width>187</width>
-           <height>21</height>
+           <width>100</width>
+           <height>20</height>
           </rect>
          </property>
-         <property name="text">
-          <string>Shadows</string>
-         </property>
-        </widget>
-        <widget class="QCheckBox" name="supersampleCheckBox">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>140</y>
-           <width>187</width>
-           <height>21</height>
-          </rect>
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>20</height>
+          </size>
          </property>
          <property name="text">
-          <string>Supersampling</string>
+          <string>Opacity</string>
          </property>
         </widget>
        </widget>
@@ -818,6 +335,18 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget">
+   <property name="minimumSize">
+    <size>
+     <width>200</width>
+     <height>500</height>
+    </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::NoDockWidgetFeatures</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea</set>
+   </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
@@ -866,7 +395,7 @@
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -877,14 +406,14 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QPushButton" name="pauseButton">
+       <widget class="QPushButton" name="cancelButton">
         <property name="text">
          <string>Cancel</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="buttonResetSim">
+       <widget class="QPushButton" name="applyButton">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -898,7 +427,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QPushButton" name="buttonResetSim_2">
+    <widget class="QPushButton" name="applyAndCloseButton">
      <property name="geometry">
       <rect>
        <x>20</x>

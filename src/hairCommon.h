@@ -44,6 +44,18 @@ using std::min;
 
 
 
+struct BGRA
+{
+    BGRA() : b(0), g(0), r(0), a(0) {}
+    BGRA(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255) : b(blue), g(green), r(red), a(alpha) {}
+
+    union {
+        struct { unsigned char b, g, r, a; };
+        unsigned char channels[4];
+    };
+};
+
+
 
 struct Triangle {
     Triangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3,

@@ -17,7 +17,8 @@ class Framebuffer;
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
-
+    friend class SceneWidget;
+    
 public:
     GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent = 0);
     ~GLWidget();

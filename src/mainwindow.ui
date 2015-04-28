@@ -44,7 +44,7 @@
        <x>0</x>
        <y>0</y>
        <width>181</width>
-       <height>674</height>
+       <height>711</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="testHolder">
@@ -57,7 +57,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Simulation</string>
+         <string>Simulation </string>
         </property>
         <property name="icon">
          <iconset resource="../images/images.qrc">
@@ -228,14 +228,6 @@
           <string>Friction Sim</string>
          </property>
         </widget>
-        <zorder>label_4</zorder>
-        <zorder>inputHairRadius_2</zorder>
-        <zorder>sliderHairsPerPatch_2</zorder>
-        <zorder>label_6</zorder>
-        <zorder>inputHairRadius_4</zorder>
-        <zorder>sliderHairsPerPatch_4</zorder>
-        <zorder>frictionSimCheckBox</zorder>
-        <zorder>showHideGroupTess</zorder>
        </widget>
       </item>
       <item>
@@ -274,7 +266,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>220</height>
+          <height>240</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -619,7 +611,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Rendering</string>
+         <string>Rendering  </string>
         </property>
         <property name="icon">
          <iconset resource="../images/images.qrc">
@@ -633,7 +625,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>170</height>
+          <height>180</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -800,9 +792,6 @@
      </layout>
     </widget>
    </widget>
-   <zorder>showHideGroupSim</zorder>
-   <zorder>groupSim</zorder>
-   <zorder>controlsBox</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -897,6 +886,13 @@
       <widget class="QLabel" name="statsLabel">
        <property name="text">
         <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="editScene">
+       <property name="text">
+        <string>Edit Scene</string>
        </property>
       </widget>
      </item>

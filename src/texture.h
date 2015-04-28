@@ -16,13 +16,16 @@ public:
 
     // Creates a texture containing the given image.
     void createColorTexture(const char *imageFile, GLint magFilter, GLint minFilter);
-    void createColorTexture(QImage &image, GLint magFilter, GLint minFilter);
+    void createColorTexture(QImage &m_image, GLint magFilter, GLint minFilter);
 
     // Creates a black texture with the given width and height.
     void createColorTexture(int width, int height, GLint magFilter, GLint minFilter);
 
     void createDepthTexture(int width, int height, GLint magFilter, GLint minFilter);
 
+    // updates the stored texture to reflect changes to m_image
+    void updateImage();
+    
     // Resizes the texture and sets it to black.
     void resize(int width, int height);
 
@@ -37,9 +40,11 @@ public:
     int height();
 
     GLuint id;
+    
+    QImage m_image;
 
 private:
-    void _create(const GLvoid * data,
+    void _create(GLvoid *data,
             GLint internalFormat,
             int width,
             int height,
@@ -53,6 +58,8 @@ private:
     GLint m_internalFormat;
     GLenum m_format;
     GLenum m_type;
+    GLint m_magFilter;
+    GLint m_minFilter;
 
     // For full-screen rendering
     Quad *m_quad;

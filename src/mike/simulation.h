@@ -12,8 +12,6 @@
 #include <string>
 
 #include <pthread.h>
-#include <XnOS.h>
-#include <XnCppWrapper.h>
 
 
 

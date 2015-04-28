@@ -26,12 +26,6 @@
 #define __BMONTELL_MODE__ false
 #define TIMESTEP 0.01f
 
-float* g_pDepthHist;
-XnRGB24Pixel* g_pTexMap = NULL;
-unsigned int g_nTexMapX = 0;
-unsigned int g_nTexMapY = 0;
-XnDepthPixel g_nZRes;
-
 
 
 Simulation::Simulation(GLWidget *widget, ObjMesh *mesh)

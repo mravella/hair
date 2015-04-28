@@ -342,7 +342,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
     {
         glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
         glm::mat4 inverseView = glm::inverse(m_view);
-        glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, -1, 1)));
+        glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, 0, 1)));
         cout << "up: " << glm::to_string(up) << endl;
         cout << "look: " << glm::to_string(look) << endl;
         glm::vec3 right = glm::cross(up, look);
@@ -350,6 +350,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         glm::vec3 xform = glm::vec3();
         xform += (float) delta.x() * 0.005f * right;
         xform += (float) -delta.y() * 0.005f * up;
+        if (look.z < 0.0) xform = -xform;
         m_testSimulation->updatePosition(m_hairObject, xform);
         m_prevXformPos = event->pos();
     }

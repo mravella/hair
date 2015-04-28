@@ -1,7 +1,7 @@
 #include "glwidget.h"
 
 #include "scenewidget.h"
-#include "qwidget"
+#include "QWidget"
 #include "hairobject.h"
 #include "texture.h"
 

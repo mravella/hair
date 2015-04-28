@@ -92,7 +92,6 @@ void Simulation::moveObjects(HairObject *_object)
 
 void Simulation::updatePosition(HairObject *object, glm::vec3 xform)
 {
-    cout << "Updating position!" << endl;
     for (int i = 0; i < object->m_guideHairs.size(); ++i)
     {
         for (int j = 0; j < object->m_guideHairs.at(j)->m_vertices.size(); ++j)

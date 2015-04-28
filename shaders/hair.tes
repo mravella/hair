@@ -20,6 +20,7 @@ uniform int numHairSegments;
 uniform int numSplineVertices;
 uniform float hairGroupSpread;
 uniform float noiseAmplitude;
+uniform float noiseFrequency;
 uniform vec3 triangleFace[2];
 
 uniform sampler2D noiseTexture;
@@ -67,7 +68,7 @@ vec3 shiftedSpline(in vec2 tessCoord)
 
     // Apply noise to offset position.
     float noise = noiseAmplitude * tessCoord.x;
-    tessCoord *= 0.4;
+    tessCoord *= vec2(noiseFrequency, 0.2);
     pos.x += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy).r) * 0.5;
     pos.y += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy + .1).r) * 0.5;
     pos.z += noise * (1.0 - 2.0 * texture(noiseTexture, tessCoord.xy + .2).r) * 0.5;

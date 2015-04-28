@@ -36,9 +36,11 @@ void HairInterface::connectUserInputs()
     connect(m_ui->sliderHairRadius, SIGNAL(valueChanged(int)), this, SLOT(setHairRadius(int)));
     connect(m_ui->inputHairRadius, SIGNAL(textChanged(QString)), this, SLOT(inputHairRadiusText(QString)));
     
-    // noise amp
+    // noise
     connect(m_ui->sliderNoiseAmp, SIGNAL(valueChanged(int)), this, SLOT(setNoiseAmp(int)));
     connect(m_ui->inputNoiseAmp, SIGNAL(textChanged(QString)), this, SLOT(inputNoiseAmpText(QString)));
+    connect(m_ui->sliderNoiseFreq, SIGNAL(valueChanged(int)), this, SLOT(setNoiseFreq(int)));
+    connect(m_ui->inputNoiseFreq, SIGNAL(valueChanged(int)), this, SLOT(inputNoiseFreqText(QString)));
 
     // rgb
     connect(m_ui->sliderHairColorR, SIGNAL(valueChanged(int)), this, SLOT(setHairColorR(int)));
@@ -82,6 +84,8 @@ void HairInterface::setHairObject(HairObject *hairObject)
     // Sync noise amplitude slider
     m_ui->sliderNoiseAmp->setValue(m_hairObject->m_noiseAmplitude*100);
     m_ui->inputNoiseAmp->setText(QString::number(m_hairObject->m_noiseAmplitude));
+    m_ui->sliderNoiseFreq->setValue(m_hairObject->m_noiseFrequency*100);
+    m_ui->inputNoiseFreq->setText(QString::number(m_hairObject->m_noiseFrequency));
     
     // Sync rgb sliders
     m_ui->sliderHairColorR->setValue(m_hairObject->m_color.x*2550);
@@ -232,11 +236,31 @@ void HairInterface::inputNoiseAmpText(QString text)
     setNoiseAmp(100*value);
     m_ui->sliderNoiseAmp->setValue(100*value);
 }
+
 void HairInterface::setNoiseAmp(int value)
 {
     if (value < 0) return;
     m_hairObject->m_noiseAmplitude = value/100.;
     m_ui->inputNoiseAmp->setText(QString::number(m_hairObject->m_noiseAmplitude, 'g', 3));
+}
+
+void HairInterface::inputNoiseFreqText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_hairObject->m_noiseFrequency;
+    } else if (value == m_hairObject->m_noiseFrequency) return;
+    setNoiseFreq(100*value);
+    m_ui->sliderNoiseFreq->setValue(100*value);
+}
+
+void HairInterface::setNoiseFreq(int value)
+{
+    if (value < 0) return;
+    m_hairObject->m_noiseFrequency = value/100.;
+    m_ui->inputNoiseFreq->setText(QString::number(m_hairObject->m_noiseFrequency, 'g', 3));
 }
 
 

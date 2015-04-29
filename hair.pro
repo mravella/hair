@@ -57,7 +57,8 @@ SOURCES += \
     src/tessellator.cpp \
     src/shaderPrograms/hairfeedbackshaderprogram.cpp \
     src/ui/sceneeditor.cpp \
-    src/ui/scenewidget.cpp
+    src/ui/scenewidget.cpp \
+    src/lib/blurrer.cpp
 
 
 HEADERS += \
@@ -90,7 +91,8 @@ HEADERS += \
     src/shaderPrograms/hairfeedbackshaderprogram.h \
     src/shaderPrograms/hairrendershaderprogram.h \
     src/ui/sceneeditor.h \
-    src/ui/scenewidget.h
+    src/ui/scenewidget.h \
+    src/lib/blurrer.h
 
 
 FORMS += src/mainwindow.ui \

@@ -7,7 +7,7 @@
 
 #include "meshocttree.h"
 
-#define _ELLIPSOID_COLISIONS_ true
+#define _ELLIPSOID_COLISIONS_ false
 
 ObjMesh::ObjMesh()
 {

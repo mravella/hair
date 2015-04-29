@@ -21,7 +21,7 @@
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
     : QGLWidget(format, parent),
       m_hairInterface(hairInterface),
-      m_hairDensity(150),
+      m_hairDensity(500),
       m_timer(this),
       m_increment(0),
       m_targetFPS(60.f)
@@ -138,7 +138,7 @@ void GLWidget::paintGL()
     // Update transformation matrices.
     glm::mat4 model = glm::mat4(1.f);
     model = m_testSimulation->m_xform;
-    m_lightPosition = glm::vec3(1, 2, 4);
+    m_lightPosition = glm::vec3(2, 2, 2);
     glm::mat4 lightProjection = glm::perspective(1.3f, 1.f, .1f, 100.f);
     glm::mat4 lightView = glm::lookAt(m_lightPosition, glm::vec3(0), glm::vec3(0,1,0));
     m_eyeToLight = lightProjection * lightView * glm::inverse(m_view);
@@ -286,15 +286,15 @@ void GLWidget::initSimulation()
     HairObject *_oldHairObject = m_hairObject;
     
     m_highResMesh = new ObjMesh();
-    m_highResMesh->init(":/models/224.obj");
+    m_highResMesh->init(":/models/dude_highres.obj");
     
     m_lowResMesh = new ObjMesh();
-    m_lowResMesh->init(":/models/224.obj", 1.1);
+    m_lowResMesh->init(":/models/dude_lowres.obj", 1.1);
     
     m_testSimulation = new Simulation(this, m_lowResMesh);
     
     m_hairObject = new HairObject(
-                m_highResMesh, m_hairDensity, ":/images/224_hairmap.jpg", m_testSimulation, m_hairObject);
+                m_highResMesh, m_hairDensity, ":/images/dude_hairmap.jpg", m_testSimulation, m_hairObject);
     
     safeDelete(_oldHairObject);
     

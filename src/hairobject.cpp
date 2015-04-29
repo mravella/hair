@@ -102,7 +102,7 @@ HairObject::HairObject(
                 continue;
             }
 
-            m_guideHairs.append(new Hair(20, 0.4, pos, normal));
+            m_guideHairs.append(new Hair(20, 0.25, pos, normal));
         }
     }
     

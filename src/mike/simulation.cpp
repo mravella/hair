@@ -17,7 +17,7 @@
 #define MASS 1.0f
 
 #define GRID_WIDTH 0.1f
-#define FRICTION 0.07f
+#define FRICTION 0.04f
 #define REPULSION 0.000f
 
 #define DAMPENING 0.95f
@@ -126,7 +126,9 @@ void Simulation::calculateExternalForces(HairObject *_object)
             {
                 glm::vec4 curr = m_xform * glm::vec4(currVert->startPosition, 1.0);
                 glm::vec3 acceleration = (glm::vec3(currVert->prevPos - glm::vec3(curr)) - currVert->velocity * TIMESTEP) / (TIMESTEP * TIMESTEP);
-                force += acceleration * currVert->mass * 0.1f;
+                if (glm::length(currVert->prevPos - glm::vec3(curr)) > 0.01) force += acceleration * currVert->mass * 0.2f;
+//                cout << "Prev: " << glm::to_string(currVert->prevPos) << endl;
+//                cout << "Curr: " << glm::to_string(glm::vec3(curr)) << endl;
             }
 
             force += glm::normalize(m_windDir) * m_windMagnitude;

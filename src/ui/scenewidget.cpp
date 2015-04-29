@@ -16,7 +16,7 @@ SceneWidget::SceneWidget(GLWidget *parent) :
     
     setMouseTracking(true);
     
-    m_grayscale = 0;
+    m_grayscale = 1;
     m_radius = 50;
     m_opacity = 1;
     m_mask = NULL;

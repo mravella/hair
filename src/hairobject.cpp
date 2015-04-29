@@ -4,11 +4,7 @@
 #include "errorchecker.h"
 #include "simulation.h"
 #include "texture.h"
-#include <QPainter>
-
-//QT_BEGIN_NAMESPACE
-//  extern Q_WIDGETS_EXPORT void qt_blurImage(QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0 );
-//QT_END_NAMESPACE
+#include "blurrer.h"
 
 HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
 {
@@ -44,35 +40,30 @@ HairObject::~HairObject()
 {
     for (int i = 0; i < m_guideHairs.size(); ++i)
         delete m_guideHairs.at(i);
-    safeDelete(m_hairGrowthMapTexture);
+    safeDelete(m_blurredHairGrowthMapTexture);
 }
 
 HairObject::HairObject(
         ObjMesh *_mesh,
         float _hairsPerUnitArea,
-        const char * _hairGrowthMap,
-        Simulation *_simulation,
-        HairObject *_oldObject) :
-    
-    HairObject(_mesh, _hairsPerUnitArea, QImage(_hairGrowthMap), _simulation, _oldObject)
-    
-{
-    
-}
-
-HairObject::HairObject(
-        ObjMesh *_mesh,
-        float _hairsPerUnitArea,
-        QImage image,
+        QImage &image,
         Simulation *_simulation,
         HairObject *_oldObject)
-{
-
+{    
     if (image.width() == 0)
     {
 //        std::cout << _hairGrowthMap << " does not appear to be a valid image." << std::endl;
         exit(1);
     }
+
+    m_hairGrowthMap = image;
+
+    // Initialize blurred hair growth map texture.
+    QImage blurredImage;
+    Blurrer::blur(image, blurredImage);
+    m_blurredHairGrowthMapTexture = new Texture();
+    m_blurredHairGrowthMapTexture->createColorTexture(blurredImage, GL_LINEAR, GL_LINEAR);
+
     
     int _failures = 0;
     int _emptyPoints = 0;
@@ -108,18 +99,7 @@ HairObject::HairObject(
     
     setAttributes(_oldObject);
 
-    m_simulation = _simulation;
-
-    // Blur the hair growth map.
-    QPixmap blurredPixmap( image.size() );
-    blurredPixmap.fill( Qt::transparent );
-    QPainter painter( &blurredPixmap );
-//    qt_blurImage( &painter, image, 0.1 * image.width(), true, false );
-    QImage blurredImage = blurredPixmap.toImage();
-
-    // Initialize mesh texture with blurred hair growth map.
-    m_hairGrowthMapTexture = new Texture();
-    m_hairGrowthMapTexture->createColorTexture(blurredImage, GL_LINEAR, GL_LINEAR);
+    m_simulation = _simulation;    
 }
 
 void HairObject::setAttributes(HairObject *_oldObject){

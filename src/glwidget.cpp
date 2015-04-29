@@ -31,6 +31,8 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     m_hairObject = NULL;
     m_testSimulation = NULL;
     
+    resetTexture = NULL;
+    
     // Shader programs
     m_programs = {
         m_hairProgram = new HairShaderProgram(),
@@ -120,20 +122,21 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
-    ErrorChecker::printGLErrors("start of paintGL");
-    
-    if (paused)
-    {
-        return;
+    if (resetTexture != NULL){
+        partialResetSim(resetTexture);
+        resetTexture = NULL;
     }
     
-    m_increment++;
-    float time = m_increment / (float) m_targetFPS;      // Time in seconds (assuming 60 FPS).
+    ErrorChecker::printGLErrors("start of paintGL");
     
-    
-    m_testSimulation->update(time);
-    m_hairObject->update(time);
-    
+    // Update simulation if not paused.
+    if (!isPaused())
+    {
+        m_increment++;
+        float time = m_increment / (float) m_targetFPS; // Time in seconds (assuming 60 FPS).
+        m_testSimulation->update(time);
+        m_hairObject->update(time);
+    }
     
     // Update transformation matrices.
     glm::mat4 model = glm::mat4(1.f);
@@ -149,7 +152,7 @@ void GLWidget::paintGL()
     m_opacityMapTexture->bind(GL_TEXTURE2);
     m_meshDepthTexture->bind(GL_TEXTURE3);
     m_finalTexture->bind(GL_TEXTURE4);
-    m_hairObject->m_hairGrowthMapTexture->bind(GL_TEXTURE5);
+    m_hairObject->m_blurredHairGrowthMapTexture->bind(GL_TEXTURE5);
     
     if (useShadows)
     {
@@ -235,6 +238,8 @@ void GLWidget::resizeGL(int w, int h)
     
     m_finalTexture->resize(2*w, 2*h);
     m_finalFramebuffer->resizeDepthBuffer(2*w, 2*h);
+
+    forceUpdate();
 }
 
 
@@ -302,25 +307,17 @@ void GLWidget::initSimulation()
 }
 
 void GLWidget::partialResetSim(Texture *texture){
-//    safeDelete(m_highResMesh);
-//    safeDelete(m_lowResMesh);
-//    safeDelete(m_testSimulation);
+
     HairObject *_oldHairObject = m_hairObject;
-    
-//    m_highResMesh = new ObjMesh();
-//    m_highResMesh->init(":/models/head.obj");
-    
-//    m_lowResMesh = new ObjMesh();
-//    m_lowResMesh->init(":/models/headLowRes.obj", 1.1);
-    
-//    m_testSimulation = new Simulation(this, m_lowResMesh);
-    
+        
     m_hairObject = new HairObject(
                 m_highResMesh, m_hairDensity, texture->m_image, m_testSimulation);
+    
     
     safeDelete(_oldHairObject);
     
     m_hairInterface->setHairObject(m_hairObject);
+    
 }
 
 void GLWidget::resetSimulation()
@@ -401,6 +398,8 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             m_testSimulation->updateRotation(m_hairObject, angle, glm::vec3(1,0,0));
         }
     }
+
+    forceUpdate();
 }
 
 void GLWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -414,4 +413,37 @@ void GLWidget::wheelEvent(QWheelEvent *event)
     m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
             glm::rotate(m_angleY, glm::vec3(1, 0, 0)) *
             glm::rotate(m_angleX, glm::vec3(0, 1, 0));
+
+    forceUpdate();
+}
+
+void GLWidget::pause()
+{
+    if (!m_paused)
+    {
+        m_paused = true;
+        m_timer.stop();
+    }
+}
+
+void GLWidget::unpause()
+{
+    if (m_paused)
+    {
+        m_paused = false;
+        m_timer.start();
+    }
+}
+
+bool GLWidget::isPaused()
+{
+    return m_paused;
+}
+
+void GLWidget::forceUpdate()
+{
+    if (isPaused())
+    {
+        update();
+    }
 }

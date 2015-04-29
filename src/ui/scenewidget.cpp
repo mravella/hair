@@ -16,7 +16,7 @@ SceneWidget::SceneWidget(GLWidget *parent) :
     
     setMouseTracking(true);
     
-    m_grayscale = 0;
+    m_grayscale = 1;
     m_radius = 50;
     m_opacity = 1;
     m_mask = NULL;
@@ -44,7 +44,7 @@ void SceneWidget::initializeGL()
 {    
     
     test = new Texture();
-    test->createColorTexture(mainWidget->m_hairObject->m_hairGrowthMapTexture->m_image, GL_LINEAR, GL_LINEAR);
+    test->createColorTexture(mainWidget->m_hairObject->m_hairGrowthMap, GL_LINEAR, GL_LINEAR);
     
 }
 void SceneWidget::resizeGL(int width, int height)
@@ -53,6 +53,7 @@ void SceneWidget::resizeGL(int width, int height)
 }
 
 void SceneWidget::paintGL(){
+    
     glEnable(GL_TEXTURE_2D);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
@@ -170,9 +171,9 @@ void SceneWidget::paintTexture(glm::vec2 center, uchar *data, glm::vec2 imgSize)
 void SceneWidget::apply(){
     test->m_image.save("output.png");
     
-    mainWidget->partialResetSim(test);
+    mainWidget->resetTexture = test;
     
-    if (mainWidget->paused){
+    if (mainWidget->isPaused()){
         mainWidget->m_hairInterface->togglePaused();
     }
     
@@ -228,4 +229,9 @@ void SceneWidget::makeQuadraticMask()
     }
 }
 
+
+void SceneWidget::clearTexture(int r, int g, int b){
+    test->m_image.fill(QColor(r, g, b));
+    test->updateImage();
+}
 

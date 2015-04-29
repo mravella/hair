@@ -27,12 +27,15 @@ public:
     void resetSimulation();
     void partialResetSim(Texture *texture);
 
+    void pause();
+    void unpause();
+    bool isPaused();
+    void forceUpdate(); // Redraws the scene if paused.
+
     bool useShadows = true;
     bool useSupersampling = true;
     bool useFrictionSim = true;
     
-    bool paused = false;
-
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -51,6 +54,8 @@ protected slots:
 private:
     void _drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
     void _drawMesh(ShaderProgram *program, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+
+    bool m_paused = false;
 
     HairInterface *m_hairInterface;
 
@@ -89,12 +94,13 @@ private:
     glm::vec3 m_lightPosition;
     glm::mat4 m_eyeToLight;
 
-
     float m_hairDensity;
-
+    
     QTimer m_timer; /** Timer calls tick() 60 times per second. */
     int m_increment; /** Incremented on every call to paintGL. */
     float m_targetFPS;
+    
+    Texture *resetTexture;
 };
 
 #endif // GLWIDGET_H

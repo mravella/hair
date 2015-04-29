@@ -111,7 +111,8 @@ void Texture::renderFullScreen()
     glUniform1i(glGetUniformLocation(m_program->id, "tex"), 0);
     m_quad->draw();
     unbind(GL_TEXTURE0);
-    m_program->unbind();
+    m_program->unbind();  
+    
 }
 
 int Texture::width()

@@ -35,7 +35,11 @@ public slots:
     void setFalloffLinear();
     void setFalloffQuadratic();
     
+    void clearWhite();
+    void clearBlack();
+    
     void applyEditor();
+    void applyAndCloseEditor();
     void cancelEditor();
     
     

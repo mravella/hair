@@ -39,6 +39,8 @@ public:
     void makeLinearMask();
     void makeQuadraticMask();
     
+    void clearTexture(int r, int g, int b);
+    
 signals:
     
 public slots:

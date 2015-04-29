@@ -4,7 +4,7 @@
  * #include "constants.glsl"
  */
 
-const vec4 BACKGROUND_COLOR = vec3(0.5, 0.5, 0.5, 1.0);
+const vec4 BACKGROUND_COLOR = vec4(0.5, 0.5, 0.5, 1.0);
 
 // Hair material properties
 const float HAIR_SHININESS = 50.0;

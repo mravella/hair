@@ -173,7 +173,7 @@ void SceneWidget::apply(){
     
     mainWidget->resetTexture = test;
     
-    if (mainWidget->paused){
+    if (mainWidget->isPaused()){
         mainWidget->m_hairInterface->togglePaused();
     }
     

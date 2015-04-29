@@ -10,3 +10,5 @@ hair
 *.stash
 
 *.autosave
+
+ui_sceneeditor.h

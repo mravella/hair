@@ -129,18 +129,14 @@ void GLWidget::paintGL()
     
     ErrorChecker::printGLErrors("start of paintGL");
     
-    if (paused)
+    // Update simulation if not paused.
+    if (!isPaused())
     {
-        return;
+        m_increment++;
+        float time = m_increment / (float) m_targetFPS; // Time in seconds (assuming 60 FPS).
+        m_testSimulation->update(time);
+        m_hairObject->update(time);
     }
-    
-    m_increment++;
-    float time = m_increment / (float) m_targetFPS;      // Time in seconds (assuming 60 FPS).
-    
-    
-    m_testSimulation->update(time);
-    m_hairObject->update(time);
-    
     
     // Update transformation matrices.
     glm::mat4 model = glm::mat4(1.f);
@@ -232,13 +228,6 @@ void GLWidget::paintGL()
     // Update UI.
     m_hairInterface->updateFPSLabel(m_increment);
     
-//    glDisable(GL_DEPTH_TEST);
-//    if (m_prevtex != NULL) {
-//        cout << 10 << endl;  
-//        m_prevtex->renderFullScreen();
-//        cout << 11 << endl;
-//    }
-    
 }
 
 
@@ -249,6 +238,8 @@ void GLWidget::resizeGL(int w, int h)
     
     m_finalTexture->resize(2*w, 2*h);
     m_finalFramebuffer->resizeDepthBuffer(2*w, 2*h);
+
+    forceUpdate();
 }
 
 
@@ -318,10 +309,6 @@ void GLWidget::initSimulation()
 void GLWidget::partialResetSim(Texture *texture){
 
     HairObject *_oldHairObject = m_hairObject;
-    
-//    m_prevtex = new Texture();
-    
-//    m_prevtex->createColorTexture(texture->m_image, GL_LINEAR, GL_LINEAR);
         
     m_hairObject = new HairObject(
                 m_highResMesh, m_hairDensity, texture->m_image, m_testSimulation);
@@ -411,6 +398,8 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
             m_testSimulation->updateRotation(m_hairObject, angle, glm::vec3(1,0,0));
         }
     }
+
+    forceUpdate();
 }
 
 void GLWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -424,4 +413,37 @@ void GLWidget::wheelEvent(QWheelEvent *event)
     m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
             glm::rotate(m_angleY, glm::vec3(1, 0, 0)) *
             glm::rotate(m_angleX, glm::vec3(0, 1, 0));
+
+    forceUpdate();
+}
+
+void GLWidget::pause()
+{
+    if (!m_paused)
+    {
+        m_paused = true;
+        m_timer.stop();
+    }
+}
+
+void GLWidget::unpause()
+{
+    if (m_paused)
+    {
+        m_paused = false;
+        m_timer.start();
+    }
+}
+
+bool GLWidget::isPaused()
+{
+    return m_paused;
+}
+
+void GLWidget::forceUpdate()
+{
+    if (isPaused())
+    {
+        update();
+    }
 }

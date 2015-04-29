@@ -211,6 +211,7 @@ void HairInterface::setHairsPerPatch(int numHairs)
     m_ui->inputHairsPerPatch->setText(QString::number(numHairs));
     m_ui->sliderHairsPerPatch->setValue(numHairs);
     updateStatsLabel();
+    m_glWidget->forceUpdate();
 }
 
 void HairInterface::inputSplineVerticesText(QString text)
@@ -230,6 +231,7 @@ void HairInterface::setSplineVertices(int numVertices)
     m_ui->inputSplineVertices->setText(QString::number(numVertices));
     m_ui->sliderSplineVertices->setValue(numVertices);
     updateStatsLabel();
+    m_glWidget->forceUpdate();
 }
 
 void HairInterface::inputHairRadiusText(QString text)
@@ -248,6 +250,7 @@ void HairInterface::setHairRadius(int value)
 {
     m_hairObject->m_hairRadius = value/10000.;
     m_ui->inputHairRadius->setText(QString::number(m_hairObject->m_hairRadius, 'g', 4));
+    m_glWidget->forceUpdate();
 }
 
 void HairInterface::inputNoiseAmpText(QString text)
@@ -267,6 +270,7 @@ void HairInterface::setNoiseAmp(int value)
     if (value < 0) return;
     m_hairObject->m_noiseAmplitude = value/100.;
     m_ui->inputNoiseAmp->setText(QString::number(m_hairObject->m_noiseAmplitude, 'g', 3));
+    m_glWidget->forceUpdate();
 }
 
 void HairInterface::inputNoiseFreqText(QString text)
@@ -286,6 +290,7 @@ void HairInterface::setNoiseFreq(int value)
     if (value < 0) return;
     m_hairObject->m_noiseFrequency = value/100.;
     m_ui->inputNoiseFreq->setText(QString::number(m_hairObject->m_noiseFrequency, 'g', 3));
+    m_glWidget->forceUpdate();
 }
 
 
@@ -305,6 +310,7 @@ void HairInterface::setHairColorR(int value)
     if (value < 0) return;
     m_hairObject->m_color.x = value/2550.;
     m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x, 'g', 3));
+    m_glWidget->forceUpdate();
 }
 
 void HairInterface::inputHairColorGText(QString text)
@@ -323,6 +329,7 @@ void HairInterface::setHairColorG(int value)
     if (value < 0) return;    
     m_hairObject->m_color.y = value/2550.;
     m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y, 'g', 3));
+    m_glWidget->forceUpdate();
 }
 
 void HairInterface::inputHairColorBText(QString text)
@@ -341,6 +348,7 @@ void HairInterface::setHairColorB(int value)
     if (value < 0) return;
     m_hairObject->m_color.z = value/2550.;
     m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 3));
+    m_glWidget->forceUpdate();
 }
 
 
@@ -368,11 +376,13 @@ void HairInterface::setWindMagnitude(int value)
 void HairInterface::setShadows(bool checked)
 {
     m_glWidget->useShadows = checked;
+    m_glWidget->forceUpdate();
 }
 
 void HairInterface::setSupersampling(bool checked)
 {
     m_glWidget->useSupersampling = checked;
+    m_glWidget->forceUpdate();
 }
 
 void HairInterface::setFrictionSim(bool checked)
@@ -382,12 +392,21 @@ void HairInterface::setFrictionSim(bool checked)
 
 void HairInterface::togglePaused()
 {
-    m_glWidget->paused = !m_glWidget->paused;
-    m_ui->pauseButton->setText(m_glWidget->paused ? "Continue" : "Pause");
+    if (m_glWidget->isPaused())
+    {
+        m_glWidget->unpause();
+        m_ui->pauseButton->setText("Pause");
+    }
+
+    else
+    {
+        m_glWidget->pause();
+        m_ui->pauseButton->setText("Continue");
+    }
 }
 
 void HairInterface::startEditScene(){
-    if (!m_glWidget->paused){
+    if (!m_glWidget->isPaused()){
         togglePaused();
     }
     

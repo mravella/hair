@@ -6,5 +6,6 @@
         <file>headLowRes.obj</file>
         <file>dude_highres.obj</file>
         <file>dude_lowres.obj</file>
+        <file>224.obj</file>
     </qresource>
 </RCC>

@@ -17,16 +17,19 @@ class Framebuffer;
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
-
+    friend class SceneWidget;
+    friend class HairInterface;
+    
 public:
     GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent = 0);
     ~GLWidget();
 
     void resetSimulation();
+    void partialResetSim(Texture *texture);
 
     bool useShadows = true;
     bool useSupersampling = true;
-    bool useFrictionSim = false;
+    bool useFrictionSim = true;
     
     bool paused = false;
 
@@ -36,6 +39,7 @@ protected:
     void resizeGL(int w, int h) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
 
     void initSimulation();
@@ -78,17 +82,22 @@ private:
     glm::mat4 m_projection, m_view;
     float m_zoom = 5, m_angleX = 0, m_angleY = 0;
     QPoint m_prevMousePos;
+    QPoint m_prevXformPos;
+    QPoint m_prevRotPos;
 
     // Light parameters
     glm::vec3 m_lightPosition;
     glm::mat4 m_eyeToLight;
 
+    Texture *m_prevtex = NULL;
 
     float m_hairDensity;
-
+    
     QTimer m_timer; /** Timer calls tick() 60 times per second. */
     int m_increment; /** Incremented on every call to paintGL. */
     float m_targetFPS;
+    
+    Texture *resetTexture;
 };
 
 #endif // GLWIDGET_H

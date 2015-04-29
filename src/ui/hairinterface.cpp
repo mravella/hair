@@ -1,9 +1,13 @@
 #include "hairinterface.h"
 
 #include "ui_mainwindow.h"
+#include "ui_sceneeditor.h"
+#include "sceneeditor.h"
 #include "glwidget.h"
 #include "hairobject.h"
 #include "hair.h"
+#include "simulation.h"
+
 
 HairInterface::HairInterface(Ui::MainWindow *ui)
 {
@@ -12,9 +16,19 @@ HairInterface::HairInterface(Ui::MainWindow *ui)
     m_hairObject = NULL;
     connectUserInputs();
     
-    showHideGroupSim();
-    showHideGroupTess();
-    showHideGroupRender();
+    m_ui->testHolder->setAlignment(Qt::AlignTop);
+    m_ui->scrollArea->setWidget(m_ui->controlsBox);
+    m_ui->scrollArea->setFrameShape(QFrame::NoFrame);
+    
+    // to start with a group shown, use one of these:
+//    showHideGroupSim();
+//    showHideGroupTess();
+//    showHideGroupRender();
+    
+    // to start with a group hidden, use one of these:
+    m_ui->groupTess->hide();
+    m_ui->groupRender->hide();
+    m_ui->groupSim->hide();
 }
 
 void HairInterface::connectUserInputs()
@@ -40,7 +54,7 @@ void HairInterface::connectUserInputs()
     connect(m_ui->sliderNoiseAmp, SIGNAL(valueChanged(int)), this, SLOT(setNoiseAmp(int)));
     connect(m_ui->inputNoiseAmp, SIGNAL(textChanged(QString)), this, SLOT(inputNoiseAmpText(QString)));
     connect(m_ui->sliderNoiseFreq, SIGNAL(valueChanged(int)), this, SLOT(setNoiseFreq(int)));
-    connect(m_ui->inputNoiseFreq, SIGNAL(valueChanged(int)), this, SLOT(inputNoiseFreqText(QString)));
+    connect(m_ui->inputNoiseFreq, SIGNAL(textChanged(QString)), this, SLOT(inputNoiseFreqText(QString)));
 
     // rgb
     connect(m_ui->sliderHairColorR, SIGNAL(valueChanged(int)), this, SLOT(setHairColorR(int)));
@@ -49,6 +63,10 @@ void HairInterface::connectUserInputs()
     connect(m_ui->inputHairColorG, SIGNAL(textChanged(QString)), this, SLOT(inputHairColorGText(QString)));
     connect(m_ui->sliderHairColorB, SIGNAL(valueChanged(int)), this, SLOT(setHairColorB(int)));
     connect(m_ui->inputHairColorB, SIGNAL(textChanged(QString)), this, SLOT(inputHairColorBText(QString)));
+    
+    // wind magnitude
+    connect(m_ui->sliderWindMagnitude, SIGNAL(valueChanged(int)), this, SLOT(setWindMagnitude(int)));
+    connect(m_ui->inputWindMagnitude, SIGNAL(textChanged(QString)), this, SLOT(inputWindMagnitudeText(QString)));
 
     // toggles
     connect(m_ui->frictionSimCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFrictionSim(bool)));
@@ -58,6 +76,9 @@ void HairInterface::connectUserInputs()
     // buttons
     connect(m_ui->pauseButton, SIGNAL(pressed()), this, SLOT(togglePaused()));
     connect(m_ui->buttonResetSim, SIGNAL(pressed()), this, SLOT(resetSimulation()));
+    
+    
+    connect(m_ui->sceneEditorButton, SIGNAL(pressed()), this, SLOT(startEditScene()));
 }
 
 void HairInterface::setGLWidget(GLWidget *glWidget)
@@ -95,6 +116,10 @@ void HairInterface::setHairObject(HairObject *hairObject)
     m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y, 'g', 2));
     m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 2));
 
+    // Sync wind magnitude
+    m_ui->sliderWindMagnitude->setValue(m_glWidget->m_testSimulation->m_windMagnitude*100);
+    m_ui->inputWindMagnitude->setText(QString::number(m_glWidget->m_testSimulation->m_windMagnitude, 'g', 2));
+    
     // Sync toggles
     m_ui->frictionSimCheckBox->setChecked(m_glWidget->useFrictionSim);
     m_ui->shadowCheckBox->setChecked(m_glWidget->useShadows);
@@ -318,6 +343,28 @@ void HairInterface::setHairColorB(int value)
     m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 3));
 }
 
+
+void HairInterface::inputWindMagnitudeText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_glWidget->m_testSimulation->m_windMagnitude;
+    } else if (value == m_glWidget->m_testSimulation->m_windMagnitude) return;
+    setWindMagnitude(100*value);
+    m_ui->sliderWindMagnitude->setValue(100*value);
+}
+void HairInterface::setWindMagnitude(int value)
+{
+    if (value < 0) return;    
+    m_glWidget->m_testSimulation->m_windMagnitude = value/100.;
+    m_ui->inputWindMagnitude->setText(QString::number(m_glWidget->m_testSimulation->m_windMagnitude, 'g', 3));
+}
+
+
+
+
 void HairInterface::setShadows(bool checked)
 {
     m_glWidget->useShadows = checked;
@@ -337,4 +384,16 @@ void HairInterface::togglePaused()
 {
     m_glWidget->paused = !m_glWidget->paused;
     m_ui->pauseButton->setText(m_glWidget->paused ? "Continue" : "Pause");
+}
+
+void HairInterface::startEditScene(){
+    if (!m_glWidget->paused){
+        togglePaused();
+    }
+    
+    SceneEditor *newSceneEditor = new SceneEditor(m_glWidget);
+    
+    newSceneEditor->show();
+    newSceneEditor->raise();
+    newSceneEditor->activateWindow();
 }

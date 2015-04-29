@@ -13,6 +13,9 @@
 
 #include <pthread.h>
 
+
+
+
 class HairObject;
 class Hair;
 class GLWidget;
@@ -89,6 +92,7 @@ struct HairSimulationThreadInfo {
 
 class Simulation
 {
+    friend class HairInterface;
 public:
     Simulation(GLWidget *widget, ObjMesh *mesh);
     
@@ -96,6 +100,9 @@ public:
     
     void update(float _time);
     void simulate(HairObject *_object);
+    void updateHairPosition(HairObject *object);
+    void updatePosition(HairObject *object, glm::vec3 xform);
+    void updateRotation(HairObject *object, float angle, glm::vec3 axis);
     
     glm::mat4 m_xform;
     
@@ -131,6 +138,10 @@ private:
 public:
     QList<glm::vec3> m_externalForces;
     std::map<grid_loc, fluid> m_fluidGrid;
+    bool m_headMoving;
+
+    glm::vec3 m_windDir;
+    float m_windMagnitude;
     
     
     

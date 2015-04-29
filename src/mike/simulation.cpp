@@ -17,14 +17,15 @@
 #define MASS 1.0f
 
 #define GRID_WIDTH 0.1f
-#define FRICTION 0.07f
+#define FRICTION 0.04f
 #define REPULSION 0.000f
 
 #define DAMPENING 0.95f
 
 #define EULER false
 #define __BMONTELL_MODE__ false
-#define TIMESTEP 0.01f
+#define TIMESTEP 0.02f
+
 
 
 Simulation::Simulation(GLWidget *widget, ObjMesh *mesh)
@@ -34,6 +35,9 @@ Simulation::Simulation(GLWidget *widget, ObjMesh *mesh)
     m_mesh = mesh;
     m_xform = glm::mat4(1.0);
     m_fluidGrid = std::map<grid_loc, fluid>();
+    m_headMoving = false;
+    m_windDir = glm::vec3(0, 0, 1);
+    m_windMagnitude = 0.0f;
 }
 
 Simulation::~Simulation()
@@ -49,8 +53,8 @@ void Simulation::simulate(HairObject *_object)
 
 //    QTime t;
 //    t.start();
-    moveObjects(_object);
-    
+//    moveObjects(_object);
+
     calculateExternalForces(_object);
     
     if (m_widget->useFrictionSim){
@@ -66,6 +70,17 @@ void Simulation::simulate(HairObject *_object)
     
 }
 
+void Simulation::updateHairPosition(HairObject *object)
+{
+    for (int i = 0; i < object->m_guideHairs.size(); ++i)
+    {
+        for (int j = 0; j < object->m_guideHairs.at(j)->m_vertices.size(); ++j)
+        {
+            object->m_guideHairs.at(i)->m_vertices.at(j)->prevPos = glm::vec3(m_xform * glm::vec4(object->m_guideHairs.at(i)->m_vertices.at(j)->startPosition, 1.0));
+        }
+    }
+}
+
 void Simulation::moveObjects(HairObject *_object)
 {
     for (int i = 0; i < _object->m_guideHairs.size(); ++i)
@@ -76,10 +91,21 @@ void Simulation::moveObjects(HairObject *_object)
         }
     }
     m_xform = glm::rotate((float) sin(m_time), glm::vec3(0, 1, 0));
-    //    m_xform = glm::translate(m_xform, glm::vec3(sin(m_time), 0.0 , sin(m_time)));
+//        m_xform = glm::translate(m_xform, glm::vec3(sin(m_time), 0.0 , sin(m_time)));
     //    float x = CLAMP(fabs(sin(m_time)), 0.5, 1.0); m_xform = glm::scale(glm::mat4(1.0), glm::vec3(x, x, x));
-    
-    
+}
+
+void Simulation::updatePosition(HairObject *object, glm::vec3 xform)
+{
+    updateHairPosition(object);
+    m_xform = glm::translate(m_xform, xform);
+}
+
+
+void Simulation::updateRotation(HairObject *object, float angle, glm::vec3 axis)
+{
+    updateHairPosition(object);
+    m_xform = glm::rotate(m_xform, angle, axis);
 }
 
 // Calculate forces for each joint, for each external force included in the simulation
@@ -95,9 +121,18 @@ void Simulation::calculateExternalForces(HairObject *_object)
             
             glm::vec3 force = glm::vec3(0.0);
             force += glm::vec3(0.0, -9.8, 0.0);
-            glm::vec4 curr = m_xform * glm::vec4(currVert->startPosition, 1.0);
-            glm::vec3 acceleration = (glm::vec3(currVert->prevPos - glm::vec3(curr)) - currVert->velocity * TIMESTEP) / (TIMESTEP * TIMESTEP);
-            force += acceleration * currVert->mass * 0.1f;
+
+            if (m_headMoving)
+            {
+                glm::vec4 curr = m_xform * glm::vec4(currVert->startPosition, 1.0);
+                glm::vec3 acceleration = (glm::vec3(currVert->prevPos - glm::vec3(curr)) - currVert->velocity * TIMESTEP) / (TIMESTEP * TIMESTEP);
+                if (glm::length(currVert->prevPos - glm::vec3(curr)) > 0.01) force += acceleration * currVert->mass * 0.2f;
+//                cout << "Prev: " << glm::to_string(currVert->prevPos) << endl;
+//                cout << "Curr: " << glm::to_string(glm::vec3(curr)) << endl;
+            }
+
+            force += glm::normalize(m_windDir) * m_windMagnitude;
+
             glm::vec3 normal;
             if (m_mesh->contains(normal, currVert->position)) force = 5.0f * normal;
             currVert->forces = force;

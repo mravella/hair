@@ -50,11 +50,16 @@ public slots:
     void setHairColorG(int value);
     void inputHairColorBText(QString text);
     void setHairColorB(int value);
+    
+    void inputWindMagnitudeText(QString text);
+    void setWindMagnitude(int value);
 
     void setShadows(bool);
     void setSupersampling(bool);
     void setFrictionSim(bool);
     void togglePaused();
+    
+    void startEditScene();
 
 private:
     void connectUserInputs();

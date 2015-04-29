@@ -6,9 +6,9 @@
 #include "texture.h"
 #include <QPainter>
 
-QT_BEGIN_NAMESPACE
-  extern Q_WIDGETS_EXPORT void qt_blurImage( QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0 );
-QT_END_NAMESPACE
+//QT_BEGIN_NAMESPACE
+//  extern Q_WIDGETS_EXPORT void qt_blurImage(QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0 );
+//QT_END_NAMESPACE
 
 HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
 {
@@ -44,23 +44,26 @@ HairObject::~HairObject()
 {
     for (int i = 0; i < m_guideHairs.size(); ++i)
         delete m_guideHairs.at(i);
-    safeDelete(m_hairGrowthMapTexture);
+    safeDelete(m_blurredHairGrowthMapTexture);
 }
 
 HairObject::HairObject(
         ObjMesh *_mesh,
         float _hairsPerUnitArea,
-        const char * _hairGrowthMap,
+        QImage &image,
         Simulation *_simulation,
         HairObject *_oldObject)
 {
-    QImage image(_hairGrowthMap);
+    m_hairGrowthMap = image;
+    
     if (image.width() == 0)
     {
-        std::cout << _hairGrowthMap << " does not appear to be a valid image." << std::endl;
+//        std::cout << _hairGrowthMap << " does not appear to be a valid image." << std::endl;
         exit(1);
     }
-
+    
+    int _failures = 0;
+    int _emptyPoints = 0;
     for (unsigned int i = 0; i < _mesh->triangles.size(); i++)
     {
         Triangle t = _mesh->triangles[i];
@@ -75,11 +78,17 @@ HairObject::HairObject(
             uv = glm::vec2(MIN(uv.x, 0.999), MIN(uv.y, 0.999)); // Make UV in range [0,1) instead of [0,1]
 
             QPoint p = QPoint(uv.x * image.width(), (1 - uv.y) * image.height());
-            if (!image.valid(p)) continue; // Don't put hair on neck......
+            if (!image.valid(p)){
+                _failures++;
+                continue; // Don't put hair on neck......
+            }
 
             // If hair growth map is black, skip this hair.
             QColor hairGrowth = QColor(image.pixel(p));
-            if (hairGrowth.value() == 0) continue;
+            if (hairGrowth.value() == 0){
+                _emptyPoints++;
+                continue;
+            }
 
             m_guideHairs.append(new Hair(20, 0.4, pos, normal));
         }
@@ -93,12 +102,13 @@ HairObject::HairObject(
     QPixmap blurredPixmap( image.size() );
     blurredPixmap.fill( Qt::transparent );
     QPainter painter( &blurredPixmap );
-    qt_blurImage( &painter, image, 0.1 * image.width(), true, false );
+//    qt_blurImage( &painter, image, 0.1 * image.width(), true, false );
     QImage blurredImage = blurredPixmap.toImage();
 
     // Initialize mesh texture with blurred hair growth map.
-    m_hairGrowthMapTexture = new Texture();
-    m_hairGrowthMapTexture->createColorTexture(blurredImage, GL_LINEAR, GL_LINEAR);
+    m_blurredHairGrowthMapTexture = new Texture();
+    m_blurredHairGrowthMapTexture->createColorTexture(blurredImage, GL_LINEAR, GL_LINEAR);
+    
 }
 
 void HairObject::setAttributes(HairObject *_oldObject){

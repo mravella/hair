@@ -55,7 +55,9 @@ SOURCES += \
     src/meshocttree.cpp \
     src/md5.cpp \
     src/tessellator.cpp \
-    src/shaderPrograms/hairfeedbackshaderprogram.cpp
+    src/shaderPrograms/hairfeedbackshaderprogram.cpp \
+    src/ui/sceneeditor.cpp \
+    src/ui/scenewidget.cpp
 
 
 HEADERS += \
@@ -86,10 +88,13 @@ HEADERS += \
     src/md5.h \
     src/tessellator.h \
     src/shaderPrograms/hairfeedbackshaderprogram.h \
-    src/shaderPrograms/hairrendershaderprogram.h
+    src/shaderPrograms/hairrendershaderprogram.h \
+    src/ui/sceneeditor.h \
+    src/ui/scenewidget.h
 
 
-FORMS += src/mainwindow.ui
+FORMS += src/mainwindow.ui \
+    src/ui/sceneeditor.ui
 
 OTHER_FILES += \
     shaders/mesh.frag \
@@ -117,6 +122,7 @@ RESOURCES += \
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unknown-pragmas
 
 LIBS += "-L$$PWD/glew-1.10.0/lib" -lGLEW
+
 
 INCLUDEPATH += glew-1.10.0/include
 DEPENDPATH += glew-1.10.0/include

@@ -44,30 +44,18 @@ HairObject::~HairObject()
 {
     for (int i = 0; i < m_guideHairs.size(); ++i)
         delete m_guideHairs.at(i);
-    safeDelete(m_hairGrowthMapTexture);
+    safeDelete(m_blurredHairGrowthMapTexture);
 }
 
 HairObject::HairObject(
         ObjMesh *_mesh,
         float _hairsPerUnitArea,
-        const char * _hairGrowthMap,
-        Simulation *_simulation,
-        HairObject *_oldObject) :
-    
-    HairObject(_mesh, _hairsPerUnitArea, QImage(_hairGrowthMap), _simulation, _oldObject)
-    
-{
-    
-}
-
-HairObject::HairObject(
-        ObjMesh *_mesh,
-        float _hairsPerUnitArea,
-        QImage image,
+        QImage &image,
         Simulation *_simulation,
         HairObject *_oldObject)
 {
-
+    m_hairGrowthMap = image;
+    
     if (image.width() == 0)
     {
 //        std::cout << _hairGrowthMap << " does not appear to be a valid image." << std::endl;
@@ -118,8 +106,9 @@ HairObject::HairObject(
     QImage blurredImage = blurredPixmap.toImage();
 
     // Initialize mesh texture with blurred hair growth map.
-    m_hairGrowthMapTexture = new Texture();
-    m_hairGrowthMapTexture->createColorTexture(blurredImage, GL_LINEAR, GL_LINEAR);
+    m_blurredHairGrowthMapTexture = new Texture();
+    m_blurredHairGrowthMapTexture->createColorTexture(blurredImage, GL_LINEAR, GL_LINEAR);
+    
 }
 
 void HairObject::setAttributes(HairObject *_oldObject){

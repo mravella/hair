@@ -20,22 +20,11 @@ public:
     // Generates hair on the mesh according to the hair growth map.
     HairObject(ObjMesh *_mesh,
             float _hairsPerUnitArea,
-            const char *_hairGrowthMap,
-            Simulation *_simulation,
-            HairObject *_oldObject = NULL);
-
-    HairObject(
-            ObjMesh *_mesh,
-            float _hairsPerUnitArea,
-            QImage image,
+            QImage &image,
             Simulation *_simulation,
             HairObject *_oldObject = NULL);
     
     
-    // Generates hair all over the given mesh.
-    HairObject(ObjMesh *_mesh, float _hairsPerUnitArea, Simulation *_simulation)
-        : HairObject(_mesh, _hairsPerUnitArea, ":/images/white.jpg", _simulation) { }
-
     void update(float _time);
     void paint(ShaderProgram *program);
     void setAttributes(HairObject *_oldObject);
@@ -54,7 +43,8 @@ public:
 
     Simulation *m_simulation;
 
-    Texture *m_hairGrowthMapTexture;
+    QImage m_hairGrowthMap;
+    Texture *m_blurredHairGrowthMapTexture;
     
     int m_numGuideHairs;
     int m_numHairVertices;

@@ -47,9 +47,12 @@ SceneEditor::SceneEditor(GLWidget *parent) :
     connect(m_ui->falloffLinear, SIGNAL(clicked()), this, SLOT(setFalloffLinear()));
     connect(m_ui->falloffQuadratic, SIGNAL(clicked()), this, SLOT(setFalloffQuadratic()));
     
+    connect(m_ui->clearWhiteButton, SIGNAL(pressed()), this, SLOT(clearWhite()));
+    connect(m_ui->clearBlackButton, SIGNAL(pressed()), this, SLOT(clearBlack()));
     
     // buttons
     connect(m_ui->applyButton, SIGNAL(pressed()), this, SLOT(applyEditor()));
+    connect(m_ui->applyAndCloseButton, SIGNAL(pressed()), this, SLOT(applyAndCloseEditor()));
     connect(m_ui->cancelButton, SIGNAL(pressed()), this, SLOT(cancelEditor()));
     
     
@@ -174,10 +177,21 @@ void SceneEditor::setFalloffQuadratic(){
     m_sceneWidget->updateBrushSettings();
 }
 
+void SceneEditor::clearWhite(){
+    m_sceneWidget->clearTexture(255, 255, 255);
+}
+void SceneEditor::clearBlack(){
+    m_sceneWidget->clearTexture(0, 0, 0);
+}
 
 void SceneEditor::applyEditor()
 {
     m_sceneWidget->apply();
+}
+void SceneEditor::applyAndCloseEditor()
+{
+    m_sceneWidget->apply();
+    this->close();
 }
 void SceneEditor::cancelEditor()
 {

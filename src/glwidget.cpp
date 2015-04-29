@@ -31,6 +31,8 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     m_hairObject = NULL;
     m_testSimulation = NULL;
     
+    resetTexture = NULL;
+    
     // Shader programs
     m_programs = {
         m_hairProgram = new HairShaderProgram(),
@@ -120,6 +122,11 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
+    if (resetTexture != NULL){
+        partialResetSim(resetTexture);
+        resetTexture = NULL;
+    }
+    
     ErrorChecker::printGLErrors("start of paintGL");
     
     if (paused)
@@ -149,7 +156,7 @@ void GLWidget::paintGL()
     m_opacityMapTexture->bind(GL_TEXTURE2);
     m_meshDepthTexture->bind(GL_TEXTURE3);
     m_finalTexture->bind(GL_TEXTURE4);
-    m_hairObject->m_hairGrowthMapTexture->bind(GL_TEXTURE5);
+    m_hairObject->m_blurredHairGrowthMapTexture->bind(GL_TEXTURE5);
     
     if (useShadows)
     {
@@ -225,6 +232,13 @@ void GLWidget::paintGL()
     // Update UI.
     m_hairInterface->updateFPSLabel(m_increment);
     
+//    glDisable(GL_DEPTH_TEST);
+//    if (m_prevtex != NULL) {
+//        cout << 10 << endl;  
+//        m_prevtex->renderFullScreen();
+//        cout << 11 << endl;
+//    }
+    
 }
 
 
@@ -293,8 +307,9 @@ void GLWidget::initSimulation()
     
     m_testSimulation = new Simulation(this, m_lowResMesh);
     
+    QImage hairGrowthMap(":/images/headHair.jpg");
     m_hairObject = new HairObject(
-                m_highResMesh, m_hairDensity, ":/images/lower.png", m_testSimulation, m_hairObject);
+                m_highResMesh, m_hairDensity, hairGrowthMap, m_testSimulation, m_hairObject);
     
     safeDelete(_oldHairObject);
     
@@ -302,25 +317,21 @@ void GLWidget::initSimulation()
 }
 
 void GLWidget::partialResetSim(Texture *texture){
-//    safeDelete(m_highResMesh);
-//    safeDelete(m_lowResMesh);
-//    safeDelete(m_testSimulation);
+
     HairObject *_oldHairObject = m_hairObject;
     
-//    m_highResMesh = new ObjMesh();
-//    m_highResMesh->init(":/models/head.obj");
+//    m_prevtex = new Texture();
     
-//    m_lowResMesh = new ObjMesh();
-//    m_lowResMesh->init(":/models/headLowRes.obj", 1.1);
-    
-//    m_testSimulation = new Simulation(this, m_lowResMesh);
-    
+//    m_prevtex->createColorTexture(texture->m_image, GL_LINEAR, GL_LINEAR);
+        
     m_hairObject = new HairObject(
                 m_highResMesh, m_hairDensity, texture->m_image, m_testSimulation);
+    
     
     safeDelete(_oldHairObject);
     
     m_hairInterface->setHairObject(m_hairObject);
+    
 }
 
 void GLWidget::resetSimulation()

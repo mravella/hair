@@ -89,12 +89,15 @@ private:
     glm::vec3 m_lightPosition;
     glm::mat4 m_eyeToLight;
 
+    Texture *m_prevtex = NULL;
 
     float m_hairDensity;
-
+    
     QTimer m_timer; /** Timer calls tick() 60 times per second. */
     int m_increment; /** Incremented on every call to paintGL. */
     float m_targetFPS;
+    
+    Texture *resetTexture;
 };
 
 #endif // GLWIDGET_H

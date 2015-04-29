@@ -105,7 +105,8 @@ OTHER_FILES += \
     shaders/white.frag \
     shaders/constants.glsl \
     shaders/opacitymapping.glsl \
-    shaders/hairrender.vert
+    shaders/hairrender.vert \
+    shaders/depthpeel.glsl
 
 
 RESOURCES += \

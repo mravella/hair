@@ -301,6 +301,27 @@ void GLWidget::initSimulation()
     m_hairInterface->setHairObject(m_hairObject);
 }
 
+void GLWidget::partialResetSim(Texture *texture){
+//    safeDelete(m_highResMesh);
+//    safeDelete(m_lowResMesh);
+//    safeDelete(m_testSimulation);
+    HairObject *_oldHairObject = m_hairObject;
+    
+//    m_highResMesh = new ObjMesh();
+//    m_highResMesh->init(":/models/head.obj");
+    
+//    m_lowResMesh = new ObjMesh();
+//    m_lowResMesh->init(":/models/headLowRes.obj", 1.1);
+    
+//    m_testSimulation = new Simulation(this, m_lowResMesh);
+    
+    m_hairObject = new HairObject(
+                m_highResMesh, m_hairDensity, texture->m_image, m_testSimulation);
+    
+    safeDelete(_oldHairObject);
+    
+    m_hairInterface->setHairObject(m_hairObject);
+}
 
 void GLWidget::resetSimulation()
 {    

@@ -134,13 +134,13 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>240</height>
+          <height>260</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>220</height>
+          <height>260</height>
          </size>
         </property>
         <property name="title">
@@ -316,6 +316,61 @@
          <property name="text">
           <string>Opacity</string>
          </property>
+        </widget>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>160</y>
+           <width>151</width>
+           <height>101</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Brush Falloff</string>
+         </property>
+         <widget class="QRadioButton" name="falloffLinear">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>50</y>
+            <width>102</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Linear</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QRadioButton" name="falloffConstant">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>30</y>
+            <width>102</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Constant</string>
+          </property>
+         </widget>
+         <widget class="QRadioButton" name="falloffQuadratic">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>70</y>
+            <width>102</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Quadratic</string>
+          </property>
+         </widget>
         </widget>
        </widget>
       </item>

@@ -165,10 +165,10 @@
           </size>
          </property>
          <property name="text">
-          <string>Wind:</string>
+          <string>Wind Strength:</string>
          </property>
         </widget>
-        <widget class="QLineEdit" name="inputHairRadius_4">
+        <widget class="QLineEdit" name="inputWindMagnitude">
          <property name="geometry">
           <rect>
            <x>110</x>
@@ -190,13 +190,13 @@
           </size>
          </property>
          <property name="text">
-          <string>TODO</string>
+          <string/>
          </property>
          <property name="readOnly">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
-        <widget class="QSlider" name="sliderHairsPerPatch_4">
+        <widget class="QSlider" name="sliderWindMagnitude">
          <property name="geometry">
           <rect>
            <x>10</x>
@@ -209,7 +209,7 @@
           <number>1</number>
          </property>
          <property name="maximum">
-          <number>64</number>
+          <number>10000</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>

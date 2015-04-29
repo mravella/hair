@@ -4,6 +4,7 @@
 #include "QWidget"
 #include "hairobject.h"
 #include "texture.h"
+#include "hairinterface.h"
 
 #include "QMouseEvent"
 
@@ -41,12 +42,6 @@ void SceneWidget::updateCanvas()
 }
 void SceneWidget::initializeGL()
 {    
-//    QImage image(":/images/headHair.jpg");
-//    if (image.width() == 0)
-//    {
-//        std::cout << "test does not appear to be a valid image." << std::endl;
-//        exit(1);
-//    }
     
     test = new Texture();
     test->createColorTexture(mainWidget->m_hairObject->m_hairGrowthMapTexture->m_image, GL_LINEAR, GL_LINEAR);
@@ -74,11 +69,11 @@ void SceneWidget::paintGL(){
 
 void SceneWidget::updateBrushSettings(){
     if (m_brushFalloffType == CONSTANT){
-//        makeConstantMask();
+        makeConstantMask();
     } else if (m_brushFalloffType == LINEAR){
         makeLinearMask();
     } else if (m_brushFalloffType == QUADRATIC){
-//        makeQuadraticMask();
+        makeQuadraticMask();
     }
     
 //    m_previewBuffer = QImage(2*m_radius+1, 2*m_radius+1,)
@@ -88,13 +83,15 @@ void SceneWidget::updateBrushSettings(){
 void SceneWidget::mousePressEvent(QMouseEvent *event)
 {
     m_mouseDown = true;
+    QPoint pos = QPoint(round(event->x()*test->width()/width()), round(event->y()*test->height()/height()));        
+    paintTexture(glm::vec2(pos.x(), pos.y()), test->m_image.bits(), glm::vec2(test->m_image.width(), test->m_image.height()));
+    test->updateImage();
 }
 
 void SceneWidget::mouseMoveEvent(QMouseEvent *event)
 {
     if (m_mouseDown){
-        QPoint pos = QPoint(round(event->x()*test->width()/width()), round(event->y()*test->height()/height()));
-        
+        QPoint pos = QPoint(round(event->x()*test->width()/width()), round(event->y()*test->height()/height()));        
         paintTexture(glm::vec2(pos.x(), pos.y()), test->m_image.bits(), glm::vec2(test->m_image.width(), test->m_image.height()));
         test->updateImage();
     }
@@ -172,10 +169,31 @@ void SceneWidget::paintTexture(glm::vec2 center, uchar *data, glm::vec2 imgSize)
 
 void SceneWidget::apply(){
     test->m_image.save("output.png");
-    mainWidget->m_hairObject->m_hairGrowthMapTexture = new Texture();
-    mainWidget->m_hairObject->m_hairGrowthMapTexture->createColorTexture(test->m_image, GL_LINEAR, GL_LINEAR);
+    
+    mainWidget->partialResetSim(test);
+    
+    if (mainWidget->paused){
+        mainWidget->m_hairInterface->togglePaused();
+    }
+    
+//    mainWidget->m_hairObject->m_hairGrowthMapTexture = new Texture();
+//    mainWidget->m_hairObject->m_hairGrowthMapTexture->createColorTexture(test->m_image, GL_LINEAR, GL_LINEAR);
 }
 
+void SceneWidget::makeConstantMask()
+{
+    delete[] m_mask;
+    int len = (2*m_radius+1);
+    m_mask = new float[len*len];
+
+    int row, col;
+    for (row = 0; row < len; row++){
+      for (col = 0; col < len; col++){
+        float distance = sqrt((row-m_radius)*(row-m_radius)+(col-m_radius)*(col-m_radius));
+        m_mask[row*len+col] = (distance <= m_radius ? 1 : 0);
+      }
+    }
+}
 
 void SceneWidget::makeLinearMask()
 {
@@ -192,3 +210,22 @@ void SceneWidget::makeLinearMask()
         }
     }
 }
+
+void SceneWidget::makeQuadraticMask()
+{
+    delete[] m_mask;
+    int len = (2*m_radius+1);
+    m_mask = new float[len*len];
+
+    int row, col;
+    for (row = 0; row < len; row++){
+      for (col = 0; col < len; col++){
+        float distance = sqrt((row-m_radius)*(row-m_radius)+(col-m_radius)*(col-m_radius));
+        m_mask[row*len+col] = (1-distance/m_radius);
+        if (m_mask[row*len+col] < 0) m_mask[row*len+col] = 0; // because apparently using max(a, b) is a bitch
+        else m_mask[row*len+col] *= (1-distance/m_radius);
+      }
+    }
+}
+
+

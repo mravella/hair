@@ -173,12 +173,7 @@ void SceneWidget::apply(){
     
     mainWidget->resetTexture = test;
     
-    if (mainWidget->isPaused()){
-        mainWidget->m_hairInterface->togglePaused();
-    }
-    
-//    mainWidget->m_hairObject->m_hairGrowthMapTexture = new Texture();
-//    mainWidget->m_hairObject->m_hairGrowthMapTexture->createColorTexture(test->m_image, GL_LINEAR, GL_LINEAR);
+    mainWidget->unpause();
 }
 
 void SceneWidget::makeConstantMask()

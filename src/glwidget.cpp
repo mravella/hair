@@ -298,8 +298,8 @@ void GLWidget::initSimulation()
     
     m_testSimulation = new Simulation(this, m_lowResMesh);
     
-    m_hairObject = new HairObject(
-                m_highResMesh, m_hairDensity, ":/images/dude_hairmap.jpg", m_testSimulation, m_hairObject);
+    QImage initialHairMap(":/images/dude_hairmap.jpg");
+    m_hairObject = new HairObject(m_highResMesh, m_hairDensity, initialHairMap, m_testSimulation, m_hairObject);
     
     safeDelete(_oldHairObject);
     

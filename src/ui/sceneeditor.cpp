@@ -187,6 +187,7 @@ void SceneEditor::clearBlack(){
 void SceneEditor::applyEditor()
 {
     m_sceneWidget->apply();
+    m_sceneWidget->mainWidget->pause();
 }
 void SceneEditor::applyAndCloseEditor()
 {

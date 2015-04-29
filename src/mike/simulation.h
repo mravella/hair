@@ -92,6 +92,7 @@ struct HairSimulationThreadInfo {
 
 class Simulation
 {
+    friend class HairInterface;
 public:
     Simulation(GLWidget *widget, ObjMesh *mesh);
     

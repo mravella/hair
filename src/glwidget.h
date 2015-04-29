@@ -18,6 +18,7 @@ class GLWidget : public QGLWidget
 {
     Q_OBJECT
     friend class SceneWidget;
+    friend class HairInterface;
     
 public:
     GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent = 0);

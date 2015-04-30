@@ -86,7 +86,7 @@ private:
 
     // Camera parameters
     glm::mat4 m_projection, m_view;
-    float m_zoom = 5, m_angleX = 0, m_angleY = 0;
+    float m_zoom, m_angleX, m_angleY;
     QPoint m_prevMousePos;
     QPoint m_prevXformPos;
     QPoint m_prevRotPos;

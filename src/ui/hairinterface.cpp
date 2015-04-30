@@ -19,9 +19,7 @@ HairInterface::HairInterface(Ui::MainWindow *ui)
     m_ui->testHolder->setAlignment(Qt::AlignTop);
     m_ui->scrollArea->setWidget(m_ui->controlsBox);
     m_ui->scrollArea->setFrameShape(QFrame::NoFrame);
-    
-    m_ui->controlsBox->setStyleSheet("controlsBox { border: none; }");
-    
+        
     // to start with a group shown, use one of these:
 //    showHideGroupSim();
 //    showHideGroupTess();
@@ -74,6 +72,14 @@ void HairInterface::connectUserInputs()
     connect(m_ui->sliderShadowIntensity, SIGNAL(valueChanged(int)), this, SLOT(setShadowIntensity(int)));
     connect(m_ui->inputShadowIntensity, SIGNAL(textChanged(QString)), this, SLOT(inputShadowIntensityText(QString)));
     
+    // diffuse intensity
+    connect(m_ui->sliderDiffuseIntensity, SIGNAL(valueChanged(int)), this, SLOT(setDiffuseIntensity(int)));
+    connect(m_ui->inputDiffuseIntensity, SIGNAL(textChanged(QString)), this, SLOT(inputDiffuseIntensityText(QString)));
+    
+    // specular intensity
+    connect(m_ui->sliderSpecularIntensity, SIGNAL(valueChanged(int)), this, SLOT(setSpecularIntensity(int)));
+    connect(m_ui->inputSpecularIntensity, SIGNAL(textChanged(QString)), this, SLOT(inputSpecularIntensityText(QString)));
+        
     // toggles
     connect(m_ui->frictionSimCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFrictionSim(bool)));
     connect(m_ui->shadowCheckBox, SIGNAL(toggled(bool)), this, SLOT(setShadows(bool)));
@@ -118,17 +124,26 @@ void HairInterface::setHairObject(HairObject *hairObject)
     m_ui->sliderHairColorR->setValue(m_hairObject->m_color.x*2550);
     m_ui->sliderHairColorG->setValue(m_hairObject->m_color.y*2550);
     m_ui->sliderHairColorB->setValue(m_hairObject->m_color.z*2550);
-    m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x, 'g', 2));
+    m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x*255, 'g', 2));
     m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y, 'g', 2));
     m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 2));
 
     // Sync wind magnitude
     m_ui->sliderWindMagnitude->setValue(m_glWidget->m_testSimulation->m_windMagnitude*100);
-    m_ui->inputWindMagnitude->setText(QString::number(m_glWidget->m_testSimulation->m_windMagnitude, 'g', 2));
+    m_ui->inputWindMagnitude->setText(QString::number(m_glWidget->m_testSimulation->m_windMagnitude, 'g', 3));
     
     // Sync shadow intensity
-    m_ui->sliderShadowIntensity->setValue(m_glWidget->m_hairObject->m_shadowIntensity*10);
-    m_ui->inputShadowIntensity->setText(QString::number(m_glWidget->m_hairObject->m_shadowIntensity, 'g', 2));
+    m_ui->sliderShadowIntensity->setValue(m_glWidget->m_hairObject->m_shadowIntensity*100);
+    m_ui->inputShadowIntensity->setText(QString::number(m_glWidget->m_hairObject->m_shadowIntensity, 'g', 3));
+    
+    // Sync diffuse intensity
+    m_ui->sliderDiffuseIntensity->setValue(m_glWidget->m_hairObject->m_diffuseIntensity*100);
+    m_ui->inputDiffuseIntensity->setText(QString::number(m_glWidget->m_hairObject->m_diffuseIntensity, 'g', 3));
+    
+    // Sync specular intensity
+    m_ui->sliderSpecularIntensity->setValue(m_glWidget->m_hairObject->m_specularIntensity*100);
+    m_ui->inputSpecularIntensity->setText(QString::number(m_glWidget->m_hairObject->m_specularIntensity, 'g', 3));
+    
     
     
     // Sync toggles
@@ -313,14 +328,14 @@ void HairInterface::inputHairColorRText(QString text)
     if (!ok){
         value = m_hairObject->m_color.x;
     } else if (value == m_hairObject->m_color.x) return;
-    setHairColorR(2550*value);
-    m_ui->sliderHairColorR->setValue(2550*value);
+    setHairColorR(10*value);
+    m_ui->sliderHairColorR->setValue(10*value);
 }
 void HairInterface::setHairColorR(int value)
 {
     if (value < 0) return;
     m_hairObject->m_color.x = value/2550.;
-    m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x, 'g', 3));
+    m_ui->inputHairColorR->setText(QString::number(value/10, 'g', 3));
     m_glWidget->forceUpdate();
 }
 
@@ -404,6 +419,41 @@ void HairInterface::setShadowIntensity(int value)
     m_ui->inputShadowIntensity->setText(QString::number(m_glWidget->m_hairObject->m_shadowIntensity, 'g', 3));
 }
 
+void HairInterface::inputDiffuseIntensityText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_glWidget->m_hairObject->m_diffuseIntensity;
+    } else if (value == m_glWidget->m_hairObject->m_diffuseIntensity) return;
+    setDiffuseIntensity(100*value);
+    m_ui->sliderDiffuseIntensity->setValue(100*value);
+}
+void HairInterface::setDiffuseIntensity(int value)
+{
+    if (value < 0) return;    
+    m_glWidget->m_hairObject->m_diffuseIntensity = value/100.;
+    m_ui->inputDiffuseIntensity->setText(QString::number(m_glWidget->m_hairObject->m_diffuseIntensity, 'g', 3));
+}
+
+void HairInterface::inputSpecularIntensityText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_glWidget->m_hairObject->m_specularIntensity;
+    } else if (value == m_glWidget->m_hairObject->m_specularIntensity) return;
+    setSpecularIntensity(100*value);
+    m_ui->sliderSpecularIntensity->setValue(100*value);
+}
+void HairInterface::setSpecularIntensity(int value)
+{
+    if (value < 0) return;    
+    m_glWidget->m_hairObject->m_specularIntensity = value/100.;
+    m_ui->inputSpecularIntensity->setText(QString::number(m_glWidget->m_hairObject->m_specularIntensity, 'g', 3));
+}
 
 
 void HairInterface::setShadows(bool checked)

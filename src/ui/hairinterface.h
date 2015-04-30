@@ -56,6 +56,12 @@ public slots:
     
     void inputShadowIntensityText(QString text);
     void setShadowIntensity(int value);
+    void inputDiffuseIntensityText(QString text);
+    void setDiffuseIntensity(int value);
+    void inputSpecularIntensityText(QString text);
+    void setSpecularIntensity(int value);
+    
+    
 
     void setShadows(bool);
     void setSupersampling(bool);

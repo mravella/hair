@@ -6,6 +6,8 @@
 #include "texture.h"
 #include "blurrer.h"
 
+#include <glm/gtx/color_space.hpp>
+
 HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
 {
     
@@ -125,6 +127,8 @@ void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hair
     m_noiseFrequency = _noiseFrequency;
     m_numSplineVertices = _numSplineVertices;
     m_shadowIntensity = 15;
+    m_diffuseIntensity = 1;
+    m_specularIntensity = .5;
 }
 
 void HairObject::update(float _time){
@@ -142,7 +146,7 @@ void HairObject::update(float _time){
 
 void HairObject::paint(ShaderProgram *program){
     
-    program->uniforms.color = m_color;
+    program->uniforms.color = glm::rgbColor(glm::vec3(m_color.x*255, m_color.y, m_color.z));
     program->uniforms.numGroupHairs = m_numGroupHairs;
     program->uniforms.hairGroupSpread = m_hairGroupSpread;
     program->uniforms.hairRadius = m_hairRadius;

@@ -29,7 +29,7 @@ public:
     void paint(ShaderProgram *program);
     void setAttributes(HairObject *_oldObject);
     void setAttributes(
-            glm::vec3 _color = glm::vec3(.23f, .17f, .15f),
+            glm::vec3 _color = glm::vec3(14./255, .356f, .231f),
             int _numGroupHairs = 64,
             float _hairGroupSpread = 0.2,
             float _hairRadius = 0.001f,
@@ -60,6 +60,8 @@ public:
     glm::vec3 m_color;
     
     float m_shadowIntensity;
+    float m_diffuseIntensity;
+    float m_specularIntensity;
 };
 
 #endif // HAIROBJECT_H

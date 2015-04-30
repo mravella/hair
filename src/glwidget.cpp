@@ -18,6 +18,8 @@
 #include "texture.h"
 #include "framebuffer.h"
 
+#include <glm/gtx/color_space.hpp>
+
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
     : QGLWidget(format, parent),
       m_hairInterface(hairInterface),
@@ -255,8 +257,8 @@ void GLWidget::_drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view
     program->uniforms.lightPosition = m_lightPosition;
     program->uniforms.shadowIntensity = m_hairObject->m_shadowIntensity;
     program->uniforms.useShadows = useShadows;
-    program->uniforms.specIntensity = 0.5;
-    program->uniforms.diffuseIntensity = 1.0;
+    program->uniforms.specIntensity = m_hairObject->m_specularIntensity;
+    program->uniforms.diffuseIntensity = m_hairObject->m_diffuseIntensity;
     program->setGlobalUniforms();
     m_hairObject->paint(program);
 }
@@ -276,7 +278,7 @@ void GLWidget::_drawMesh(ShaderProgram *program, glm::mat4 model, glm::mat4 view
     program->uniforms.eyeToLight = m_eyeToLight;
     program->uniforms.shadowIntensity = m_hairObject->m_shadowIntensity;
     program->uniforms.useShadows = useShadows;
-    program->uniforms.color = 2.f * m_hairObject->m_color; // multiplying by 2 because it looks better...
+    program->uniforms.color = 2.f * glm::rgbColor(glm::vec3(m_hairObject->m_color.x*255, m_hairObject->m_color.y, m_hairObject->m_color.z)); // multiplying by 2 because it looks better...
     program->setGlobalUniforms();
     program->setPerObjectUniforms();
     m_highResMesh->draw();
@@ -308,9 +310,17 @@ void GLWidget::initSimulation()
 }
 
 void GLWidget::initCamera(){
-
+    
+    m_angleX = 0;
+    m_angleY = .33;
+    m_zoom = 3;
+    
     // Initialize global view and projection matrices.
-    m_view = glm::lookAt(glm::vec3(0,0,m_zoom), glm::vec3(0), glm::vec3(0,1,0));
+//    m_view = glm::lookAt(glm::vec3(0,0,m_zoom), glm::vec3(0), glm::vec3(0,1,0));
+    m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
+            glm::rotate(m_angleY, glm::vec3(1, 0, 0)) *
+            glm::rotate(m_angleX, glm::vec3(0, 1, 0));
+    
     m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
     
 }

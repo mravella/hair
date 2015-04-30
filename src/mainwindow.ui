@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>230</x>
-      <y>20</y>
+      <y>10</y>
       <width>182</width>
       <height>700</height>
      </rect>
@@ -115,77 +115,11 @@
         <property name="title">
          <string/>
         </property>
-        <widget class="QLabel" name="label_4">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>10</y>
-           <width>166</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>180</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Gravity:</string>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="inputHairRadius_2">
-         <property name="geometry">
-          <rect>
-           <x>110</x>
-           <y>10</y>
-           <width>50</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>50</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>TODO</string>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QSlider" name="sliderHairsPerPatch_2">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>30</y>
-           <width>151</width>
-           <height>22</height>
-          </rect>
-         </property>
-         <property name="minimum">
-          <number>1</number>
-         </property>
-         <property name="maximum">
-          <number>64</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
         <widget class="QLabel" name="label_6">
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>50</y>
+           <y>10</y>
            <width>166</width>
            <height>20</height>
           </rect>
@@ -204,7 +138,7 @@
          <property name="geometry">
           <rect>
            <x>110</x>
-           <y>50</y>
+           <y>10</y>
            <width>50</width>
            <height>21</height>
           </rect>
@@ -232,7 +166,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>70</y>
+           <y>30</y>
            <width>151</width>
            <height>22</height>
           </rect>
@@ -251,7 +185,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>100</y>
+           <y>60</y>
            <width>187</width>
            <height>21</height>
           </rect>
@@ -260,6 +194,13 @@
           <string>Friction Sim</string>
          </property>
         </widget>
+        <zorder>label_6</zorder>
+        <zorder>inputWindMagnitude</zorder>
+        <zorder>sliderWindMagnitude</zorder>
+        <zorder>frictionSimCheckBox</zorder>
+        <zorder>sliderSplineVertices</zorder>
+        <zorder>label_2</zorder>
+        <zorder>inputSplineVertices</zorder>
        </widget>
       </item>
       <item>
@@ -744,7 +685,7 @@
           </size>
          </property>
          <property name="title">
-          <string>Hair Color (rgb)</string>
+          <string>Hair Color (hsv)</string>
          </property>
          <widget class="QSlider" name="sliderHairColorR">
           <property name="geometry">
@@ -978,7 +919,7 @@
           <number>1</number>
          </property>
          <property name="maximum">
-          <number>1000</number>
+          <number>100</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -1044,7 +985,7 @@
           <number>1</number>
          </property>
          <property name="maximum">
-          <number>1000</number>
+          <number>100</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>

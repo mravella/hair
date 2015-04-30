@@ -79,7 +79,11 @@ void HairInterface::connectUserInputs()
     // specular intensity
     connect(m_ui->sliderSpecularIntensity, SIGNAL(valueChanged(int)), this, SLOT(setSpecularIntensity(int)));
     connect(m_ui->inputSpecularIntensity, SIGNAL(textChanged(QString)), this, SLOT(inputSpecularIntensityText(QString)));
-        
+    
+    // stiffness
+    connect(m_ui->sliderStiffness, SIGNAL(valueChanged(int)), this, SLOT(setStiffness(int)));
+    connect(m_ui->inputStiffness, SIGNAL(textChanged(QString)), this, SLOT(inputStiffnessText(QString)));
+    
     // toggles
     connect(m_ui->frictionSimCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFrictionSim(bool)));
     connect(m_ui->shadowCheckBox, SIGNAL(toggled(bool)), this, SLOT(setShadows(bool)));
@@ -144,6 +148,9 @@ void HairInterface::setHairObject(HairObject *hairObject)
     m_ui->sliderSpecularIntensity->setValue(m_glWidget->m_hairObject->m_specularIntensity*100);
     m_ui->inputSpecularIntensity->setText(QString::number(m_glWidget->m_hairObject->m_specularIntensity, 'g', 3));
     
+    // Sync stiffness
+    m_ui->sliderStiffness->setValue(m_glWidget->m_testSimulation->m_stiffness*1000);
+    m_ui->inputStiffness->setText(QString::number(m_glWidget->m_testSimulation->m_stiffness, 'g', 4));
     
     
     // Sync toggles
@@ -454,6 +461,26 @@ void HairInterface::setSpecularIntensity(int value)
     m_glWidget->m_hairObject->m_specularIntensity = value/100.;
     m_ui->inputSpecularIntensity->setText(QString::number(m_glWidget->m_hairObject->m_specularIntensity, 'g', 3));
 }
+
+
+void HairInterface::inputStiffnessText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_glWidget->m_testSimulation->m_stiffness;
+    } else if (value == m_glWidget->m_testSimulation->m_stiffness) return;
+    setStiffness(1000*value);
+    m_ui->sliderStiffness->setValue(1000*value);
+}
+void HairInterface::setStiffness(int value)
+{
+    if (value < 0) return;    
+    m_glWidget->m_testSimulation->m_stiffness = value/1000.;
+    m_ui->inputStiffness->setText(QString::number(m_glWidget->m_testSimulation->m_stiffness, 'g', 3));
+}
+
 
 
 void HairInterface::setShadows(bool checked)

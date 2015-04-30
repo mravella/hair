@@ -61,6 +61,8 @@ public slots:
     void inputSpecularIntensityText(QString text);
     void setSpecularIntensity(int value);
     
+    void inputStiffnessText(QString text);
+    void setStiffness(int value);
     
 
     void setShadows(bool);

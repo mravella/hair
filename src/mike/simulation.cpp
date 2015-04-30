@@ -21,7 +21,7 @@
 #define REPULSION 0.000f
 
 #define DAMPENING 0.99f
-#define STIFFNESS 0.2f
+#define STIFFNESS 0.14f
 
 #define EULER false
 #define __BMONTELL_MODE__ false

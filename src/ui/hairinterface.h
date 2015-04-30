@@ -9,6 +9,7 @@ namespace Ui {
 }
 class HairObject;
 class GLWidget;
+class ObjMesh;
 
 class HairInterface : public QObject
 {
@@ -20,6 +21,7 @@ public:
 
     void setGLWidget(GLWidget *glWidget);
     void setHairObject(HairObject *hairObject);
+    void setMesh(ObjMesh *mesh);
     void updateFPSLabel(int totalNumFrames);
     void updateStatsLabel();
 
@@ -77,6 +79,7 @@ private:
 
     Ui::MainWindow *m_ui;
     HairObject *m_hairObject;
+    ObjMesh *m_mesh;
     GLWidget *m_glWidget;
     QTime m_clock;
 };

@@ -7,6 +7,7 @@
 #include "hairobject.h"
 #include "hair.h"
 #include "simulation.h"
+#include "objmesh.h"
 
 
 HairInterface::HairInterface(Ui::MainWindow *ui)
@@ -14,6 +15,7 @@ HairInterface::HairInterface(Ui::MainWindow *ui)
     m_ui = ui;
     m_glWidget = NULL;
     m_hairObject = NULL;
+    m_mesh = NULL;
     connectUserInputs();
     
     m_ui->testHolder->setAlignment(Qt::AlignTop);
@@ -100,6 +102,11 @@ void HairInterface::connectUserInputs()
 void HairInterface::setGLWidget(GLWidget *glWidget)
 {
     m_glWidget = glWidget;
+}
+
+void HairInterface::setMesh(ObjMesh *mesh)
+{
+    m_mesh = mesh;
 }
 
 void HairInterface::setHairObject(HairObject *hairObject)
@@ -520,7 +527,7 @@ void HairInterface::startEditScene(){
         togglePaused();
     }
     
-    SceneEditor *newSceneEditor = new SceneEditor(m_glWidget);
+    SceneEditor *newSceneEditor = new SceneEditor(m_glWidget, m_mesh);
     
     newSceneEditor->show();
     newSceneEditor->raise();

@@ -6,7 +6,7 @@
 #include "scenewidget.h"
 #include "QGridLayout"
 
-SceneEditor::SceneEditor(GLWidget *parent) :
+SceneEditor::SceneEditor(GLWidget *parent, ObjMesh *mesh) :
     QMainWindow(parent),
     m_ui(new Ui::SceneEditor)
 {
@@ -19,7 +19,7 @@ SceneEditor::SceneEditor(GLWidget *parent) :
     
     // add interaction area
     QGridLayout *gridLayout = new QGridLayout(m_ui->centralwidget);
-    m_sceneWidget = new SceneWidget(parent);
+    m_sceneWidget = new SceneWidget(parent, mesh);
     gridLayout->addWidget(m_sceneWidget, 0, 1);
     
     

@@ -8,9 +8,10 @@
 
 #include "QMouseEvent"
 
-SceneWidget::SceneWidget(GLWidget *parent) :
+SceneWidget::SceneWidget(GLWidget *parent, ObjMesh *mesh) :
     QGLWidget(parent),
-    m_timer(this)
+    m_timer(this),
+    m_mesh(mesh)
 {
     mainWidget = parent;
     
@@ -64,7 +65,37 @@ void SceneWidget::paintGL(){
     glTexCoord2f(1,1); glVertex3f(1, -1, -1);
     glTexCoord2f(1,0); glVertex3f(1, 1, -1);
     glTexCoord2f(0,0); glVertex3f(-1, 1, -1);    
-    glEnd();   
+    glEnd();
+
+    test->unbind(GL_TEXTURE_2D);
+
+    // Enable blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f(0, 1, 1, 0.25);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Wireframe
+
+    // Scale and translate UV map
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glTranslatef(-1, -1, 0);
+    glScalef(2, 2, 0);
+
+    // Draw triangle UVs
+    glBegin(GL_TRIANGLES);
+    for (unsigned int i = 0; i < m_mesh->triangles.size(); i++)
+    {
+        Triangle t = m_mesh->triangles[i];
+        glVertex3f(t.uv1.x, t.uv1.y, -1);
+        glVertex3f(t.uv2.x, t.uv2.y, -1);
+        glVertex3f(t.uv3.x, t.uv3.y, -1);
+    }
+    glEnd();
+    glPopMatrix();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDisable(GL_BLEND);
+    glColor3f(1,1,1);
 }
 
 

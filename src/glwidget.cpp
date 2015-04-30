@@ -34,7 +34,7 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     m_testSimulation = NULL;
     
     resetTexture = NULL;
-    
+
     // Shader programs
     m_programs = {
         m_hairProgram = new HairShaderProgram(),
@@ -293,14 +293,15 @@ void GLWidget::initSimulation()
     HairObject *_oldHairObject = m_hairObject;
     
     m_highResMesh = new ObjMesh();
-    m_highResMesh->init(":/models/dude_highres.obj");
+    m_highResMesh->init(":/models/head.obj");
+    m_hairInterface->setMesh(m_highResMesh);
     
     m_lowResMesh = new ObjMesh();
-    m_lowResMesh->init(":/models/dude_lowres.obj", 1.1);
+    m_lowResMesh->init(":/models/headLowRes.obj", 1.1);
     
     m_testSimulation = new Simulation(this, m_lowResMesh);
     
-    QImage initialHairMap(":/images/dude_hairmap.jpg");
+    QImage initialHairMap(":/images/headHair.jpg");
     m_hairObject = new HairObject(m_highResMesh, m_hairDensity, initialHairMap, m_testSimulation, m_hairObject);
     
     safeDelete(_oldHairObject);

@@ -8,6 +8,7 @@
 
 class Texture;
 class GLWidget;
+class ObjMesh;
 
 enum BrushFalloff { CONSTANT, LINEAR, QUADRATIC };
 
@@ -17,7 +18,7 @@ class SceneWidget : public QGLWidget
     friend class SceneEditor;
     
 public:
-    explicit SceneWidget(GLWidget *parent);
+    explicit SceneWidget(GLWidget *parent, ObjMesh *mesh);
     ~SceneWidget();
     
     GLWidget *mainWidget;
@@ -50,6 +51,8 @@ protected:
     QTimer m_timer;
     
     Texture *test;
+
+    ObjMesh *m_mesh;
     
     double m_grayscale;
     double m_opacity;

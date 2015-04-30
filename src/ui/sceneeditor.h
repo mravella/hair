@@ -5,6 +5,7 @@
 
 class GLWidget;
 class SceneWidget;
+class ObjMesh;
 
 namespace Ui {
 class SceneEditor;
@@ -15,7 +16,7 @@ class SceneEditor : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit SceneEditor(GLWidget *parent = 0);
+    explicit SceneEditor(GLWidget *parent, ObjMesh *mesh);
     ~SceneEditor();
     
 public slots:

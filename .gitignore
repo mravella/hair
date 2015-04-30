@@ -12,3 +12,5 @@ hair
 *.autosave
 
 ui_sceneeditor.h
+
+hair.app/Contents/MacOS/output.png

@@ -253,7 +253,7 @@ void GLWidget::_drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view
     program->uniforms.model = model;
     program->uniforms.eyeToLight = m_eyeToLight;
     program->uniforms.lightPosition = m_lightPosition;
-    program->uniforms.shadowIntensity = 15;
+    program->uniforms.shadowIntensity = m_hairObject->m_shadowIntensity;
     program->uniforms.useShadows = useShadows;
     program->setGlobalUniforms();
     m_hairObject->paint(program);
@@ -272,7 +272,7 @@ void GLWidget::_drawMesh(ShaderProgram *program, glm::mat4 model, glm::mat4 view
     program->uniforms.model = model;
     program->uniforms.lightPosition = m_lightPosition;
     program->uniforms.eyeToLight = m_eyeToLight;
-    program->uniforms.shadowIntensity = 15;
+    program->uniforms.shadowIntensity = m_hairObject->m_shadowIntensity;
     program->uniforms.useShadows = useShadows;
     program->uniforms.color = 2.f * m_hairObject->m_color; // multiplying by 2 because it looks better...
     program->setGlobalUniforms();

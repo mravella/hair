@@ -53,6 +53,9 @@ public slots:
     
     void inputWindMagnitudeText(QString text);
     void setWindMagnitude(int value);
+    
+    void inputShadowIntensityText(QString text);
+    void setShadowIntensity(int value);
 
     void setShadows(bool);
     void setSupersampling(bool);

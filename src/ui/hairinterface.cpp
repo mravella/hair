@@ -20,6 +20,8 @@ HairInterface::HairInterface(Ui::MainWindow *ui)
     m_ui->scrollArea->setWidget(m_ui->controlsBox);
     m_ui->scrollArea->setFrameShape(QFrame::NoFrame);
     
+    m_ui->controlsBox->setStyleSheet("controlsBox { border: none; }");
+    
     // to start with a group shown, use one of these:
 //    showHideGroupSim();
 //    showHideGroupTess();
@@ -68,6 +70,10 @@ void HairInterface::connectUserInputs()
     connect(m_ui->sliderWindMagnitude, SIGNAL(valueChanged(int)), this, SLOT(setWindMagnitude(int)));
     connect(m_ui->inputWindMagnitude, SIGNAL(textChanged(QString)), this, SLOT(inputWindMagnitudeText(QString)));
 
+    // shadow intensity
+    connect(m_ui->sliderShadowIntensity, SIGNAL(valueChanged(int)), this, SLOT(setShadowIntensity(int)));
+    connect(m_ui->inputShadowIntensity, SIGNAL(textChanged(QString)), this, SLOT(inputShadowIntensityText(QString)));
+    
     // toggles
     connect(m_ui->frictionSimCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFrictionSim(bool)));
     connect(m_ui->shadowCheckBox, SIGNAL(toggled(bool)), this, SLOT(setShadows(bool)));
@@ -119,6 +125,11 @@ void HairInterface::setHairObject(HairObject *hairObject)
     // Sync wind magnitude
     m_ui->sliderWindMagnitude->setValue(m_glWidget->m_testSimulation->m_windMagnitude*100);
     m_ui->inputWindMagnitude->setText(QString::number(m_glWidget->m_testSimulation->m_windMagnitude, 'g', 2));
+    
+    // Sync shadow intensity
+    m_ui->sliderShadowIntensity->setValue(m_glWidget->m_hairObject->m_shadowIntensity*10);
+    m_ui->inputShadowIntensity->setText(QString::number(m_glWidget->m_hairObject->m_shadowIntensity, 'g', 2));
+    
     
     // Sync toggles
     m_ui->frictionSimCheckBox->setChecked(m_glWidget->useFrictionSim);
@@ -352,6 +363,8 @@ void HairInterface::setHairColorB(int value)
 }
 
 
+
+
 void HairInterface::inputWindMagnitudeText(QString text)
 {
     if (text.length() == 0) return;
@@ -365,11 +378,31 @@ void HairInterface::inputWindMagnitudeText(QString text)
 }
 void HairInterface::setWindMagnitude(int value)
 {
-    if (value < 0) return;    
+    if (value < 0) return;
     m_glWidget->m_testSimulation->m_windMagnitude = value/100.;
     m_ui->inputWindMagnitude->setText(QString::number(m_glWidget->m_testSimulation->m_windMagnitude, 'g', 3));
 }
 
+
+
+
+void HairInterface::inputShadowIntensityText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_glWidget->m_hairObject->m_shadowIntensity;
+    } else if (value == m_glWidget->m_hairObject->m_shadowIntensity) return;
+    setShadowIntensity(10*value);
+    m_ui->sliderShadowIntensity->setValue(10*value);
+}
+void HairInterface::setShadowIntensity(int value)
+{
+    if (value < 0) return;    
+    m_glWidget->m_hairObject->m_shadowIntensity = value/10.;
+    m_ui->inputShadowIntensity->setText(QString::number(m_glWidget->m_hairObject->m_shadowIntensity, 'g', 3));
+}
 
 
 

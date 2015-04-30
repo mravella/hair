@@ -33,7 +33,7 @@ void main()
     // Key light
     fragColor = colorContribution((view * vec4(lightPosition, 1.)));
     fragColor *= getHairTransmittance(position_lightSpace);
-    fragColor *= mix(0.2, 1.0, getMeshVisibility(position_lightSpace));
+    fragColor *= getMeshVisibility(position_lightSpace);
 
     // Fill light
     fragColor += FILL_LIGHT_INTENSITY_HAIR * colorContribution(view * FILL_LIGHT_POS);

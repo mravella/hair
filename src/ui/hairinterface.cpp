@@ -137,7 +137,7 @@ void HairInterface::setHairObject(HairObject *hairObject)
     m_ui->inputWindMagnitude->setText(QString::number(m_glWidget->m_testSimulation->m_windMagnitude, 'g', 3));
     
     // Sync shadow intensity
-    m_ui->sliderShadowIntensity->setValue(m_glWidget->m_hairObject->m_shadowIntensity*100);
+    m_ui->sliderShadowIntensity->setValue(m_glWidget->m_hairObject->m_shadowIntensity*10);
     m_ui->inputShadowIntensity->setText(QString::number(m_glWidget->m_hairObject->m_shadowIntensity, 'g', 3));
     
     // Sync diffuse intensity

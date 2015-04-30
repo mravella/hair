@@ -35,6 +35,7 @@ Hair::Hair(int numSegments, double length, glm::vec3 location, glm::vec3 dir)
             double dot = CLAMP(glm::dot(oldVert->position - newVert->position, glm::vec3(0, -1, 0)), -1.0, 1.0);
             double det = CLAMP(glm::dot(oldVert->position - newVert->position, glm::vec3(1, 0, 0)), -1.0, 1.0);
             newVert->theta = -atan2(det, dot);
+            newVert->pointVector = dir;
         }
         newVert->segLen = stepSize;
         m_vertices.append(newVert);

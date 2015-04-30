@@ -17,14 +17,15 @@
 #define MASS 1.0f
 
 #define GRID_WIDTH 0.1f
-#define FRICTION 0.04f
+#define FRICTION 0.05f
 #define REPULSION 0.000f
 
-#define DAMPENING 0.95f
+#define DAMPENING 0.99f
+#define STIFFNESS 0.2f
 
 #define EULER false
 #define __BMONTELL_MODE__ false
-#define TIMESTEP 0.02f
+#define TIMESTEP 0.01f
 
 
 
@@ -38,6 +39,8 @@ Simulation::Simulation(GLWidget *widget, ObjMesh *mesh)
     m_headMoving = false;
     m_windDir = glm::vec3(0, 0, 1);
     m_windMagnitude = 0.0f;
+    m_friction = FRICTION;
+    m_stiffness = STIFFNESS;
 }
 
 Simulation::~Simulation()
@@ -55,6 +58,7 @@ void Simulation::simulate(HairObject *_object)
 //    t.start();
 //    moveObjects(_object);
 
+
     calculateExternalForces(_object);
     
     if (m_widget->useFrictionSim){
@@ -67,6 +71,7 @@ void Simulation::simulate(HairObject *_object)
     }
     
     particleSimulation(_object);
+    updateHairPosition(_object);
     
 }
 
@@ -83,13 +88,7 @@ void Simulation::updateHairPosition(HairObject *object)
 
 void Simulation::moveObjects(HairObject *_object)
 {
-    for (int i = 0; i < _object->m_guideHairs.size(); ++i)
-    {
-        for (int j = 0; j < _object->m_guideHairs.at(j)->m_vertices.size(); ++j)
-        {
-            _object->m_guideHairs.at(i)->m_vertices.at(j)->prevPos = glm::vec3(m_xform * glm::vec4(_object->m_guideHairs.at(i)->m_vertices.at(j)->startPosition, 1.0));
-        }
-    }
+
     m_xform = glm::rotate((float) sin(m_time), glm::vec3(0, 1, 0));
 //        m_xform = glm::translate(m_xform, glm::vec3(sin(m_time), 0.0 , sin(m_time)));
     //    float x = CLAMP(fabs(sin(m_time)), 0.5, 1.0); m_xform = glm::scale(glm::mat4(1.0), glm::vec3(x, x, x));
@@ -126,7 +125,7 @@ void Simulation::calculateExternalForces(HairObject *_object)
             {
                 glm::vec4 curr = m_xform * glm::vec4(currVert->startPosition, 1.0);
                 glm::vec3 acceleration = (glm::vec3(currVert->prevPos - glm::vec3(curr)) - currVert->velocity * TIMESTEP) / (TIMESTEP * TIMESTEP);
-                if (glm::length(currVert->prevPos - glm::vec3(curr)) > 0.01) force += acceleration * currVert->mass * 0.2f;
+                force += acceleration * currVert->mass * 0.1f;
 //                cout << "Prev: " << glm::to_string(currVert->prevPos) << endl;
 //                cout << "Curr: " << glm::to_string(glm::vec3(curr)) << endl;
             }
@@ -211,6 +210,7 @@ void Simulation::calculateFrictionAndRepulsion(HairObject *_object)
     for (int i = 0; i < _numThreads; i++)
     {
         m_threadData[i].fluidGrid = &m_fluidGrid;
+        m_threadData[i].friction = m_friction;
         
         _index = HAIRS_PER_THREAD*i;
         for (int k = 0; k < HAIRS_PER_THREAD; k++){
@@ -239,6 +239,7 @@ void* Simulation::calculateFrictionAndRepulsionThread(void *untypedInfoStruct){
     HairSimulationThreadInfo *infoStruct = (HairSimulationThreadInfo *) untypedInfoStruct;
     
     std::map<grid_loc, fluid> *fluidGrid = infoStruct->fluidGrid;
+    float friction = infoStruct->friction;
     
     
     for (int i = 0; i < HAIRS_PER_THREAD; i++){
@@ -307,7 +308,7 @@ void* Simulation::calculateFrictionAndRepulsionThread(void *untypedInfoStruct){
             glm::vec3 v = v0 * (1.0f - zPercentage) + v1 * (zPercentage);
             
             // Account for friction;
-            currVert->velocity = (1.0f - FRICTION) * currVert->velocity + FRICTION * v;
+            currVert->velocity = (1.0f - friction) * currVert->velocity + friction * v;
             
 //            currVert->velocity = currVert->velocity + REPULSION * currGradient / TIMESTEP;
             
@@ -796,10 +797,12 @@ void Simulation::particleSimulation(HairObject *obj)
         for (int j = 1; j < numVerts; ++j)
         {
             HairVertex *h = obj->m_guideHairs.at(i)->m_vertices.at(j);
+            HairVertex *prev = obj->m_guideHairs.at(i)->m_vertices.at(j - 1);
             
             // TODO: Precompute the mass inverse
-            h->velocity = h->velocity + TIMESTEP * (h->forces * (1.0f / h->mass));
-            h->tempPos += (h->velocity * TIMESTEP);
+            h->velocity = h->velocity + TIMESTEP * (h->forces * (1.0f / h->mass)) * 0.5f;
+            glm::vec3 stiff_pos = prev->segLen * prev->pointVector;
+            h->tempPos += glm::mix((h->velocity * TIMESTEP), stiff_pos, m_stiffness);
             h->forces = glm::vec3(0.0);
             h->velocity *= 0.99f;
         }

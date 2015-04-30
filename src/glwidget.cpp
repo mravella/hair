@@ -23,7 +23,7 @@
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
     : QGLWidget(format, parent),
       m_hairInterface(hairInterface),
-      m_hairDensity(500),
+      m_hairDensity(100),
       m_timer(this),
       m_increment(0),
       m_targetFPS(60.f)
@@ -385,7 +385,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
     {
         glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
         glm::mat4 inverseView = glm::inverse(m_view);
-        glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, 0, 1)));
+        glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, -1.0, 1)));
         cout << "up: " << glm::to_string(up) << endl;
         cout << "look: " << glm::to_string(look) << endl;
         glm::vec3 right = glm::cross(up, look);

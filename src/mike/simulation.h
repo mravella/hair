@@ -86,6 +86,7 @@ struct HairSimulationThreadInfo {
 //    QMap<std::tuple<double, double, double>, double> *densityGrid;
 //    QMap<std::tuple<double, double, double>, glm::vec3> *velocityGrid;
     std::map<grid_loc, fluid> *fluidGrid;
+    float friction;
 
 };
 
@@ -142,6 +143,8 @@ public:
 
     glm::vec3 m_windDir;
     float m_windMagnitude;
+    float m_friction;
+    float m_stiffness;
     
     
     

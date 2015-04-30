@@ -64,19 +64,14 @@ private:
     HairObject *m_hairObject;
     Simulation *m_testSimulation;
 
+    Texture *m_noiseTexture;
+
     std::vector<ShaderProgram*> m_programs;
     ShaderProgram *m_hairProgram,
                   *m_meshProgram,
                   *m_hairOpacityProgram,
                   *m_whiteMeshProgram,
                   *m_whiteHairProgram;
-
-    std::vector<Texture*> m_textures;
-    Texture *m_noiseTexture,
-            *m_hairDepthTexture,
-            *m_meshDepthTexture,
-            *m_opacityMapTexture,
-            *m_finalTexture;
 
     std::vector<Framebuffer*> m_framebuffers;
     Framebuffer *m_hairShadowFramebuffer,

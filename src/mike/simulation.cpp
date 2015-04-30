@@ -25,7 +25,7 @@
 
 #define EULER false
 #define __BMONTELL_MODE__ false
-#define TIMESTEP 0.01f
+#define TIMESTEP 0.02f
 
 
 
@@ -119,7 +119,7 @@ void Simulation::calculateExternalForces(HairObject *_object)
             HairVertex *currVert = _object->m_guideHairs.at(i)->m_vertices.at(j);
             
             glm::vec3 force = glm::vec3(0.0);
-            force += glm::vec3(0.0, -9.8, 0.0);
+            force += glm::vec3(glm::inverse(m_xform) * glm::vec4(0.0, -9.8, 0.0, 0.0));
 
             if (m_headMoving)
             {
@@ -130,7 +130,7 @@ void Simulation::calculateExternalForces(HairObject *_object)
 //                cout << "Curr: " << glm::to_string(glm::vec3(curr)) << endl;
             }
 
-            force += glm::normalize(m_windDir) * m_windMagnitude;
+            force += glm::vec3(glm::inverse(m_xform) * glm::vec4(glm::normalize(m_windDir) * m_windMagnitude, 0.0));
 
             glm::vec3 normal;
             if (m_mesh->contains(normal, currVert->position)) force = 5.0f * normal;

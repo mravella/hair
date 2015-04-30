@@ -155,6 +155,7 @@ struct HairVertex
     glm::vec3 correctionVector;
     glm::vec3 startPosition;
     glm::vec3 prevPos;
+    glm::vec3 pointVector;
     double    theta;
     double    omega;
     float    segLen;
@@ -175,6 +176,7 @@ struct HairVertex
         correctionVector = glm::vec3(0.0);
         mass = 1.0;
         invMass = 1.0;
+        pointVector = glm::vec3(0.0);
     }
 
     HairVertex(glm::vec3 x)
@@ -191,6 +193,7 @@ struct HairVertex
         correctionVector = glm::vec3(0.0);
         mass = 1.0;
         invMass = 1.0;
+        pointVector = glm::vec3(0.0);
 
     }
 };

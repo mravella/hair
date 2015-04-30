@@ -35,6 +35,8 @@ struct Uniforms {
 
     glm::vec3 color;
 
+    float length;
+
     // Texture uniforms
     int noiseTexture;
     int hairShadowMap;

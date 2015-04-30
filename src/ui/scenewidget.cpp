@@ -26,7 +26,7 @@ SceneWidget::SceneWidget(GLWidget *parent, ObjMesh *mesh) :
     m_mouseDown = false;
     
     
-    m_brushFalloffType = LINEAR;
+    m_brushFalloffType = CONSTANT;
     updateBrushSettings();
     
     m_timer.start(1000.0f / 60.);

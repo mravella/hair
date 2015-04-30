@@ -48,21 +48,21 @@ HairObject::~HairObject()
 HairObject::HairObject(
         ObjMesh *_mesh,
         float _hairsPerUnitArea,
-        QImage &image,
+        QImage &_hairGrowthMap,
         Simulation *_simulation,
         HairObject *_oldObject)
 {    
-    if (image.width() == 0)
+    if (_hairGrowthMap.width() == 0)
     {
-//        std::cout << _hairGrowthMap << " does not appear to be a valid image." << std::endl;
+        std::cout << "Hair growth map does not appear to be a valid image." << std::endl;
         exit(1);
     }
 
-    m_hairGrowthMap = image;
+    m_hairGrowthMap = _hairGrowthMap;
 
     // Initialize blurred hair growth map texture.
     QImage blurredImage;
-    Blurrer::blur(image, blurredImage);
+    Blurrer::blur(_hairGrowthMap, blurredImage);
     m_blurredHairGrowthMapTexture = new Texture();
     m_blurredHairGrowthMapTexture->createColorTexture(blurredImage, GL_LINEAR, GL_LINEAR);
 
@@ -82,20 +82,21 @@ HairObject::HairObject(
             t.randPoint(pos, uv, normal);
             uv = glm::vec2(MIN(uv.x, 0.999), MIN(uv.y, 0.999)); // Make UV in range [0,1) instead of [0,1]
 
-            QPoint p = QPoint(uv.x * image.width(), (1 - uv.y) * image.height());
-            if (!image.valid(p)){
+            QPoint p = QPoint(uv.x * _hairGrowthMap.width(), (1 - uv.y) * _hairGrowthMap.height());
+            if (!_hairGrowthMap.valid(p)){
                 _failures++;
                 continue; // Don't put hair on neck......
             }
 
             // If hair growth map is black, skip this hair.
-            QColor hairGrowth = QColor(image.pixel(p));
-            if (hairGrowth.value() == 0){
+            QColor hairGrowth = QColor(_hairGrowthMap.pixel(p));
+            if (hairGrowth.valueF() < 0.05){
                 _emptyPoints++;
                 continue;
             }
 
-            m_guideHairs.append(new Hair(20, 0.45, pos, normal));
+            float maxHairLength = 0.45;
+            m_guideHairs.append(new Hair(20, maxHairLength * hairGrowth.valueF(), pos, normal));
         }
     }
     
@@ -142,6 +143,7 @@ void HairObject::update(float _time){
     {
         m_guideHairs.at(i)->update(_time);
     }
+
 }
 
 void HairObject::paint(ShaderProgram *program){
@@ -159,4 +161,5 @@ void HairObject::paint(ShaderProgram *program){
     {
         m_guideHairs.at(i)->paint(program);
     }
+
 }

@@ -20,7 +20,7 @@ public:
     // Generates hair on the mesh according to the hair growth map.
     HairObject(ObjMesh *_mesh,
             float _hairsPerUnitArea,
-            QImage &image,
+            QImage &hairGrowthMap,
             Simulation *_simulation,
             HairObject *_oldObject = NULL);
     

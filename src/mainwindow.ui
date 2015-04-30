@@ -252,7 +252,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Tesselation</string>
+         <string>Geometry</string>
         </property>
         <property name="icon">
          <iconset resource="../images/images.qrc">

@@ -188,6 +188,7 @@ void SceneEditor::applyEditor()
 {
     m_sceneWidget->apply();
     m_sceneWidget->mainWidget->pause();
+    m_sceneWidget->mainWidget->forceUpdate();
 }
 void SceneEditor::applyAndCloseEditor()
 {

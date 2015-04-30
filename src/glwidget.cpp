@@ -113,9 +113,7 @@ void GLWidget::initializeGL()
     // Initialize simulation.
     initSimulation();
     
-    // Initialize global view and projection matrices.
-    m_view = glm::lookAt(glm::vec3(0,0,m_zoom), glm::vec3(0), glm::vec3(0,1,0));
-    m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+    initCamera();
     
     ErrorChecker::printGLErrors("end of initializeGL");
 }
@@ -306,6 +304,15 @@ void GLWidget::initSimulation()
     safeDelete(_oldHairObject);
     
     m_hairInterface->setHairObject(m_hairObject);
+    
+}
+
+void GLWidget::initCamera(){
+
+    // Initialize global view and projection matrices.
+    m_view = glm::lookAt(glm::vec3(0,0,m_zoom), glm::vec3(0), glm::vec3(0,1,0));
+    m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+    
 }
 
 void GLWidget::partialResetSim(Texture *texture){
@@ -325,6 +332,7 @@ void GLWidget::partialResetSim(Texture *texture){
 void GLWidget::resetSimulation()
 {    
     initSimulation();
+    initCamera();
 }
 
 

@@ -15,7 +15,6 @@ SceneEditor::SceneEditor(GLWidget *parent) :
     // add controls
     m_ui->testHolder->setAlignment(Qt::AlignTop);
     m_ui->scrollArea->setWidget(m_ui->controlsBox);
-    m_ui->controlsBox->setStyleSheet("QGroupBox { background-color: none; }");
     m_ui->scrollArea->setFrameShape(QFrame::NoFrame);
     
     // add interaction area
@@ -188,6 +187,7 @@ void SceneEditor::applyEditor()
 {
     m_sceneWidget->apply();
     m_sceneWidget->mainWidget->pause();
+    m_sceneWidget->mainWidget->forceUpdate();
 }
 void SceneEditor::applyAndCloseEditor()
 {

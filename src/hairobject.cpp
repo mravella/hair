@@ -124,6 +124,7 @@ void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hair
     m_noiseAmplitude = _noiseAmplitude;
     m_noiseFrequency = _noiseFrequency;
     m_numSplineVertices = _numSplineVertices;
+    m_shadowIntensity = 15;
 }
 
 void HairObject::update(float _time){

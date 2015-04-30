@@ -113,9 +113,7 @@ void GLWidget::initializeGL()
     // Initialize simulation.
     initSimulation();
     
-    // Initialize global view and projection matrices.
-    m_view = glm::lookAt(glm::vec3(0,0,m_zoom), glm::vec3(0), glm::vec3(0,1,0));
-    m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+    initCamera();
     
     ErrorChecker::printGLErrors("end of initializeGL");
 }
@@ -255,8 +253,10 @@ void GLWidget::_drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view
     program->uniforms.model = model;
     program->uniforms.eyeToLight = m_eyeToLight;
     program->uniforms.lightPosition = m_lightPosition;
-    program->uniforms.shadowIntensity = 15;
+    program->uniforms.shadowIntensity = m_hairObject->m_shadowIntensity;
     program->uniforms.useShadows = useShadows;
+    program->uniforms.specIntensity = 0.5;
+    program->uniforms.diffuseIntensity = 1.0;
     program->setGlobalUniforms();
     m_hairObject->paint(program);
 }
@@ -274,7 +274,7 @@ void GLWidget::_drawMesh(ShaderProgram *program, glm::mat4 model, glm::mat4 view
     program->uniforms.model = model;
     program->uniforms.lightPosition = m_lightPosition;
     program->uniforms.eyeToLight = m_eyeToLight;
-    program->uniforms.shadowIntensity = 15;
+    program->uniforms.shadowIntensity = m_hairObject->m_shadowIntensity;
     program->uniforms.useShadows = useShadows;
     program->uniforms.color = 2.f * m_hairObject->m_color; // multiplying by 2 because it looks better...
     program->setGlobalUniforms();
@@ -304,6 +304,15 @@ void GLWidget::initSimulation()
     safeDelete(_oldHairObject);
     
     m_hairInterface->setHairObject(m_hairObject);
+    
+}
+
+void GLWidget::initCamera(){
+
+    // Initialize global view and projection matrices.
+    m_view = glm::lookAt(glm::vec3(0,0,m_zoom), glm::vec3(0), glm::vec3(0,1,0));
+    m_projection = glm::perspective(0.8f, (float)width()/height(), 0.1f, 100.f);
+    
 }
 
 void GLWidget::partialResetSim(Texture *texture){
@@ -323,6 +332,7 @@ void GLWidget::partialResetSim(Texture *texture){
 void GLWidget::resetSimulation()
 {    
     initSimulation();
+    initCamera();
 }
 
 

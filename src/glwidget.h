@@ -46,6 +46,7 @@ protected:
     void wheelEvent(QWheelEvent *event) override;
 
     void initSimulation();
+    void initCamera();
 
 protected slots:
     /** Repaints the canvas. Called 60 times per second by m_timer. */

@@ -42,8 +42,11 @@ struct Uniforms {
     int opacityMap;
     int hairGrowthMap;
 
-    bool useShadows;
+    float specIntensity;
+    float diffuseIntensity;
 
+    // Shadows
+    bool useShadows;
     float shadowIntensity; // Controls the shadow darkness
 };
 

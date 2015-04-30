@@ -50,7 +50,6 @@ public:
     int m_numHairVertices;
     
     int m_numHairsPerPatch;
-    glm::vec3 m_color;
     int m_numGroupHairs;
     float m_hairGroupSpread;
     float m_hairRadius;
@@ -58,6 +57,9 @@ public:
     float m_noiseFrequency;
     int m_numSplineVertices;
 
+    glm::vec3 m_color;
+    
+    float m_shadowIntensity;
 };
 
 #endif // HAIROBJECT_H

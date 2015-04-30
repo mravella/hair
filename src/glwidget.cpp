@@ -257,6 +257,8 @@ void GLWidget::_drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view
     program->uniforms.lightPosition = m_lightPosition;
     program->uniforms.shadowIntensity = 15;
     program->uniforms.useShadows = useShadows;
+    program->uniforms.specIntensity = 0.5;
+    program->uniforms.diffuseIntensity = 1.0;
     program->setGlobalUniforms();
     m_hairObject->paint(program);
 }

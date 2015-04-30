@@ -9,8 +9,10 @@ in vec3 tangent_g;
 out vec3 fragColor;
 
 uniform vec3 color;
+uniform float specIntensity, diffuseIntensity;
 uniform mat4 view, eyeToLight;
 uniform vec3 lightPosition;
+
 
 vec3 colorContribution(vec4 lightPosition_ES)
 {
@@ -21,7 +23,7 @@ vec3 colorContribution(vec4 lightPosition_ES)
     float diffuse = sqrt(1. - abs(dot(tangent_N, toLight_N.xyz)));
 
     float specular = pow(sqrt(1. - abs(dot(tangent_N, h_N))), HAIR_SHININESS);
-    return (HAIR_DIFFUSE_INTENSITY * diffuse + HAIR_SPEC_INTENSITY * specular) * color;
+    return (diffuseIntensity * diffuse + specIntensity * specular) * color;
 }
 
 void main()

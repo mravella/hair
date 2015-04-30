@@ -34,6 +34,8 @@ void HairShaderProgram::setPerObjectUniforms()
     setUniform1f("noiseAmplitude", uniforms.noiseAmplitude);
     setUniform1f("noiseFrequency", uniforms.noiseFrequency);
     setUniform3f("color", uniforms.color);
+    setUniform1f("specIntensity", uniforms.specIntensity);
+    setUniform1f("diffuseIntensity", uniforms.diffuseIntensity);
 }
 
 void HairShaderProgram::setPerDrawUniforms()

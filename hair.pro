@@ -92,7 +92,9 @@ HEADERS += \
     src/shaderPrograms/hairrendershaderprogram.h \
     src/ui/sceneeditor.h \
     src/ui/scenewidget.h \
-    src/lib/blurrer.h
+    src/lib/blurrer.h \
+    src/shaderPrograms/hairdepthpeelprogram.h \
+    src/shaderPrograms/meshdepthpeelprogram.h
 
 
 FORMS += src/mainwindow.ui \
@@ -113,7 +115,11 @@ OTHER_FILES += \
     shaders/constants.glsl \
     shaders/opacitymapping.glsl \
     shaders/hairrender.vert \
-    shaders/depthpeel.glsl
+    shaders/depthpeel.glsl \
+    shaders/hairDepthPeel.frag \
+    shaders/hairlighting.glsl \
+    shaders/meshlighting.glsl \
+    shaders/meshdepthpeel.frag
 
 
 RESOURCES += \

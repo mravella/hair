@@ -2,9 +2,14 @@
     <qresource prefix="/shaders">
         <file>constants.glsl</file>
         <file>opacitymapping.glsl</file>
+        <file>depthpeel.glsl</file>
+        <file>hairlighting.glsl</file>
+        <file>meshlighting.glsl</file>
         <file>mesh.frag</file>
+        <file>meshdepthpeel.frag</file>
         <file>mesh.vert</file>
         <file>hair.frag</file>
+        <file>hairDepthPeel.frag</file>
         <file>hairOpacity.frag</file>
         <file>hair.vert</file>
         <file>hair.tcs</file>

@@ -13,6 +13,8 @@
 #include "hairopacityshaderprogram.h"
 #include "whitehairshaderprogram.h"
 #include "whitemeshshaderprogram.h"
+#include "hairdepthpeelprogram.h"
+#include "meshdepthpeelprogram.h"
 #include "hairinterface.h"
 #include "meshocttree.h"
 #include "texture.h"
@@ -44,14 +46,18 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
         m_hairOpacityProgram = new HairOpacityShaderProgram(),
         m_whiteHairProgram = new WhiteHairShaderProgram(),
         m_whiteMeshProgram = new WhiteMeshShaderProgram(),
+        m_hairDepthPeelProgram = new HairDepthPeelShaderProgram(),
+        m_meshDepthPeelProgram = new MeshDepthPeelShaderProgram(),
     };
-        
+
     // Framebuffers
     m_framebuffers = {
         m_hairShadowFramebuffer = new Framebuffer(),
         m_meshShadowFramebuffer = new Framebuffer(),
         m_opacityMapFramebuffer = new Framebuffer(),
         m_finalFramebuffer = new Framebuffer(),
+        m_depthPeel0Framebuffer = new Framebuffer(),
+        m_depthPeel1Framebuffer = new Framebuffer(),
     };
     
     m_hairInterface->setGLWidget(this);
@@ -88,18 +94,23 @@ void GLWidget::initializeGL()
     
     // Initialize textures.
     m_noiseTexture->createColorTexture(":/images/noise128.jpg", GL_LINEAR, GL_LINEAR);
-    
+
     // Initialize framebuffers.
     int shadowMapRes = 2048;
+    glm::vec2 finalSize = glm::vec2(2 * width(), 2 * height());
     for (auto framebuffer = m_framebuffers.begin(); framebuffer != m_framebuffers.end(); ++framebuffer)
         (*framebuffer)->create();
     m_hairShadowFramebuffer->generateDepthTexture(shadowMapRes, shadowMapRes, GL_NEAREST, GL_NEAREST);
     m_meshShadowFramebuffer->generateDepthTexture(shadowMapRes, shadowMapRes, GL_LINEAR, GL_LINEAR);
     m_opacityMapFramebuffer->generateColorTexture(shadowMapRes, shadowMapRes, GL_NEAREST, GL_NEAREST);
     m_opacityMapFramebuffer->generateDepthBuffer(shadowMapRes, shadowMapRes);
-    m_finalFramebuffer->generateColorTexture(2 * width(), 2 * height(), GL_LINEAR, GL_LINEAR);
-    m_finalFramebuffer->generateDepthBuffer(2 * width(), 2 * height());
-    
+    m_finalFramebuffer->generateColorTexture(finalSize.x, finalSize.y, GL_LINEAR, GL_LINEAR);
+    m_finalFramebuffer->generateDepthBuffer(finalSize.x, finalSize.y);
+    m_depthPeel0Framebuffer->generateColorTexture(finalSize.x, finalSize.y, GL_LINEAR, GL_LINEAR);
+    m_depthPeel0Framebuffer->generateDepthTexture(finalSize.x, finalSize.y, GL_NEAREST, GL_NEAREST);
+    m_depthPeel1Framebuffer->generateColorTexture(finalSize.x, finalSize.y, GL_LINEAR, GL_LINEAR);
+    m_depthPeel1Framebuffer->generateDepthBuffer(finalSize.x, finalSize.y);
+
     // Initialize simulation.
     initSimulation();
     
@@ -110,13 +121,14 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
+    ErrorChecker::printGLErrors("start of paintGL");
+
     if (resetTexture != NULL){
         partialResetSim(resetTexture);
         resetTexture = NULL;
     }
-    
-    ErrorChecker::printGLErrors("start of paintGL");
-    
+    _resizeDepthPeelFramebuffers();
+        
     // Update simulation if not paused.
     if (!isPaused())
     {
@@ -141,7 +153,10 @@ void GLWidget::paintGL()
     m_meshShadowFramebuffer->depthTexture->bind(GL_TEXTURE3);
     m_finalFramebuffer->colorTexture->bind(GL_TEXTURE4);
     m_hairObject->m_blurredHairGrowthMapTexture->bind(GL_TEXTURE5);
-    
+    m_depthPeel0Framebuffer->depthTexture->bind(GL_TEXTURE6);
+    m_depthPeel0Framebuffer->colorTexture->bind(GL_TEXTURE7);
+    m_depthPeel1Framebuffer->colorTexture->bind(GL_TEXTURE8);
+
     if (useShadows)
     {
         // Render hair shadow map.
@@ -174,37 +189,69 @@ void GLWidget::paintGL()
         glDisable(GL_BLEND);
         
     }
-    
-    
-    if (useSupersampling)
+
+    if (useTransparency)
     {
-        // Render into supersample framebuffer.
-        m_finalFramebuffer->bind();
-        glViewport(0, 0, m_finalFramebuffer->colorTexture->width(), m_finalFramebuffer->colorTexture->height());
-    }
-    else
-    {
-        // Render into default framebuffer.
-        glViewport(0, 0, width(), height());
-    }
-    
-    
-    // Render scene.
-    glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    _drawHair(m_hairProgram, model, m_view, m_projection);
-    _drawMesh(m_meshProgram, model, m_view, m_projection);
-    
-    
-    if (useSupersampling)
-    {
-        // Render supersampled texture.
-        m_finalFramebuffer->unbind();
+        glViewport(0, 0, m_depthPeel0Framebuffer->colorTexture->width(), m_depthPeel0Framebuffer->colorTexture->height());
+        glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+
+        // Draw first (front-most) depth peeling layer.
+        m_depthPeel0Framebuffer->bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        _drawHair(m_hairProgram, model, m_view, m_projection);
+        _drawMesh(m_meshProgram, model, m_view, m_projection);
+
+        // Draw second depth peeling layer.
+        m_depthPeel1Framebuffer->bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);      
+        _drawHair(m_hairDepthPeelProgram, model, m_view, m_projection);
+        _drawMesh(m_meshDepthPeelProgram, model, m_view, m_projection);
+
+        // Render farthest layer to screen.
+        m_depthPeel1Framebuffer->unbind();
         glViewport(0, 0, width(), height());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        m_finalFramebuffer->colorTexture->renderFullScreen();
+        glDisable(GL_DEPTH_TEST);
+        m_depthPeel1Framebuffer->colorTexture->renderFullScreen();
+
+        // Blend closer layers on top.
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        m_depthPeel0Framebuffer->colorTexture->renderFullScreen();
+        glDisable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
     }
     
+    else
+    {
+        if (useSupersampling)
+        {
+            // Render into supersample framebuffer.
+            m_finalFramebuffer->bind();
+            glViewport(0, 0, m_finalFramebuffer->colorTexture->width(), m_finalFramebuffer->colorTexture->height());
+        }
+        else
+        {
+            // Render into default framebuffer...
+            glViewport(0, 0, width(), height());
+        }
+
+        // Render scene.
+        glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        _drawHair(m_hairProgram, model, m_view, m_projection);
+        _drawMesh(m_meshProgram, model, m_view, m_projection);
+
+        if (useSupersampling)
+        {
+            // Render supersampled texture.
+            m_finalFramebuffer->unbind();
+            glViewport(0, 0, width(), height());
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            m_finalFramebuffer->colorTexture->renderFullScreen();
+        }
+    }
+        
     
     // Clean up.
     m_noiseTexture->unbind(GL_TEXTURE0);
@@ -213,6 +260,9 @@ void GLWidget::paintGL()
     m_meshShadowFramebuffer->depthTexture->unbind(GL_TEXTURE3);
     m_finalFramebuffer->colorTexture->unbind(GL_TEXTURE4);
     m_hairObject->m_blurredHairGrowthMapTexture->unbind(GL_TEXTURE5);
+    m_depthPeel0Framebuffer->depthTexture->bind(GL_TEXTURE6);
+    m_depthPeel0Framebuffer->colorTexture->bind(GL_TEXTURE7);
+    m_depthPeel1Framebuffer->colorTexture->bind(GL_TEXTURE8);
 
     // Update UI.
     m_hairInterface->updateFPSLabel(m_increment);
@@ -232,6 +282,21 @@ void GLWidget::resizeGL(int w, int h)
 }
 
 
+void GLWidget::_resizeDepthPeelFramebuffers()
+{
+    int w = useSupersampling ? 2 * width() : width();
+    int h = useSupersampling ? 2 * height() : height();
+
+    Texture *colorTexture0 = m_depthPeel0Framebuffer->colorTexture;
+    if (colorTexture0->width() != w || colorTexture0->height() != h)
+    {
+        m_depthPeel0Framebuffer->colorTexture->resize(w, h);
+        m_depthPeel0Framebuffer->depthTexture->resize(w, h);
+        m_depthPeel1Framebuffer->colorTexture->resize(w, h);
+        m_depthPeel1Framebuffer->resizeDepthBuffer(w, h);
+    }
+}
+
 void GLWidget::_drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view, glm::mat4 projection)
 {
     program->bind();
@@ -239,6 +304,7 @@ void GLWidget::_drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view
     program->uniforms.hairShadowMap = 1;
     program->uniforms.opacityMap = 2;
     program->uniforms.meshShadowMap = 3;
+    program->uniforms.depthPeelMap = 6;
     program->uniforms.projection = projection;
     program->uniforms.view = view;
     program->uniforms.model = model;
@@ -306,7 +372,6 @@ void GLWidget::initCamera(){
     m_zoom = 3;
     
     // Initialize global view and projection matrices.
-//    m_view = glm::lookAt(glm::vec3(0,0,m_zoom), glm::vec3(0), glm::vec3(0,1,0));
     m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
             glm::rotate(m_angleY, glm::vec3(1, 0, 0)) *
             glm::rotate(m_angleX, glm::vec3(0, 1, 0));

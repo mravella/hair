@@ -35,6 +35,7 @@ public:
     bool useShadows = true;
     bool useSupersampling = true;
     bool useFrictionSim = true;
+    bool useTransparency = true;
     
 protected:
     void initializeGL() override;
@@ -56,6 +57,8 @@ private:
     void _drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
     void _drawMesh(ShaderProgram *program, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
 
+    void _resizeDepthPeelFramebuffers();
+
     bool m_paused = false;
 
     HairInterface *m_hairInterface;
@@ -71,13 +74,17 @@ private:
                   *m_meshProgram,
                   *m_hairOpacityProgram,
                   *m_whiteMeshProgram,
-                  *m_whiteHairProgram;
+                  *m_whiteHairProgram,
+                  *m_hairDepthPeelProgram,
+                  *m_meshDepthPeelProgram;
 
     std::vector<Framebuffer*> m_framebuffers;
     Framebuffer *m_hairShadowFramebuffer,
                 *m_meshShadowFramebuffer,
                 *m_opacityMapFramebuffer,
-                *m_finalFramebuffer;
+                *m_finalFramebuffer,
+                *m_depthPeel0Framebuffer,
+                *m_depthPeel1Framebuffer;
 
     // Camera parameters
     glm::mat4 m_projection, m_view;

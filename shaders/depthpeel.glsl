@@ -9,11 +9,14 @@ void depthPeel(inout vec4 color, in vec4 p)
 {
     vec4 clipCoord = (p / p.w + 1.0) / 2.0;
     vec2 uv = clipCoord.xy;
-    float currDepth = clipCoord.z - 1e-4;
+
+    float currDepth = gl_FragCoord.z - 1e-4;
     float lastDepth = texelFetch(depthPeelMap, ivec2(uv * textureSize(depthPeelMap, 0)), 0).r;
 
-    float discardFrag = step(currDepth, lastDepth); // 1.0 if fragment should be discarded, else 0.0
+    // Fragment should be discarded if depth is less than the value in the last depth peel map.
+    float discardFrag = step(currDepth, lastDepth);
 
     color = mix(color, BACKGROUND_COLOR, discardFrag);
-    gl_FragDepth = mix(gl_FragDepth, 1.0, discardFrag);
+    gl_FragDepth = mix(gl_FragCoord.z, 1.0, discardFrag);
+
 }

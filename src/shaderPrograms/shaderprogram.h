@@ -43,6 +43,7 @@ struct Uniforms {
     int meshShadowMap;
     int opacityMap;
     int hairGrowthMap;
+    int depthPeelMap;
 
     float specIntensity;
     float diffuseIntensity;

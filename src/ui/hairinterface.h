@@ -34,42 +34,37 @@ public slots:
     
     void inputHairsPerPatchText(QString text);
     void setHairsPerPatch(int);
-    
     void inputSplineVerticesText(QString text);
     void setSplineVertices(int numVertices);
-    
     void inputHairRadiusText(QString text);
     void setHairRadius(int value);
-    
     void inputNoiseAmpText(QString text);
     void setNoiseAmp(int value);
     void inputNoiseFreqText(QString text);
     void setNoiseFreq(int value);
-
     void inputHairColorRText(QString text);
     void setHairColorR(int value);
     void inputHairColorGText(QString text);
     void setHairColorG(int value);
     void inputHairColorBText(QString text);
     void setHairColorB(int value);
-    
     void inputWindMagnitudeText(QString text);
     void setWindMagnitude(int value);
-    
     void inputShadowIntensityText(QString text);
     void setShadowIntensity(int value);
     void inputDiffuseIntensityText(QString text);
     void setDiffuseIntensity(int value);
     void inputSpecularIntensityText(QString text);
     void setSpecularIntensity(int value);
-    
     void inputStiffnessText(QString text);
     void setStiffness(int value);
+    void inputTransparencyText(QString text);
+    void setTransparency(int value);
     
-
     void setShadows(bool);
     void setSupersampling(bool);
     void setFrictionSim(bool);
+    void toggleTransparency(bool checked);
     void togglePaused();
     
     void startEditScene();

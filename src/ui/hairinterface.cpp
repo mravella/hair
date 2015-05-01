@@ -39,63 +39,44 @@ void HairInterface::connectUserInputs()
     connect(m_ui->showHideGroupTess, SIGNAL(pressed()), this, SLOT(showHideGroupTess()));
     connect(m_ui->showHideGroupRender, SIGNAL(pressed()), this, SLOT(showHideGroupRender()));
     
-            
-    // hairs per patch
     connect(m_ui->sliderHairsPerPatch, SIGNAL(valueChanged(int)), this, SLOT(setHairsPerPatch(int)));
     connect(m_ui->inputHairsPerPatch, SIGNAL(textChanged(QString)), this, SLOT(inputHairsPerPatchText(QString)));
-
-    // spline vertices
     connect(m_ui->sliderSplineVertices, SIGNAL(valueChanged(int)), this, SLOT(setSplineVertices(int)));
     connect(m_ui->inputSplineVertices, SIGNAL(textChanged(QString)), this, SLOT(inputSplineVerticesText(QString)));
-    
-    // hair radius
     connect(m_ui->sliderHairRadius, SIGNAL(valueChanged(int)), this, SLOT(setHairRadius(int)));
     connect(m_ui->inputHairRadius, SIGNAL(textChanged(QString)), this, SLOT(inputHairRadiusText(QString)));
-    
-    // noise
     connect(m_ui->sliderNoiseAmp, SIGNAL(valueChanged(int)), this, SLOT(setNoiseAmp(int)));
     connect(m_ui->inputNoiseAmp, SIGNAL(textChanged(QString)), this, SLOT(inputNoiseAmpText(QString)));
     connect(m_ui->sliderNoiseFreq, SIGNAL(valueChanged(int)), this, SLOT(setNoiseFreq(int)));
     connect(m_ui->inputNoiseFreq, SIGNAL(textChanged(QString)), this, SLOT(inputNoiseFreqText(QString)));
-
-    // rgb
     connect(m_ui->sliderHairColorR, SIGNAL(valueChanged(int)), this, SLOT(setHairColorR(int)));
     connect(m_ui->inputHairColorR, SIGNAL(textChanged(QString)), this, SLOT(inputHairColorRText(QString)));
     connect(m_ui->sliderHairColorG, SIGNAL(valueChanged(int)), this, SLOT(setHairColorG(int)));
     connect(m_ui->inputHairColorG, SIGNAL(textChanged(QString)), this, SLOT(inputHairColorGText(QString)));
     connect(m_ui->sliderHairColorB, SIGNAL(valueChanged(int)), this, SLOT(setHairColorB(int)));
     connect(m_ui->inputHairColorB, SIGNAL(textChanged(QString)), this, SLOT(inputHairColorBText(QString)));
-    
-    // wind magnitude
     connect(m_ui->sliderWindMagnitude, SIGNAL(valueChanged(int)), this, SLOT(setWindMagnitude(int)));
     connect(m_ui->inputWindMagnitude, SIGNAL(textChanged(QString)), this, SLOT(inputWindMagnitudeText(QString)));
-
-    // shadow intensity
     connect(m_ui->sliderShadowIntensity, SIGNAL(valueChanged(int)), this, SLOT(setShadowIntensity(int)));
     connect(m_ui->inputShadowIntensity, SIGNAL(textChanged(QString)), this, SLOT(inputShadowIntensityText(QString)));
-    
-    // diffuse intensity
     connect(m_ui->sliderDiffuseIntensity, SIGNAL(valueChanged(int)), this, SLOT(setDiffuseIntensity(int)));
     connect(m_ui->inputDiffuseIntensity, SIGNAL(textChanged(QString)), this, SLOT(inputDiffuseIntensityText(QString)));
-    
-    // specular intensity
     connect(m_ui->sliderSpecularIntensity, SIGNAL(valueChanged(int)), this, SLOT(setSpecularIntensity(int)));
     connect(m_ui->inputSpecularIntensity, SIGNAL(textChanged(QString)), this, SLOT(inputSpecularIntensityText(QString)));
-    
-    // stiffness
     connect(m_ui->sliderStiffness, SIGNAL(valueChanged(int)), this, SLOT(setStiffness(int)));
     connect(m_ui->inputStiffness, SIGNAL(textChanged(QString)), this, SLOT(inputStiffnessText(QString)));
+    connect(m_ui->sliderTransparency, SIGNAL(valueChanged(int)), this, SLOT(setTransparency(int)));
+    connect(m_ui->inputTransparency, SIGNAL(textChanged(QString)), this, SLOT(inputTransparencyText(QString)));    
     
     // toggles
     connect(m_ui->frictionSimCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFrictionSim(bool)));
     connect(m_ui->shadowCheckBox, SIGNAL(toggled(bool)), this, SLOT(setShadows(bool)));
     connect(m_ui->supersampleCheckBox, SIGNAL(toggled(bool)), this, SLOT(setSupersampling(bool)));
-
+    connect(m_ui->transparencyCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleTransparency(bool)));
+    
     // buttons
     connect(m_ui->pauseButton, SIGNAL(pressed()), this, SLOT(togglePaused()));
     connect(m_ui->buttonResetSim, SIGNAL(pressed()), this, SLOT(resetSimulation()));
-    
-    
     connect(m_ui->sceneEditorButton, SIGNAL(pressed()), this, SLOT(startEditScene()));
 }
 
@@ -113,57 +94,40 @@ void HairInterface::setHairObject(HairObject *hairObject)
 {
     m_hairObject = hairObject;
 
-    // Sync hairs per patch slider
     m_ui->sliderHairsPerPatch->setValue(m_hairObject->m_numGroupHairs);
     m_ui->inputHairsPerPatch->setText(QString::number(m_hairObject->m_numGroupHairs));
-
-    // Sync spline vertices slider
     m_ui->sliderSplineVertices->setValue(m_hairObject->m_numSplineVertices);
     m_ui->inputSplineVertices->setText(QString::number(m_hairObject->m_numSplineVertices));
-
-    // Sync hair radius slider
     m_ui->sliderHairRadius->setValue(m_hairObject->m_hairRadius*10000);
     m_ui->inputHairRadius->setText(QString::number(m_hairObject->m_hairRadius));
-    
-    // Sync noise amplitude slider
     m_ui->sliderNoiseAmp->setValue(m_hairObject->m_noiseAmplitude*100);
     m_ui->inputNoiseAmp->setText(QString::number(m_hairObject->m_noiseAmplitude));
     m_ui->sliderNoiseFreq->setValue(m_hairObject->m_noiseFrequency*100);
     m_ui->inputNoiseFreq->setText(QString::number(m_hairObject->m_noiseFrequency));
-    
-    // Sync rgb sliders
     m_ui->sliderHairColorR->setValue(m_hairObject->m_color.x*2550);
     m_ui->sliderHairColorG->setValue(m_hairObject->m_color.y*2550);
     m_ui->sliderHairColorB->setValue(m_hairObject->m_color.z*2550);
     m_ui->inputHairColorR->setText(QString::number(m_hairObject->m_color.x*255, 'g', 2));
     m_ui->inputHairColorG->setText(QString::number(m_hairObject->m_color.y, 'g', 2));
     m_ui->inputHairColorB->setText(QString::number(m_hairObject->m_color.z, 'g', 2));
-
-    // Sync wind magnitude
     m_ui->sliderWindMagnitude->setValue(m_glWidget->m_testSimulation->m_windMagnitude*100);
     m_ui->inputWindMagnitude->setText(QString::number(m_glWidget->m_testSimulation->m_windMagnitude, 'g', 3));
-    
-    // Sync shadow intensity
     m_ui->sliderShadowIntensity->setValue(m_glWidget->m_hairObject->m_shadowIntensity*10);
     m_ui->inputShadowIntensity->setText(QString::number(m_glWidget->m_hairObject->m_shadowIntensity, 'g', 3));
-    
-    // Sync diffuse intensity
     m_ui->sliderDiffuseIntensity->setValue(m_glWidget->m_hairObject->m_diffuseIntensity*100);
     m_ui->inputDiffuseIntensity->setText(QString::number(m_glWidget->m_hairObject->m_diffuseIntensity, 'g', 3));
-    
-    // Sync specular intensity
     m_ui->sliderSpecularIntensity->setValue(m_glWidget->m_hairObject->m_specularIntensity*100);
     m_ui->inputSpecularIntensity->setText(QString::number(m_glWidget->m_hairObject->m_specularIntensity, 'g', 3));
-    
-    // Sync stiffness
     m_ui->sliderStiffness->setValue(m_glWidget->m_testSimulation->m_stiffness*1000);
     m_ui->inputStiffness->setText(QString::number(m_glWidget->m_testSimulation->m_stiffness, 'g', 4));
-    
+//    m_ui->sliderTransparency->setValue(m_glWidget->m_transparency*1000);
+//    m_ui->inputTransparency->setText(QString::number(m_glWidget->m_transparency, 'g', 4));
     
     // Sync toggles
     m_ui->frictionSimCheckBox->setChecked(m_glWidget->useFrictionSim);
     m_ui->shadowCheckBox->setChecked(m_glWidget->useShadows);
     m_ui->supersampleCheckBox->setChecked(m_glWidget->useSupersampling);
+    m_ui->transparencyCheckBox->setChecked(m_glWidget->useTransparency);
 
     updateStatsLabel();
 }
@@ -469,7 +433,6 @@ void HairInterface::setSpecularIntensity(int value)
     m_ui->inputSpecularIntensity->setText(QString::number(m_glWidget->m_hairObject->m_specularIntensity, 'g', 3));
 }
 
-
 void HairInterface::inputStiffnessText(QString text)
 {
     if (text.length() == 0) return;
@@ -488,6 +451,23 @@ void HairInterface::setStiffness(int value)
     m_ui->inputStiffness->setText(QString::number(m_glWidget->m_testSimulation->m_stiffness, 'g', 3));
 }
 
+void HairInterface::inputTransparencyText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+//    if (!ok){
+//        value = m_glWidget->m_transparency;
+//    } else if (value == m_glWidget->m_transparency) return;
+    setTransparency(1000*value);
+    m_ui->sliderTransparency->setValue(1000*value);
+}
+void HairInterface::setTransparency(int value)
+{
+    if (value < 0) return;    
+//    m_glWidget->m_transparency = value/1000.;
+//    m_ui->inputTransparency->setText(QString::number(m_glWidget->m_transparency, 'g', 3));
+}
 
 
 void HairInterface::setShadows(bool checked)
@@ -506,6 +486,12 @@ void HairInterface::setFrictionSim(bool checked)
 {
     m_glWidget->useFrictionSim = checked;
 }
+
+void HairInterface::toggleTransparency(bool checked)
+{
+    m_glWidget->useTransparency = checked;
+}
+
 
 void HairInterface::togglePaused()
 {

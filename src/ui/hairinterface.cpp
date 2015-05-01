@@ -395,6 +395,7 @@ void HairInterface::setShadowIntensity(int value)
     if (value < 0) return;    
     m_glWidget->m_hairObject->m_shadowIntensity = value/10.;
     m_ui->inputShadowIntensity->setText(QString::number(m_glWidget->m_hairObject->m_shadowIntensity, 'g', 3));
+    m_glWidget->forceUpdate();
 }
 
 void HairInterface::inputDiffuseIntensityText(QString text)
@@ -413,6 +414,7 @@ void HairInterface::setDiffuseIntensity(int value)
     if (value < 0) return;    
     m_glWidget->m_hairObject->m_diffuseIntensity = value/100.;
     m_ui->inputDiffuseIntensity->setText(QString::number(m_glWidget->m_hairObject->m_diffuseIntensity, 'g', 3));
+    m_glWidget->forceUpdate();
 }
 
 void HairInterface::inputSpecularIntensityText(QString text)
@@ -431,6 +433,7 @@ void HairInterface::setSpecularIntensity(int value)
     if (value < 0) return;    
     m_glWidget->m_hairObject->m_specularIntensity = value/100.;
     m_ui->inputSpecularIntensity->setText(QString::number(m_glWidget->m_hairObject->m_specularIntensity, 'g', 3));
+    m_glWidget->forceUpdate();
 }
 
 void HairInterface::inputStiffnessText(QString text)
@@ -456,17 +459,18 @@ void HairInterface::inputTransparencyText(QString text)
     if (text.length() == 0) return;
     bool ok;
     double value = text.toDouble(&ok);
-//    if (!ok){
-//        value = m_glWidget->m_transparency;
-//    } else if (value == m_glWidget->m_transparency) return;
+    if (!ok){
+        value = m_hairObject->m_transparency;
+    } else if (value == m_hairObject->m_transparency) return;
     setTransparency(1000*value);
     m_ui->sliderTransparency->setValue(1000*value);
 }
 void HairInterface::setTransparency(int value)
 {
     if (value < 0) return;    
-//    m_glWidget->m_transparency = value/1000.;
-//    m_ui->inputTransparency->setText(QString::number(m_glWidget->m_transparency, 'g', 3));
+    m_hairObject->m_transparency = value/1000.;
+    m_ui->inputTransparency->setText(QString::number(m_hairObject->m_transparency, 'g', 3));
+    m_glWidget->forceUpdate();
 }
 
 
@@ -490,6 +494,7 @@ void HairInterface::setFrictionSim(bool checked)
 void HairInterface::toggleTransparency(bool checked)
 {
     m_glWidget->useTransparency = checked;
+    m_glWidget->forceUpdate();
 }
 
 

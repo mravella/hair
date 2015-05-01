@@ -62,6 +62,7 @@ public:
     float m_shadowIntensity;
     float m_diffuseIntensity;
     float m_specularIntensity;
+    float m_transparency;
 };
 
 #endif // HAIROBJECT_H

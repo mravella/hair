@@ -48,6 +48,8 @@ struct Uniforms {
     float specIntensity;
     float diffuseIntensity;
 
+    float opacity;
+
     // Shadows
     bool useShadows;
     float shadowIntensity; // Controls the shadow darkness

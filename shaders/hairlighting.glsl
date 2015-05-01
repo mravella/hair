@@ -5,6 +5,7 @@ uniform vec3 color;
 uniform float specIntensity, diffuseIntensity;
 uniform mat4 view, eyeToLight;
 uniform vec3 lightPosition;
+uniform float opacity;
 
 vec3 colorContribution(in vec4 position_ES, in vec3 tangent_ES, in vec4 lightPosition_ES)
 {
@@ -23,7 +24,7 @@ vec4 hairLighting(in vec4 position_ES, in vec3 tangent_ES)
     vec4 position_lightSpace = eyeToLight * position_ES;
 
     vec4 color;
-    color.w = HAIR_OPACITY;
+    color.w = opacity;
 
     // Key light
     color.xyz = colorContribution(position_ES, tangent_ES, (view * vec4(lightPosition, 1.)));

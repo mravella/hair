@@ -37,6 +37,7 @@ void HairShaderProgram::setPerObjectUniforms()
     setUniform3f("color", uniforms.color);
     setUniform1f("specIntensity", uniforms.specIntensity);
     setUniform1f("diffuseIntensity", uniforms.diffuseIntensity);
+    setUniform1f("opacity", uniforms.opacity);
 }
 
 void HairShaderProgram::setPerDrawUniforms()

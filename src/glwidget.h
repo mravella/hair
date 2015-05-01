@@ -35,7 +35,7 @@ public:
     bool useShadows = true;
     bool useSupersampling = true;
     bool useFrictionSim = true;
-    bool useTransparency = true;
+    bool useTransparency = false;
     
 protected:
     void initializeGL() override;

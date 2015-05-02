@@ -36,6 +36,14 @@ public slots:
     void setFalloffLinear();
     void setFalloffQuadratic();
     
+    void setDensityTexture();
+    void setDirectionTexture();
+    
+    void setBrushDirLeft();
+    void setBrushDirRight();
+    void setBrushDirUp();
+    void setBrushDirDown();
+    
     void clearWhite();
     void clearBlack();
     

@@ -71,7 +71,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>60</height>
+          <height>70</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -83,30 +83,33 @@
         <property name="title">
          <string/>
         </property>
-        <widget class="QPushButton" name="editScene_2">
+        <widget class="QRadioButton" name="densityMapOption">
          <property name="geometry">
           <rect>
-           <x>20</x>
-           <y>0</y>
+           <x>10</x>
+           <y>10</y>
            <width>131</width>
-           <height>32</height>
+           <height>21</height>
           </rect>
          </property>
          <property name="text">
-          <string>Density</string>
+          <string>Density Map</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
-        <widget class="QPushButton" name="editScene_3">
+        <widget class="QRadioButton" name="directionMapOption">
          <property name="geometry">
           <rect>
-           <x>20</x>
-           <y>30</y>
-           <width>131</width>
-           <height>32</height>
+           <x>10</x>
+           <y>40</y>
+           <width>151</width>
+           <height>21</height>
           </rect>
          </property>
          <property name="text">
-          <string>Length</string>
+          <string>Direction Map</string>
          </property>
         </widget>
        </widget>
@@ -140,7 +143,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>400</height>
+          <height>500</height>
          </size>
         </property>
         <property name="title">
@@ -379,7 +382,7 @@
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>370</y>
+           <y>440</y>
            <width>171</width>
            <height>32</height>
           </rect>
@@ -398,7 +401,7 @@
          <property name="geometry">
           <rect>
            <x>0</x>
-           <y>340</y>
+           <y>410</y>
            <width>171</width>
            <height>32</height>
           </rect>
@@ -412,6 +415,77 @@
          <property name="text">
           <string>Clear Black</string>
          </property>
+        </widget>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>270</y>
+           <width>151</width>
+           <height>121</height>
+          </rect>
+         </property>
+         <property name="title">
+          <string>Brush Direction</string>
+         </property>
+         <widget class="QRadioButton" name="brushDirRight">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>50</y>
+            <width>102</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Right</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+         <widget class="QRadioButton" name="brushDirLeft">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>30</y>
+            <width>102</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Left</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QRadioButton" name="brushDirUp">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>70</y>
+            <width>102</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Up</string>
+          </property>
+         </widget>
+         <widget class="QRadioButton" name="brushDirDown">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>90</y>
+            <width>102</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Down</string>
+          </property>
+         </widget>
         </widget>
        </widget>
       </item>

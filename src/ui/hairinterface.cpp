@@ -67,12 +67,15 @@ void HairInterface::connectUserInputs()
     connect(m_ui->inputStiffness, SIGNAL(textChanged(QString)), this, SLOT(inputStiffnessText(QString)));
     connect(m_ui->sliderTransparency, SIGNAL(valueChanged(int)), this, SLOT(setTransparency(int)));
     connect(m_ui->inputTransparency, SIGNAL(textChanged(QString)), this, SLOT(inputTransparencyText(QString)));    
+    connect(m_ui->sliderHairColorVariation, SIGNAL(valueChanged(int)), this, SLOT(setHairColorVariation(int)));
+    connect(m_ui->inputHairColorVariation, SIGNAL(textChanged(QString)), this, SLOT(inputHairColorVariationText(QString)));    
     
     // toggles
     connect(m_ui->frictionSimCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFrictionSim(bool)));
     connect(m_ui->shadowCheckBox, SIGNAL(toggled(bool)), this, SLOT(setShadows(bool)));
     connect(m_ui->supersampleCheckBox, SIGNAL(toggled(bool)), this, SLOT(setSupersampling(bool)));
     connect(m_ui->transparencyCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleTransparency(bool)));
+    connect(m_ui->hairColorVariationCheckBox, SIGNAL(toggled(bool)), this, SLOT(toggleHairColorVariation(bool)));
     
     // buttons
     connect(m_ui->pauseButton, SIGNAL(pressed()), this, SLOT(togglePaused()));
@@ -120,14 +123,17 @@ void HairInterface::setHairObject(HairObject *hairObject)
     m_ui->inputSpecularIntensity->setText(QString::number(m_glWidget->m_hairObject->m_specularIntensity, 'g', 3));
     m_ui->sliderStiffness->setValue(m_glWidget->m_testSimulation->m_stiffness*1000);
     m_ui->inputStiffness->setText(QString::number(m_glWidget->m_testSimulation->m_stiffness, 'g', 4));
-//    m_ui->sliderTransparency->setValue(m_glWidget->m_transparency*1000);
-//    m_ui->inputTransparency->setText(QString::number(m_glWidget->m_transparency, 'g', 4));
+    m_ui->sliderTransparency->setValue(m_hairObject->m_transparency*1000);
+    m_ui->inputTransparency->setText(QString::number(m_hairObject->m_transparency, 'g', 4));
+    m_ui->sliderHairColorVariation->setValue(m_hairObject->m_hairColorVariation*1000);
+    m_ui->inputHairColorVariation->setText(QString::number(m_hairObject->m_hairColorVariation, 'g', 4));
     
     // Sync toggles
     m_ui->frictionSimCheckBox->setChecked(m_glWidget->useFrictionSim);
     m_ui->shadowCheckBox->setChecked(m_glWidget->useShadows);
     m_ui->supersampleCheckBox->setChecked(m_glWidget->useSupersampling);
     m_ui->transparencyCheckBox->setChecked(m_glWidget->useTransparency);
+    m_ui->hairColorVariationCheckBox->setChecked(m_hairObject->m_useHairColorVariation);
 
     updateStatsLabel();
 }
@@ -472,6 +478,25 @@ void HairInterface::setTransparency(int value)
     m_ui->inputTransparency->setText(QString::number(m_hairObject->m_transparency, 'g', 3));
     m_glWidget->forceUpdate();
 }
+void HairInterface::inputHairColorVariationText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_hairObject->m_hairColorVariation;
+    } else if (value == m_hairObject->m_hairColorVariation) return;
+    setHairColorVariation(1000*value);
+    m_ui->sliderHairColorVariation->setValue(1000*value);
+}
+void HairInterface::setHairColorVariation(int value)
+{
+    if (value < 0) return;    
+    m_hairObject->m_hairColorVariation= value/1000.;
+    m_ui->inputHairColorVariation->setText(QString::number(m_hairObject->m_hairColorVariation, 'g', 3));
+    m_glWidget->forceUpdate();
+}
+
 
 
 void HairInterface::setShadows(bool checked)
@@ -479,21 +504,23 @@ void HairInterface::setShadows(bool checked)
     m_glWidget->useShadows = checked;
     m_glWidget->forceUpdate();
 }
-
 void HairInterface::setSupersampling(bool checked)
 {
     m_glWidget->useSupersampling = checked;
     m_glWidget->forceUpdate();
 }
-
 void HairInterface::setFrictionSim(bool checked)
 {
     m_glWidget->useFrictionSim = checked;
 }
-
 void HairInterface::toggleTransparency(bool checked)
 {
     m_glWidget->useTransparency = checked;
+    m_glWidget->forceUpdate();
+}
+void HairInterface::toggleHairColorVariation(bool checked)
+{
+    m_hairObject->m_useHairColorVariation = checked;
     m_glWidget->forceUpdate();
 }
 

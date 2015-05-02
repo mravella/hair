@@ -25,6 +25,12 @@ SceneWidget::SceneWidget(GLWidget *parent, ObjMesh *mesh) :
     m_blendBufferValid = false;
     m_mouseDown = false;
     
+    m_brushDirColor = glm::vec3(0, 0, 0);
+    m_brushDir = "left";
+    
+    m_densityMapTexture = NULL;
+    m_directionMapTexture = NULL;
+    m_currentTexture = NULL;
     
     m_brushFalloffType = CONSTANT;
     updateBrushSettings();
@@ -44,9 +50,13 @@ void SceneWidget::updateCanvas()
 void SceneWidget::initializeGL()
 {    
     
-    test = new Texture();
-    test->createColorTexture(mainWidget->m_hairObject->m_hairGrowthMap, GL_LINEAR, GL_LINEAR);
+    m_densityMapTexture = new Texture();
+    m_densityMapTexture->createColorTexture(mainWidget->m_hairObject->m_hairGrowthMap, GL_LINEAR, GL_LINEAR);
     
+    m_directionMapTexture = new Texture();
+    m_directionMapTexture->createColorTexture(mainWidget->m_hairObject->m_hairGroomingMap, GL_LINEAR, GL_LINEAR);
+    
+    m_currentTexture = m_densityMapTexture;
 }
 void SceneWidget::resizeGL(int width, int height)
 {
@@ -58,7 +68,7 @@ void SceneWidget::paintGL(){
     glEnable(GL_TEXTURE_2D);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    test->bind(GL_TEXTURE_2D);
+    m_currentTexture->bind(GL_TEXTURE_2D);
     
     glBegin(GL_QUADS);
     glTexCoord2f(0,1); glVertex3f(-1, -1, -1);
@@ -67,7 +77,7 @@ void SceneWidget::paintGL(){
     glTexCoord2f(0,0); glVertex3f(-1, 1, -1);    
     glEnd();
 
-    test->unbind(GL_TEXTURE_2D);
+    m_currentTexture->unbind(GL_TEXTURE_2D);
 
     // Enable blending
     glEnable(GL_BLEND);
@@ -107,25 +117,23 @@ void SceneWidget::updateBrushSettings(){
     } else if (m_brushFalloffType == QUADRATIC){
         makeQuadraticMask();
     }
-    
-//    m_previewBuffer = QImage(2*m_radius+1, 2*m_radius+1,)
 }
 
 
 void SceneWidget::mousePressEvent(QMouseEvent *event)
 {
     m_mouseDown = true;
-    QPoint pos = QPoint(round(event->x()*test->width()/width()), round(event->y()*test->height()/height()));        
-    paintTexture(glm::vec2(pos.x(), pos.y()), test->m_image.bits(), glm::vec2(test->m_image.width(), test->m_image.height()));
-    test->updateImage();
+    QPoint pos = QPoint(round(event->x()*m_currentTexture->width()/width()), round(event->y()*m_currentTexture->height()/height()));        
+    paintTexture(glm::vec2(pos.x(), pos.y()), m_currentTexture->m_image.bits(), glm::vec2(m_currentTexture->m_image.width(), m_currentTexture->m_image.height()));
+    m_currentTexture->updateImage();
 }
 
 void SceneWidget::mouseMoveEvent(QMouseEvent *event)
 {
     if (m_mouseDown){
-        QPoint pos = QPoint(round(event->x()*test->width()/width()), round(event->y()*test->height()/height()));        
-        paintTexture(glm::vec2(pos.x(), pos.y()), test->m_image.bits(), glm::vec2(test->m_image.width(), test->m_image.height()));
-        test->updateImage();
+        QPoint pos = QPoint(round(event->x()*m_currentTexture->width()/width()), round(event->y()*m_currentTexture->height()/height()));        
+        paintTexture(glm::vec2(pos.x(), pos.y()), m_currentTexture->m_image.bits(), glm::vec2(m_currentTexture->m_image.width(), m_currentTexture->m_image.height()));
+        m_currentTexture->updateImage();
     }
 }
 
@@ -192,17 +200,26 @@ void SceneWidget::paintTexture(glm::vec2 center, uchar *data, glm::vec2 imgSize)
             if (blendValue < 0) blendValue = 0;
             m_blendBuffer[row*canvasW+col] += (1.0-m_blendBuffer[row*canvasW+col])*blendValue; // incorporate previous blends
             
-            pix[row*canvasW+col].r = (pix[row*canvasW+col].r)*(1-blendValue) + (255*m_grayscale)*(blendValue);
-            pix[row*canvasW+col].g = (pix[row*canvasW+col].g)*(1-blendValue) + (255*m_grayscale)*(blendValue);
-            pix[row*canvasW+col].b = (pix[row*canvasW+col].b)*(1-blendValue) + (255*m_grayscale)*(blendValue);
+            if (m_currentTexture == m_densityMapTexture){
+                pix[row*canvasW+col].r = (pix[row*canvasW+col].r)*(1-blendValue) + (255*m_grayscale)*(blendValue);
+                pix[row*canvasW+col].g = (pix[row*canvasW+col].g)*(1-blendValue) + (255*m_grayscale)*(blendValue);
+                pix[row*canvasW+col].b = (pix[row*canvasW+col].b)*(1-blendValue) + (255*m_grayscale)*(blendValue);
+            } else if (m_currentTexture == m_directionMapTexture){
+                if (m_brushDir == "left" || m_brushDir == "right"){
+                    pix[row*canvasW+col].r = (pix[row*canvasW+col].r)*(1-blendValue) + (255*m_brushDirColor.x)*(blendValue);
+                } else if (m_brushDir == "up" || m_brushDir == "down"){
+                    pix[row*canvasW+col].g = (pix[row*canvasW+col].g)*(1-blendValue) + (255*m_brushDirColor.y)*(blendValue);
+                }
+            }
         }
     }
 }
 
 void SceneWidget::apply(){
-    test->m_image.save("output.png");
+//    m_densityMapTexture->m_image.save("output.png");
     
-    mainWidget->resetTexture = test;
+    mainWidget->resetFromSceneEditorGrowthTexture = m_densityMapTexture;
+    mainWidget->resetFromSceneEditorGroomingTexture = m_directionMapTexture;
     
     mainWidget->unpause();
 }
@@ -255,9 +272,24 @@ void SceneWidget::makeQuadraticMask()
     }
 }
 
-
-void SceneWidget::clearTexture(int r, int g, int b){
-    test->m_image.fill(QColor(r, g, b));
-    test->updateImage();
+void SceneWidget::clearTexture(int r, int g, int b, Texture *texture){
+    if (texture == NULL) texture = m_currentTexture;
+    cout << r << ", " << g << ", " << b << endl;
+    texture->m_image.fill(QColor(r, g, b));
+//    QRgb test = texture->m_image.pixel(0, 0);
+//    cout << qRed(test) << ", " <<qGreen(test) << ", " << qBlue(test)<< endl;
+    texture->updateImage();
 }
 
+void SceneWidget::setBrushDir(QString dir){
+    m_brushDir = dir;
+    if (dir == "left"){
+        m_brushDirColor = glm::vec3(0, 0.5, 0.5); // change r
+    } else if (dir == "right"){
+        m_brushDirColor = glm::vec3(1, 0.5, 0.5); // change r
+    } else if (dir == "up"){
+        m_brushDirColor = glm::vec3(0.5, 1, 0.5); // change g
+    } else if (dir == "down"){
+        m_brushDirColor = glm::vec3(0.5, 0, 0.5); // change g
+    }
+}

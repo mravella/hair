@@ -25,7 +25,7 @@
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
     : QGLWidget(format, parent),
       m_hairInterface(hairInterface),
-      m_hairDensity(500),
+      m_hairDensity(100),
       m_timer(this),
       m_increment(0),
       m_targetFPS(60.f)
@@ -35,7 +35,8 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     m_hairObject = NULL;
     m_testSimulation = NULL;
     
-    resetTexture = NULL;
+    resetFromSceneEditorGrowthTexture = NULL;
+    resetFromSceneEditorGroomingTexture = NULL;
 
     m_noiseTexture = new Texture();
 
@@ -123,9 +124,10 @@ void GLWidget::paintGL()
 {
     ErrorChecker::printGLErrors("start of paintGL");
 
-    if (resetTexture != NULL){
-        partialResetSim(resetTexture);
-        resetTexture = NULL;
+    if (resetFromSceneEditorGroomingTexture != NULL && resetFromSceneEditorGrowthTexture != NULL){
+        applySceneEditor(resetFromSceneEditorGrowthTexture, resetFromSceneEditorGroomingTexture);
+        resetFromSceneEditorGroomingTexture = NULL;
+        resetFromSceneEditorGrowthTexture = NULL;
     }
     _resizeDepthPeelFramebuffers();
         
@@ -315,7 +317,11 @@ void GLWidget::_drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view
     program->uniforms.specIntensity = m_hairObject->m_specularIntensity;
     program->uniforms.diffuseIntensity = m_hairObject->m_diffuseIntensity;
     program->uniforms.opacity = 1.f - m_hairObject->m_transparency;
-    program->uniforms.maxColorVariation = 0.8f;
+    if (m_hairObject->m_useHairColorVariation){
+        program->uniforms.maxColorVariation = m_hairObject->m_hairColorVariation;
+    } else {
+        program->uniforms.maxColorVariation = 0;
+    }
     program->setGlobalUniforms();
     m_hairObject->paint(program);
 }
@@ -359,7 +365,9 @@ void GLWidget::initSimulation()
     m_testSimulation = new Simulation(this, m_lowResMesh);
     
     QImage initialHairMap(":/images/headHair.jpg");
-    m_hairObject = new HairObject(m_highResMesh, m_hairDensity, initialHairMap, m_testSimulation, m_hairObject);
+    QImage initialGroomingMap(initialHairMap.width(), initialHairMap.height(), initialHairMap.format());
+    initialGroomingMap.fill(QColor(128, 128, 255));
+    m_hairObject = new HairObject(m_highResMesh, m_hairDensity, initialHairMap, initialGroomingMap, m_testSimulation, m_hairObject);
     
     safeDelete(_oldHairObject);
     
@@ -382,12 +390,12 @@ void GLWidget::initCamera(){
     
 }
 
-void GLWidget::partialResetSim(Texture *texture){
+void GLWidget::applySceneEditor(Texture *_hairGrowthTexture, Texture *_hairGroomingTexture){
 
     HairObject *_oldHairObject = m_hairObject;
         
     m_hairObject = new HairObject(
-                m_highResMesh, m_hairDensity, texture->m_image, m_testSimulation);
+                m_highResMesh, m_hairDensity, _hairGrowthTexture->m_image, _hairGroomingTexture->m_image, m_testSimulation);
     
     
     safeDelete(_oldHairObject);

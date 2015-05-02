@@ -40,7 +40,8 @@ public:
     void makeLinearMask();
     void makeQuadraticMask();
     
-    void clearTexture(int r, int g, int b);
+    void setBrushDir(QString dir);    
+    void clearTexture(int r, int g, int b, Texture *texture = NULL);
     
 signals:
     
@@ -50,13 +51,18 @@ public slots:
 protected:
     QTimer m_timer;
     
-    Texture *test;
+    Texture *m_densityMapTexture;
+    Texture *m_directionMapTexture;
+    Texture *m_currentTexture;
 
     ObjMesh *m_mesh;
     
     double m_grayscale;
     double m_opacity;
     int m_radius;
+    
+    QString m_brushDir;
+    glm::vec3 m_brushDirColor;
     
     float *m_mask;
     float *m_blendBuffer;

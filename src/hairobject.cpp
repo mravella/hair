@@ -49,6 +49,7 @@ HairObject::HairObject(
         ObjMesh *_mesh,
         float _hairsPerUnitArea,
         QImage &_hairGrowthMap,
+        QImage &_hairGroomingMap,
         Simulation *_simulation,
         HairObject *_oldObject)
 {    
@@ -59,6 +60,7 @@ HairObject::HairObject(
     }
 
     m_hairGrowthMap = _hairGrowthMap;
+    m_hairGroomingMap = _hairGroomingMap;
 
     // Initialize blurred hair growth map texture.
     QImage blurredImage;
@@ -94,9 +96,18 @@ HairObject::HairObject(
                 _emptyPoints++;
                 continue;
             }
-
+            
             float maxHairLength = 0.45;
-            m_guideHairs.append(new Hair(20, maxHairLength * hairGrowth.valueF(), pos, normal));
+            
+            glm::vec3 u = glm::cross(normal, glm::vec3(0, 1, 0));
+            glm::vec3 v = glm::cross(u, normal);        
+            QColor groomingColor = QColor(m_hairGroomingMap.pixel(p));
+            float a = (groomingColor.red() - 128) / 255;
+            float b = (groomingColor.green() - 128) / 255;
+            glm::vec3 x = glm::vec3(a, b, .25);
+            glm::mat3 m = glm::mat3(u, v, normal);
+            
+            m_guideHairs.append(new Hair(20, maxHairLength * hairGrowth.valueF(), pos, m*x));
         }
     }
     
@@ -130,6 +141,8 @@ void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hair
     m_shadowIntensity = 15;
     m_diffuseIntensity = 1;
     m_specularIntensity = .5;
+    m_useHairColorVariation = true;
+    m_hairColorVariation = 0.8f;
 }
 
 void HairObject::update(float _time){

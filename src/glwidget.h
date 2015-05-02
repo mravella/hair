@@ -25,7 +25,7 @@ public:
     ~GLWidget();
 
     void resetSimulation();
-    void partialResetSim(Texture *texture);
+    void applySceneEditor(Texture *_hairGrowthTexture, Texture *_hairGroomingTexture);
 
     void pause();
     void unpause();
@@ -103,7 +103,7 @@ private:
     int m_increment; /** Incremented on every call to paintGL. */
     float m_targetFPS;
     
-    Texture *resetTexture;
+    Texture *resetFromSceneEditorGrowthTexture, *resetFromSceneEditorGroomingTexture;
 };
 
 #endif // GLWIDGET_H

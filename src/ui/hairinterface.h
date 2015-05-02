@@ -60,13 +60,16 @@ public slots:
     void setStiffness(int value);
     void inputTransparencyText(QString text);
     void setTransparency(int value);
+    void inputHairColorVariationText(QString text);
+    void setHairColorVariation(int value);
     
     void setShadows(bool);
     void setSupersampling(bool);
     void setFrictionSim(bool);
     void toggleTransparency(bool checked);
-    void togglePaused();
+    void toggleHairColorVariation(bool checked);
     
+    void togglePaused();
     void startEditScene();
 
 private:

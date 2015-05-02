@@ -49,6 +49,14 @@ SceneEditor::SceneEditor(GLWidget *parent, ObjMesh *mesh) :
     connect(m_ui->clearWhiteButton, SIGNAL(pressed()), this, SLOT(clearWhite()));
     connect(m_ui->clearBlackButton, SIGNAL(pressed()), this, SLOT(clearBlack()));
     
+    connect(m_ui->densityMapOption, SIGNAL(clicked()), this, SLOT(setDensityTexture()));
+    connect(m_ui->directionMapOption, SIGNAL(clicked()), this, SLOT(setDirectionTexture()));    
+    
+    connect(m_ui->brushDirLeft, SIGNAL(clicked()), this, SLOT(setBrushDirLeft()));
+    connect(m_ui->brushDirRight, SIGNAL(clicked()), this, SLOT(setBrushDirRight()));
+    connect(m_ui->brushDirUp, SIGNAL(clicked()), this, SLOT(setBrushDirUp()));
+    connect(m_ui->brushDirDown, SIGNAL(clicked()), this, SLOT(setBrushDirDown()));
+    
     // buttons
     connect(m_ui->applyButton, SIGNAL(pressed()), this, SLOT(applyEditor()));
     connect(m_ui->applyAndCloseButton, SIGNAL(pressed()), this, SLOT(applyAndCloseEditor()));
@@ -176,11 +184,36 @@ void SceneEditor::setFalloffQuadratic(){
     m_sceneWidget->updateBrushSettings();
 }
 
+void SceneEditor::setBrushDirLeft(){
+    m_sceneWidget->setBrushDir("left");
+    m_sceneWidget->updateBrushSettings();
+}
+void SceneEditor::setBrushDirRight(){
+    m_sceneWidget->setBrushDir("right");
+    m_sceneWidget->updateBrushSettings();
+}
+void SceneEditor::setBrushDirUp(){
+    m_sceneWidget->setBrushDir("up");
+    m_sceneWidget->updateBrushSettings();
+}
+void SceneEditor::setBrushDirDown(){
+    m_sceneWidget->setBrushDir("down");
+    m_sceneWidget->updateBrushSettings();
+}
+
+
 void SceneEditor::clearWhite(){
     m_sceneWidget->clearTexture(255, 255, 255);
 }
 void SceneEditor::clearBlack(){
     m_sceneWidget->clearTexture(0, 0, 0);
+}
+
+void SceneEditor::setDensityTexture(){
+    m_sceneWidget->m_currentTexture = m_sceneWidget->m_densityMapTexture;
+}
+void SceneEditor::setDirectionTexture(){
+    m_sceneWidget->m_currentTexture = m_sceneWidget->m_directionMapTexture;
 }
 
 void SceneEditor::applyEditor()

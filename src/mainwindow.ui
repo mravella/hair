@@ -693,13 +693,13 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>350</height>
+          <height>400</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>350</height>
+          <height>400</height>
          </size>
         </property>
         <property name="title">
@@ -722,7 +722,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>310</y>
+           <y>360</y>
            <width>187</width>
            <height>21</height>
           </rect>
@@ -1092,6 +1092,66 @@
          </property>
          <property name="text">
           <string>Transparency</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="inputHairColorVariation">
+         <property name="geometry">
+          <rect>
+           <x>129</x>
+           <y>310</y>
+           <width>41</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>50</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+        </widget>
+        <widget class="QSlider" name="sliderHairColorVariation">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>330</y>
+           <width>161</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>4000</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="hairColorVariationCheckBox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>310</y>
+           <width>121</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Color Variation</string>
          </property>
         </widget>
        </widget>

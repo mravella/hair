@@ -21,6 +21,7 @@ public:
     HairObject(ObjMesh *_mesh,
             float _hairsPerUnitArea,
             QImage &hairGrowthMap,
+            QImage &hairGroomingMap,
             Simulation *_simulation,
             HairObject *_oldObject = NULL);
     
@@ -44,6 +45,7 @@ public:
     Simulation *m_simulation;
 
     QImage m_hairGrowthMap;
+    QImage m_hairGroomingMap;
     Texture *m_blurredHairGrowthMapTexture;
     
     int m_numGuideHairs;
@@ -56,6 +58,8 @@ public:
     float m_noiseAmplitude;
     float m_noiseFrequency;
     int m_numSplineVertices;
+    bool m_useHairColorVariation;
+    float m_hairColorVariation;
 
     glm::vec3 m_color;
     

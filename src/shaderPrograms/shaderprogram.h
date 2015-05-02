@@ -49,6 +49,7 @@ struct Uniforms {
     float diffuseIntensity;
 
     float opacity;
+    float maxColorVariation;
 
     // Shadows
     bool useShadows;

@@ -315,6 +315,7 @@ void GLWidget::_drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view
     program->uniforms.specIntensity = m_hairObject->m_specularIntensity;
     program->uniforms.diffuseIntensity = m_hairObject->m_diffuseIntensity;
     program->uniforms.opacity = 1.f - m_hairObject->m_transparency;
+    program->uniforms.maxColorVariation = 0.8f;
     program->setGlobalUniforms();
     m_hairObject->paint(program);
 }

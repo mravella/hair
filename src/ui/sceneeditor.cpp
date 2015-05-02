@@ -22,12 +22,9 @@ SceneEditor::SceneEditor(GLWidget *parent, ObjMesh *mesh) :
     m_sceneWidget = new SceneWidget(parent, mesh);
     gridLayout->addWidget(m_sceneWidget, 0, 1);
     
-    
     // connect inputs
     connect(m_ui->showHideGroupMaps, SIGNAL(pressed()), this, SLOT(showHideGroupMaps()));
-    connect(m_ui->showHideGroupBrush, SIGNAL(pressed()), this, SLOT(showHideGroupBrush()));
-//    connect(m_ui->showHideGroupRender, SIGNAL(pressed()), this, SLOT(showHideGroupRender()));
-    
+    connect(m_ui->showHideGroupBrush, SIGNAL(pressed()), this, SLOT(showHideGroupBrush()));    
             
     // brush radius
     connect(m_ui->sliderRadius, SIGNAL(valueChanged(int)), this, SLOT(setRadius(int)));
@@ -76,12 +73,12 @@ SceneEditor::SceneEditor(GLWidget *parent, ObjMesh *mesh) :
     m_ui->inputOpacity->setText(QString::number(m_sceneWidget->m_opacity, 'g', 2));
 
 
-
     // open/close groups
-//    showHideGroupMaps(); 
-    m_ui->groupMaps->hide();
+//    m_ui->groupMaps->hide();
+    showHideGroupMaps();
     showHideGroupBrush();
     
+    setDensityTexture();
 }
 
 SceneEditor::~SceneEditor()
@@ -210,9 +207,20 @@ void SceneEditor::clearBlack(){
 }
 
 void SceneEditor::setDensityTexture(){
+    m_ui->labelBrushGrayscale->show();
+    m_ui->inputBrushGrayscale->show();
+    m_ui->sliderBrushGrayscale->show();
+    m_ui->groupBrushDirection->hide();
+
     m_sceneWidget->m_currentTexture = m_sceneWidget->m_densityMapTexture;
 }
 void SceneEditor::setDirectionTexture(){
+    m_ui->labelBrushGrayscale->hide();
+    m_ui->inputBrushGrayscale->hide();
+    m_ui->sliderBrushGrayscale->hide();
+    m_ui->groupBrushDirection->show();
+    m_ui->groupBrushDirection->move(m_ui->labelBrushGrayscale->pos());
+    
     m_sceneWidget->m_currentTexture = m_sceneWidget->m_directionMapTexture;
 }
 

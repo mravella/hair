@@ -123,6 +123,8 @@ void GLWidget::paintGL()
 {
     ErrorChecker::printGLErrors("start of paintGL");
 
+    m_clock.restart();
+
     if (resetTexture != NULL){
         partialResetSim(resetTexture);
         resetTexture = NULL;
@@ -266,7 +268,11 @@ void GLWidget::paintGL()
 
     // Update UI.
     m_hairInterface->updateFPSLabel(m_increment);
-    
+    if (m_paused || m_pausedLastFrame)
+    {
+        m_hairInterface->updateFPSLabelPaused(1000.0 / m_clock.elapsed());
+    }
+    m_pausedLastFrame = isPaused();
 }
 
 

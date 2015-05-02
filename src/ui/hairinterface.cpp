@@ -134,7 +134,7 @@ void HairInterface::setHairObject(HairObject *hairObject)
 
 void HairInterface::updateFPSLabel(int totalNumFrames)
 {
-    int updateFrequency = 10;
+    int updateFrequency = 5;
     if (totalNumFrames % updateFrequency == 1) {
         if (totalNumFrames > 1) {
             double fps = updateFrequency * 1000.0 / m_clock.elapsed();
@@ -142,6 +142,11 @@ void HairInterface::updateFPSLabel(int totalNumFrames)
         }
         m_clock.restart();
     }
+}
+
+void HairInterface::updateFPSLabelPaused(float fps)
+{
+    m_ui->fpsLabel->setText(QString::number(fps, 'f', 1) + " FPS");
 }
 
 void HairInterface::updateStatsLabel()

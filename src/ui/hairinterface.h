@@ -23,6 +23,7 @@ public:
     void setHairObject(HairObject *hairObject);
     void setMesh(ObjMesh *mesh);
     void updateFPSLabel(int totalNumFrames);
+    void updateFPSLabelPaused(float fps);
     void updateStatsLabel();
 
 public slots:

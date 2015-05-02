@@ -11,7 +11,7 @@ uniform float maxColorVariation;
 vec3 colorContribution(
         in vec4 position_ES, in vec3 tangent_ES, in vec4 lightPosition_ES, in float colorVariation)
 {
-    vec4 toLight_N = normalize(view * lightPosition_ES - position_ES);
+    vec4 toLight_N = normalize(lightPosition_ES - position_ES);
     vec3 tangent_N = normalize(tangent_ES);
     vec3 toEye_N = normalize(-position_ES.xyz);
     vec3 h_N = normalize(toEye_N + toLight_N.xyz);
@@ -20,6 +20,7 @@ vec3 colorContribution(
     float specular = pow(sqrt(1. - abs(dot(tangent_N, h_N))), HAIR_SHININESS);
 
     vec3 colorMultiplier = vec3(1.0 + maxColorVariation * (2.0 * colorVariation - 1.0));
+
     return (diffuseIntensity * diffuse + specIntensity * specular) * color * colorMultiplier;
 }
 

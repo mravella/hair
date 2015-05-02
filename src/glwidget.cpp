@@ -129,6 +129,9 @@ void GLWidget::paintGL()
         resetFromSceneEditorGroomingTexture = NULL;
         resetFromSceneEditorGrowthTexture = NULL;
     }
+        
+    m_clock.restart();
+    
     _resizeDepthPeelFramebuffers();
         
     // Update simulation if not paused.
@@ -268,7 +271,11 @@ void GLWidget::paintGL()
 
     // Update UI.
     m_hairInterface->updateFPSLabel(m_increment);
-    
+    if (m_paused || m_pausedLastFrame)
+    {
+        m_hairInterface->updateFPSLabelPaused(1000.0 / m_clock.elapsed());
+    }
+    m_pausedLastFrame = isPaused();
 }
 
 

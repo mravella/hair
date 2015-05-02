@@ -60,6 +60,7 @@ private:
     void _resizeDepthPeelFramebuffers();
 
     bool m_paused = false;
+    bool m_pausedLastFrame = true;
 
     HairInterface *m_hairInterface;
 
@@ -99,6 +100,7 @@ private:
 
     float m_hairDensity;
     
+    QTime m_clock;
     QTimer m_timer; /** Timer calls tick() 60 times per second. */
     int m_increment; /** Incremented on every call to paintGL. */
     float m_targetFPS;

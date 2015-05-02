@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,19 +20,19 @@
       <x>30</x>
       <y>10</y>
       <width>182</width>
-      <height>500</height>
+      <height>550</height>
      </rect>
     </property>
     <property name="minimumSize">
      <size>
       <width>182</width>
-      <height>500</height>
+      <height>550</height>
      </size>
     </property>
     <property name="maximumSize">
      <size>
       <width>182</width>
-      <height>400</height>
+      <height>550</height>
      </size>
     </property>
     <property name="title">
@@ -71,7 +71,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>70</height>
+          <height>60</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -93,7 +93,7 @@
           </rect>
          </property>
          <property name="text">
-          <string>Density Map</string>
+          <string>Length Map</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -103,7 +103,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>40</y>
+           <y>30</y>
            <width>151</width>
            <height>21</height>
           </rect>
@@ -153,7 +153,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>80</y>
+           <y>240</y>
            <width>150</width>
            <height>22</height>
           </rect>
@@ -191,7 +191,7 @@
          <property name="geometry">
           <rect>
            <x>109</x>
-           <y>60</y>
+           <y>220</y>
            <width>51</width>
            <height>21</height>
           </rect>
@@ -225,11 +225,11 @@
           <string>Radius</string>
          </property>
         </widget>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="labelBrushGrayscale">
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>60</y>
+           <y>220</y>
            <width>100</width>
            <height>20</height>
           </rect>
@@ -267,7 +267,7 @@
          <property name="geometry">
           <rect>
            <x>120</x>
-           <y>110</y>
+           <y>60</y>
            <width>40</width>
            <height>21</height>
           </rect>
@@ -286,7 +286,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>130</y>
+           <y>80</y>
            <width>150</width>
            <height>22</height>
           </rect>
@@ -305,7 +305,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>110</y>
+           <y>60</y>
            <width>100</width>
            <height>20</height>
           </rect>
@@ -324,7 +324,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>160</y>
+           <y>110</y>
            <width>151</width>
            <height>101</height>
           </rect>
@@ -416,7 +416,7 @@
           <string>Clear Black</string>
          </property>
         </widget>
-        <widget class="QGroupBox" name="groupBox_2">
+        <widget class="QGroupBox" name="groupBrushDirection">
          <property name="geometry">
           <rect>
            <x>10</x>
@@ -527,7 +527,7 @@
        <x>0</x>
        <y>0</y>
        <width>211</width>
-       <height>451</height>
+       <height>491</height>
       </rect>
      </property>
      <property name="minimumSize">
@@ -569,7 +569,7 @@
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>460</y>
+       <y>500</y>
        <width>196</width>
        <height>41</height>
       </rect>
@@ -601,7 +601,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>500</y>
+       <y>540</y>
        <width>171</width>
        <height>32</height>
       </rect>

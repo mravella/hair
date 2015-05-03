@@ -25,12 +25,8 @@
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
     : QGLWidget(format, parent),
       m_hairInterface(hairInterface),
-<<<<<<< HEAD
       m_hairDensity(250),
-=======
-      m_hairDensity(100),
       m_maxHairLength(.45),
->>>>>>> 01092fde9e0245c27b8256649704430d74acc753
       m_timer(this),
       m_increment(0),
       m_targetFPS(60.f)

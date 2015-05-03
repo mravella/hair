@@ -95,7 +95,7 @@ class Simulation
 {
     friend class HairInterface;
 public:
-    Simulation(GLWidget *widget, ObjMesh *mesh);
+    Simulation(GLWidget *widget, ObjMesh *mesh, Simulation *_oldSim = NULL);
     
     virtual ~Simulation();
     

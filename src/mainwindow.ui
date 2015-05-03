@@ -20,13 +20,13 @@
       <x>230</x>
       <y>10</y>
       <width>190</width>
-      <height>700</height>
+      <height>1000</height>
      </rect>
     </property>
     <property name="minimumSize">
      <size>
       <width>190</width>
-      <height>500</height>
+      <height>1000</height>
      </size>
     </property>
     <property name="maximumSize">
@@ -1232,10 +1232,10 @@
           </rect>
          </property>
          <property name="minimum">
-          <number>1</number>
+          <number>0</number>
          </property>
          <property name="maximum">
-          <number>1000</number>
+          <number>500</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>

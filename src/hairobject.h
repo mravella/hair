@@ -29,13 +29,19 @@ public:
     void paint(ShaderProgram *program);
     void setAttributes(HairObject *_oldObject);
     void setAttributes(
-            glm::vec3 _color = glm::vec3(14./255, .356f, .231f),
+            glm::vec3 _color = glm::vec3(15./255, .286f, .202f),
             int _numGroupHairs = 64,
             float _hairGroupSpread = 0.08,
             float _hairRadius = 0.001f,
             float _noiseAmplitude = 0.15f,
             float _noiseFrequency = 0.2f,
-            int _numSplineVertices = 20);
+            int _numSplineVertices = 20,
+            float _shadowIntensity = 40,
+            float _diffuseIntensity = 1,
+            float _specularIntensity = .5,
+            float _transparency = .25,
+            float _useHairColorVariation = true,
+            float _hairColorVariation = 1.5f);
     
 public:
     

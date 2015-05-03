@@ -329,7 +329,6 @@ void HairInterface::inputNoiseFreqText(QString text)
     setNoiseFreq(100*value);
     m_ui->sliderNoiseFreq->setValue(100*value);
 }
-
 void HairInterface::setNoiseFreq(int value)
 {
     if (value < 0) return;
@@ -337,7 +336,6 @@ void HairInterface::setNoiseFreq(int value)
     m_ui->inputNoiseFreq->setText(QString::number(m_hairObject->m_noiseFrequency, 'g', 3));
     m_glWidget->forceUpdate();
 }
-
 
 void HairInterface::inputHairColorRText(QString text)
 {
@@ -396,9 +394,6 @@ void HairInterface::setHairColorB(int value)
     m_glWidget->forceUpdate();
 }
 
-
-
-
 void HairInterface::inputWindMagnitudeText(QString text)
 {
     if (text.length() == 0) return;
@@ -447,8 +442,6 @@ void HairInterface::inputWindDirectionZText(QString text)
     } else if (value == m_glWidget->m_testSimulation->m_windDir.z) return;
     m_glWidget->m_testSimulation->m_windDir.z = value;
 }
-
-
 
 void HairInterface::inputShadowIntensityText(QString text)
 {

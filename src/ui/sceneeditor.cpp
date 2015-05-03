@@ -35,8 +35,7 @@ SceneEditor::SceneEditor(GLWidget *parent, ObjMesh *mesh) :
     connect(m_ui->falloffConstant, SIGNAL(clicked()), this, SLOT(setFalloffConstant()));
     connect(m_ui->falloffLinear, SIGNAL(clicked()), this, SLOT(setFalloffLinear()));
     connect(m_ui->falloffQuadratic, SIGNAL(clicked()), this, SLOT(setFalloffQuadratic()));
-    connect(m_ui->clearWhiteButton, SIGNAL(pressed()), this, SLOT(clearWhite()));
-    connect(m_ui->clearBlackButton, SIGNAL(pressed()), this, SLOT(clearBlack()));
+    connect(m_ui->clearButton, SIGNAL(pressed()), this, SLOT(clearTexture()));
     connect(m_ui->densityMapOption, SIGNAL(clicked()), this, SLOT(setDensityTexture()));
     connect(m_ui->directionMapOption, SIGNAL(clicked()), this, SLOT(setDirectionTexture()));    
     connect(m_ui->brushDirLeft, SIGNAL(clicked()), this, SLOT(setBrushDirLeft()));
@@ -200,11 +199,12 @@ void SceneEditor::setBrushDirDown(){
     m_sceneWidget->updateBrushSettings();
 }
 
-void SceneEditor::clearWhite(){
-    m_sceneWidget->clearTexture(255, 255, 255);
-}
-void SceneEditor::clearBlack(){
-    m_sceneWidget->clearTexture(0, 0, 0);
+void SceneEditor::clearTexture(){
+    if (m_sceneWidget->m_currentTexture == m_sceneWidget->m_densityMapTexture){
+        m_sceneWidget->clearTexture(0, 0, 0);
+    } else if (m_sceneWidget->m_currentTexture == m_sceneWidget->m_directionMapTexture){
+        m_sceneWidget->clearTexture(128, 128, 255);
+    }
 }
 
 void SceneEditor::inputGlobalDensityText(QString text)

@@ -44,7 +44,7 @@
        <x>0</x>
        <y>0</y>
        <width>181</width>
-       <height>956</height>
+       <height>1008</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="testHolder">
@@ -81,19 +81,6 @@
           <normalon>:/images/chevron_down.png</normalon>:/images/chevron_up.png</iconset>
         </property>
        </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_5">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
       </item>
       <item>
        <widget class="QGroupBox" name="groupMaps">
@@ -176,19 +163,6 @@
           <normalon>:/images/chevron_down.png</normalon>:/images/chevron_up.png</iconset>
         </property>
        </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_9">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
       </item>
       <item>
        <widget class="QGroupBox" name="groupGlobals">
@@ -394,19 +368,6 @@
           <normalon>:/images/chevron_down.png</normalon>:/images/chevron_up.png</iconset>
         </property>
        </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_8">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
       </item>
       <item>
        <widget class="QGroupBox" name="groupBrush">
@@ -654,44 +615,6 @@
           </property>
          </widget>
         </widget>
-        <widget class="QPushButton" name="clearWhiteButton">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>440</y>
-           <width>171</width>
-           <height>32</height>
-          </rect>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Clear White</string>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="clearBlackButton">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>410</y>
-           <width>171</width>
-           <height>32</height>
-          </rect>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Clear Black</string>
-         </property>
-        </widget>
         <widget class="QGroupBox" name="groupBrushDirection">
          <property name="geometry">
           <rect>
@@ -803,7 +726,7 @@
        <x>0</x>
        <y>0</y>
        <width>211</width>
-       <height>491</height>
+       <height>471</height>
       </rect>
      </property>
      <property name="minimumSize">
@@ -890,6 +813,25 @@
      </property>
      <property name="text">
       <string>Apply and Close</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="clearButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>470</y>
+       <width>181</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Clear</string>
      </property>
     </widget>
    </widget>

@@ -38,9 +38,9 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     
     resetFromSceneEditorGrowthTexture = NULL;
     resetFromSceneEditorGroomingTexture = NULL;
-
+    
     m_noiseTexture = new Texture();
-
+    
     // Shader programs
     m_programs = {
         m_hairProgram = new HairShaderProgram(),
@@ -51,7 +51,7 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
         m_hairDepthPeelProgram = new HairDepthPeelShaderProgram(),
         m_meshDepthPeelProgram = new MeshDepthPeelShaderProgram(),
     };
-
+    
     // Framebuffers
     m_framebuffers = {
         m_hairShadowFramebuffer = new Framebuffer(),
@@ -96,7 +96,7 @@ void GLWidget::initializeGL()
     
     // Initialize textures.
     m_noiseTexture->createColorTexture(":/images/noise128.jpg", GL_LINEAR, GL_LINEAR);
-
+    
     // Initialize framebuffers.
     int shadowMapRes = 2048;
     glm::vec2 finalSize = glm::vec2(2 * width(), 2 * height());
@@ -112,7 +112,7 @@ void GLWidget::initializeGL()
     m_depthPeel0Framebuffer->generateDepthTexture(finalSize.x, finalSize.y, GL_NEAREST, GL_NEAREST);
     m_depthPeel1Framebuffer->generateColorTexture(finalSize.x, finalSize.y, GL_LINEAR, GL_LINEAR);
     m_depthPeel1Framebuffer->generateDepthBuffer(finalSize.x, finalSize.y);
-
+    
     // Initialize simulation.
     initSimulation();
     
@@ -124,17 +124,17 @@ void GLWidget::initializeGL()
 void GLWidget::paintGL()
 {
     ErrorChecker::printGLErrors("start of paintGL");
-
+    
     if (resetFromSceneEditorGroomingTexture != NULL && resetFromSceneEditorGrowthTexture != NULL){
         applySceneEditor(resetFromSceneEditorGrowthTexture, resetFromSceneEditorGroomingTexture);
         resetFromSceneEditorGroomingTexture = NULL;
         resetFromSceneEditorGrowthTexture = NULL;
     }
-        
+    
     m_clock.restart();
     
     _resizeDepthPeelFramebuffers();
-        
+    
     // Update simulation if not paused.
     if (!isPaused())
     {
@@ -162,7 +162,7 @@ void GLWidget::paintGL()
     m_depthPeel0Framebuffer->depthTexture->bind(GL_TEXTURE6);
     m_depthPeel0Framebuffer->colorTexture->bind(GL_TEXTURE7);
     m_depthPeel1Framebuffer->colorTexture->bind(GL_TEXTURE8);
-
+    
     if (useShadows)
     {
         // Render hair shadow map.
@@ -195,31 +195,31 @@ void GLWidget::paintGL()
         glDisable(GL_BLEND);
         
     }
-
+    
     if (useTransparency)
     {
         glViewport(0, 0, m_depthPeel0Framebuffer->colorTexture->width(), m_depthPeel0Framebuffer->colorTexture->height());
         glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
-
+        
         // Draw first (front-most) depth peeling layer.
         m_depthPeel0Framebuffer->bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         _drawHair(m_hairProgram, model, m_view, m_projection);
         _drawMesh(m_meshProgram, model, m_view, m_projection);
-
+        
         // Draw second depth peeling layer.
         m_depthPeel1Framebuffer->bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);      
         _drawHair(m_hairDepthPeelProgram, model, m_view, m_projection);
         _drawMesh(m_meshDepthPeelProgram, model, m_view, m_projection);
-
+        
         // Render farthest layer to screen.
         m_depthPeel1Framebuffer->unbind();
         glViewport(0, 0, width(), height());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDisable(GL_DEPTH_TEST);
         m_depthPeel1Framebuffer->colorTexture->renderFullScreen();
-
+        
         // Blend closer layers on top.
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -241,13 +241,13 @@ void GLWidget::paintGL()
             // Render into default framebuffer...
             glViewport(0, 0, width(), height());
         }
-
+        
         // Render scene.
         glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         _drawHair(m_hairProgram, model, m_view, m_projection);
         _drawMesh(m_meshProgram, model, m_view, m_projection);
-
+        
         if (useSupersampling)
         {
             // Render supersampled texture.
@@ -257,7 +257,7 @@ void GLWidget::paintGL()
             m_finalFramebuffer->colorTexture->renderFullScreen();
         }
     }
-        
+    
     
     // Clean up.
     m_noiseTexture->unbind(GL_TEXTURE0);
@@ -269,7 +269,7 @@ void GLWidget::paintGL()
     m_depthPeel0Framebuffer->depthTexture->bind(GL_TEXTURE6);
     m_depthPeel0Framebuffer->colorTexture->bind(GL_TEXTURE7);
     m_depthPeel1Framebuffer->colorTexture->bind(GL_TEXTURE8);
-
+    
     // Update UI.
     m_hairInterface->updateFPSLabel(m_increment);
     if (m_paused || m_pausedLastFrame)
@@ -287,7 +287,7 @@ void GLWidget::resizeGL(int w, int h)
     
     m_finalFramebuffer->colorTexture->resize(2*w, 2*h);
     m_finalFramebuffer->resizeDepthBuffer(2*w, 2*h);
-
+    
     forceUpdate();
 }
 
@@ -296,7 +296,7 @@ void GLWidget::_resizeDepthPeelFramebuffers()
 {
     int w = useSupersampling ? 2 * width() : width();
     int h = useSupersampling ? 2 * height() : height();
-
+    
     Texture *colorTexture0 = m_depthPeel0Framebuffer->colorTexture;
     if (colorTexture0->width() != w || colorTexture0->height() != h)
     {
@@ -360,7 +360,6 @@ void GLWidget::initSimulation()
 {
     safeDelete(m_highResMesh);
     safeDelete(m_lowResMesh);
-    safeDelete(m_testSimulation);
     HairObject *_oldHairObject = m_hairObject;
     
     m_highResMesh = new ObjMesh();
@@ -370,13 +369,19 @@ void GLWidget::initSimulation()
     m_lowResMesh = new ObjMesh();
     m_lowResMesh->init(":/models/headLowRes.obj", 1.1);
     
-    m_testSimulation = new Simulation(this, m_lowResMesh);
+    Simulation *_oldSim = m_testSimulation;
+    m_testSimulation = new Simulation(this, m_lowResMesh, _oldSim);
     
-    QImage initialHairMap(":/images/headHair.jpg");
-    QImage initialGroomingMap(initialHairMap.width(), initialHairMap.height(), initialHairMap.format());
-    initialGroomingMap.fill(QColor(128, 128, 255));
-    m_hairObject = new HairObject(m_highResMesh, m_hairDensity, m_maxHairLength, initialHairMap, initialGroomingMap, m_testSimulation, m_hairObject);
+    if (_oldHairObject == NULL){
+        QImage initialGrowthMap(":/images/headHair.jpg");
+        QImage initialGroomingMap(initialGrowthMap.width(), initialGrowthMap.height(), initialGrowthMap.format());
+        initialGroomingMap.fill(QColor(128, 128, 255));
+        m_hairObject = new HairObject(m_highResMesh, m_hairDensity, m_maxHairLength, initialGrowthMap, initialGroomingMap, m_testSimulation, _oldHairObject);
+    } else {
+        m_hairObject = new HairObject(m_highResMesh, m_hairDensity, m_maxHairLength, _oldHairObject->m_hairGrowthMap, _oldHairObject->m_hairGroomingMap, m_testSimulation, _oldHairObject);
+    }
     
+    safeDelete(_oldSim);
     safeDelete(_oldHairObject);
     
     m_hairInterface->setHairObject(m_hairObject);
@@ -399,11 +404,11 @@ void GLWidget::initCamera(){
 }
 
 void GLWidget::applySceneEditor(Texture *_hairGrowthTexture, Texture *_hairGroomingTexture){
-
+    
     HairObject *_oldHairObject = m_hairObject;
-        
+    
     m_hairObject = new HairObject(
-                m_highResMesh, m_hairDensity, m_maxHairLength, _hairGrowthTexture->m_image, _hairGroomingTexture->m_image, m_testSimulation);
+                m_highResMesh, m_hairDensity, m_maxHairLength, _hairGrowthTexture->m_image, _hairGroomingTexture->m_image, m_testSimulation, _oldHairObject);
     
     
     safeDelete(_oldHairObject);
@@ -483,15 +488,15 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         else
         {
             // Rotate in right
-//            glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
-//            glm::mat4 inverseView = glm::inverse(m_view);
-//            glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, 0, 1)));
-//            glm::vec3 right = glm::cross(up, look);
+            //            glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
+            //            glm::mat4 inverseView = glm::inverse(m_view);
+            //            glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, 0, 1)));
+            //            glm::vec3 right = glm::cross(up, look);
             float angle = delta.y() * 0.001f;
             m_testSimulation->updateRotation(m_hairObject, angle, glm::vec3(1,0,0));
         }
     }
-
+    
     forceUpdate();
 }
 
@@ -506,7 +511,7 @@ void GLWidget::wheelEvent(QWheelEvent *event)
     m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
             glm::rotate(m_angleY, glm::vec3(1, 0, 0)) *
             glm::rotate(m_angleX, glm::vec3(0, 1, 0));
-
+    
     forceUpdate();
 }
 

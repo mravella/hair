@@ -50,8 +50,7 @@ public slots:
     void inputGlobalLengthText(QString text);
     void setGlobalLength(int value);
     
-    void clearWhite();
-    void clearBlack();
+    void clearTexture();
     
     void applyEditor();
     void applyAndCloseEditor();

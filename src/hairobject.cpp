@@ -96,11 +96,18 @@ void HairObject::setAttributes(HairObject *_oldObject){
                     _oldObject->m_hairGroupSpread,
                     _oldObject->m_hairRadius,
                     _oldObject->m_noiseAmplitude,
-                    _oldObject->m_numSplineVertices);
+                    _oldObject->m_noiseFrequency,
+                    _oldObject->m_numSplineVertices,
+                    _oldObject->m_shadowIntensity,
+                    _oldObject->m_diffuseIntensity,
+                    _oldObject->m_specularIntensity,
+                    _oldObject->m_transparency,
+                    _oldObject->m_useHairColorVariation,
+                    _oldObject->m_hairColorVariation);
     }
 }
 
-void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hairGroupSpread, float _hairRadius, float _noiseAmplitude, float _noiseFrequency, int _numSplineVertices){
+void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hairGroupSpread, float _hairRadius, float _noiseAmplitude, float _noiseFrequency, int _numSplineVertices, float _shadowIntensity, float _diffuseIntensity, float _specularIntensity, float _transparency, float _useHairColorVariation, float _hairColorVariation){
     m_color = _color;
     m_numGroupHairs = _numGroupHairs;
     m_hairGroupSpread = _hairGroupSpread;
@@ -108,11 +115,12 @@ void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hair
     m_noiseAmplitude = _noiseAmplitude;
     m_noiseFrequency = _noiseFrequency;
     m_numSplineVertices = _numSplineVertices;
-    m_shadowIntensity = 15;
-    m_diffuseIntensity = 1;
-    m_specularIntensity = .5;
-    m_useHairColorVariation = true;
-    m_hairColorVariation = 0.8f;
+    m_shadowIntensity = _shadowIntensity;
+    m_diffuseIntensity = _diffuseIntensity;
+    m_specularIntensity = _specularIntensity;
+    m_transparency = _transparency;
+    m_useHairColorVariation = _useHairColorVariation;
+    m_hairColorVariation = _hairColorVariation;
 }
 
 void HairObject::update(float _time){

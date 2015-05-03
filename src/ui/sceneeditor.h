@@ -22,6 +22,7 @@ public:
 public slots:
     void showHideGroupMaps();
     void showHideGroupBrush();
+    void showHideGroupGlobals();
     
     void inputRadiusText(QString text);
     void setRadius(int value);
@@ -44,8 +45,12 @@ public slots:
     void setBrushDirUp();
     void setBrushDirDown();
     
-    void clearWhite();
-    void clearBlack();
+    void inputGlobalDensityText(QString text);
+    void setGlobalDensity(int value);
+    void inputGlobalLengthText(QString text);
+    void setGlobalLength(int value);
+    
+    void clearTexture();
     
     void applyEditor();
     void applyAndCloseEditor();

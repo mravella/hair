@@ -19,6 +19,7 @@ class GLWidget : public QGLWidget
     Q_OBJECT
     friend class SceneWidget;
     friend class HairInterface;
+    friend class SceneEditor;
     
 public:
     GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent = 0);
@@ -99,6 +100,7 @@ private:
     glm::mat4 m_eyeToLight;
 
     float m_hairDensity;
+    float m_maxHairLength;
     
     QTime m_clock;
     QTimer m_timer; /** Timer calls tick() 60 times per second. */

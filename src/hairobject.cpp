@@ -16,37 +16,38 @@ HairObject::~HairObject()
 }
 
 HairObject::HairObject(
-        ObjMesh *_mesh,
-        float _hairsPerUnitArea,
-        QImage &_hairGrowthMap,
-        QImage &_hairGroomingMap,
-        Simulation *_simulation,
-        HairObject *_oldObject)
+        ObjMesh *mesh,
+        float hairsPerUnitArea,
+        float maxHairLength,
+        QImage &hairGrowthMap,
+        QImage &hairGroomingMap,
+        Simulation *simulation,
+        HairObject *oldObject)
 {    
-    if (_hairGrowthMap.width() == 0)
+    if (hairGrowthMap.width() == 0)
     {
         std::cout << "Hair growth map does not appear to be a valid image." << std::endl;
         exit(1);
     }
 
-    m_hairGrowthMap = _hairGrowthMap;
-    m_hairGroomingMap = _hairGroomingMap;
+    m_hairGrowthMap = hairGrowthMap;
+    m_hairGroomingMap = hairGroomingMap;
 
     // Initialize blurred hair growth map texture.
     QImage blurredImage;
-    Blurrer::blur(_hairGrowthMap, blurredImage);
+    Blurrer::blur(hairGrowthMap, blurredImage);
     m_blurredHairGrowthMapTexture = new Texture();
     m_blurredHairGrowthMapTexture->createColorTexture(blurredImage, GL_LINEAR, GL_LINEAR);
 
     
     int _failures = 0;
     int _emptyPoints = 0;
-    for (unsigned int i = 0; i < _mesh->triangles.size(); i++)
+    for (unsigned int i = 0; i < mesh->triangles.size(); i++)
     {
-        Triangle t = _mesh->triangles[i];
+        Triangle t = mesh->triangles[i];
 
         // Number of guide hairs to generate on this triangle.
-        int numHairs = (int) (_hairsPerUnitArea * t.area() + rand() / (float)RAND_MAX);
+        int numHairs = (int) (hairsPerUnitArea * t.area() + rand() / (float)RAND_MAX);
         for (int hair = 0; hair < numHairs; hair++)
         {
             // Generate random point on triangle.
@@ -54,22 +55,19 @@ HairObject::HairObject(
             t.randPoint(pos, uv, normal);
             uv = glm::vec2(MIN(uv.x, 0.999), MIN(uv.y, 0.999)); // Make UV in range [0,1) instead of [0,1]
 
-            QPoint p = QPoint(uv.x * _hairGrowthMap.width(), (1 - uv.y) * _hairGrowthMap.height());
-            if (!_hairGrowthMap.valid(p)){
+            QPoint p = QPoint(uv.x * hairGrowthMap.width(), (1 - uv.y) * hairGrowthMap.height());
+            if (!hairGrowthMap.valid(p)){
                 _failures++;
                 continue; // Don't put hair on neck......
             }
 
             // If hair growth map is black, skip this hair.
-            QColor hairGrowth = QColor(_hairGrowthMap.pixel(p));
+            QColor hairGrowth = QColor(hairGrowthMap.pixel(p));
             if (hairGrowth.valueF() < 0.05){
                 _emptyPoints++;
                 continue;
             }
             
-            float maxHairLength = 0.45;
-            
-
             glm::vec3 u = glm::normalize(glm::cross(normal, glm::vec3(0, 1, 0)));
             glm::vec3 v = glm::normalize(glm::cross(u, normal));
             QColor groomingColor = QColor(m_hairGroomingMap.pixel(p));
@@ -83,9 +81,9 @@ HairObject::HairObject(
         }
     }
     
-    setAttributes(_oldObject);
+    setAttributes(oldObject);
 
-    m_simulation = _simulation;    
+    m_simulation = simulation;    
 }
 
 void HairObject::setAttributes(HairObject *_oldObject){
@@ -98,11 +96,18 @@ void HairObject::setAttributes(HairObject *_oldObject){
                     _oldObject->m_hairGroupSpread,
                     _oldObject->m_hairRadius,
                     _oldObject->m_noiseAmplitude,
-                    _oldObject->m_numSplineVertices);
+                    _oldObject->m_noiseFrequency,
+                    _oldObject->m_numSplineVertices,
+                    _oldObject->m_shadowIntensity,
+                    _oldObject->m_diffuseIntensity,
+                    _oldObject->m_specularIntensity,
+                    _oldObject->m_transparency,
+                    _oldObject->m_useHairColorVariation,
+                    _oldObject->m_hairColorVariation);
     }
 }
 
-void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hairGroupSpread, float _hairRadius, float _noiseAmplitude, float _noiseFrequency, int _numSplineVertices){
+void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hairGroupSpread, float _hairRadius, float _noiseAmplitude, float _noiseFrequency, int _numSplineVertices, float _shadowIntensity, float _diffuseIntensity, float _specularIntensity, float _transparency, float _useHairColorVariation, float _hairColorVariation){
     m_color = _color;
     m_numGroupHairs = _numGroupHairs;
     m_hairGroupSpread = _hairGroupSpread;
@@ -110,11 +115,12 @@ void HairObject::setAttributes(glm::vec3 _color, int _numGroupHairs, float _hair
     m_noiseAmplitude = _noiseAmplitude;
     m_noiseFrequency = _noiseFrequency;
     m_numSplineVertices = _numSplineVertices;
-    m_shadowIntensity = 15;
-    m_diffuseIntensity = 1;
-    m_specularIntensity = .5;
-    m_useHairColorVariation = true;
-    m_hairColorVariation = 0.8f;
+    m_shadowIntensity = _shadowIntensity;
+    m_diffuseIntensity = _diffuseIntensity;
+    m_specularIntensity = _specularIntensity;
+    m_transparency = _transparency;
+    m_useHairColorVariation = _useHairColorVariation;
+    m_hairColorVariation = _hairColorVariation;
 }
 
 void HairObject::update(float _time){

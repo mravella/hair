@@ -29,7 +29,7 @@
 
 
 
-Simulation::Simulation(GLWidget *widget, ObjMesh *mesh)
+Simulation::Simulation(GLWidget *widget, ObjMesh *mesh, Simulation *_oldSim)
 {
     m_time = 0;
     m_widget = widget;
@@ -37,10 +37,18 @@ Simulation::Simulation(GLWidget *widget, ObjMesh *mesh)
     m_xform = glm::mat4(1.0);
     m_fluidGrid = std::map<grid_loc, fluid>();
     m_headMoving = false;
-    m_windDir = glm::vec3(0, 0, 1);
-    m_windMagnitude = 0.0f;
-    m_friction = FRICTION;
-    m_stiffness = STIFFNESS;
+    
+    if (_oldSim == NULL){
+        m_windDir = glm::vec3(1, 0, 0);
+        m_windMagnitude = 0.0f;
+        m_friction = FRICTION;
+        m_stiffness = STIFFNESS;
+    } else {
+        m_windDir = _oldSim->m_windDir;
+        m_windMagnitude = _oldSim->m_windMagnitude;
+        m_friction = _oldSim->m_friction;
+        m_stiffness = _oldSim->m_stiffness;
+    }
 }
 
 Simulation::~Simulation()
@@ -53,21 +61,21 @@ void Simulation::update(float _time){
 
 void Simulation::simulate(HairObject *_object)
 {
-
-//    QTime t;
-//    t.start();
-//    moveObjects(_object);
-
-
+    
+    //    QTime t;
+    //    t.start();
+    //    moveObjects(_object);
+    
+    
     calculateExternalForces(_object);
     
     if (m_widget->useFrictionSim){
         
         calculateFluidGrid(_object);
-//            cout << "1: " << t.restart() << " ms"<< endl;
+        //            cout << "1: " << t.restart() << " ms"<< endl;
         
         calculateFrictionAndRepulsion(_object);
-//            cout << "2: " << t.restart() << " ms"<< endl;
+        //            cout << "2: " << t.restart() << " ms"<< endl;
     }
     
     particleSimulation(_object);
@@ -88,9 +96,9 @@ void Simulation::updateHairPosition(HairObject *object)
 
 void Simulation::moveObjects(HairObject *_object)
 {
-
+    
     m_xform = glm::rotate((float) sin(m_time), glm::vec3(0, 1, 0));
-//        m_xform = glm::translate(m_xform, glm::vec3(sin(m_time), 0.0 , sin(m_time)));
+    //        m_xform = glm::translate(m_xform, glm::vec3(sin(m_time), 0.0 , sin(m_time)));
     //    float x = CLAMP(fabs(sin(m_time)), 0.5, 1.0); m_xform = glm::scale(glm::mat4(1.0), glm::vec3(x, x, x));
 }
 
@@ -120,18 +128,18 @@ void Simulation::calculateExternalForces(HairObject *_object)
             
             glm::vec3 force = glm::vec3(0.0);
             force += glm::vec3(glm::inverse(m_xform) * glm::vec4(0.0, -9.8, 0.0, 0.0));
-
+            
             if (m_headMoving)
             {
                 glm::vec4 curr = m_xform * glm::vec4(currVert->startPosition, 1.0);
                 glm::vec3 acceleration = (glm::vec3(currVert->prevPos - glm::vec3(curr)) - currVert->velocity * TIMESTEP) / (TIMESTEP * TIMESTEP);
                 force += acceleration * currVert->mass * 0.1f;
-//                cout << "Prev: " << glm::to_string(currVert->prevPos) << endl;
-//                cout << "Curr: " << glm::to_string(glm::vec3(curr)) << endl;
+                //                cout << "Prev: " << glm::to_string(currVert->prevPos) << endl;
+                //                cout << "Curr: " << glm::to_string(glm::vec3(curr)) << endl;
             }
-
+            
             force += glm::vec3(glm::inverse(m_xform) * glm::vec4(glm::normalize(m_windDir) * m_windMagnitude, 0.0));
-
+            
             glm::vec3 normal;
             float insideDist;
             if (m_mesh->contains(normal, currVert->position, insideDist))
@@ -178,18 +186,18 @@ void Simulation::calculateFluidGrid(HairObject *_object){
             float xPercentage = x - xFloor;
             float yPercentage = y - yFloor;
             float zPercentage = z - zFloor;
-
+            
             for (int i = 0; i < 8; ++i)
             {
                 float currFrac = (((i & 1) >> 0) * (1.0 - xPercentage) + (1 - ((i & 1) >> 0)) * (xPercentage))
-                               * (((i & 2) >> 1) * (1.0 - yPercentage) + (1 - ((i & 2) >> 1)) * (yPercentage))
-                               * (((i & 4) >> 2) * (1.0 - zPercentage) + (1 - ((i & 4) >> 2)) * (zPercentage));
-
+                        * (((i & 2) >> 1) * (1.0 - yPercentage) + (1 - ((i & 2) >> 1)) * (yPercentage))
+                        * (((i & 4) >> 2) * (1.0 - zPercentage) + (1 - ((i & 4) >> 2)) * (zPercentage));
+                
                 float x, y, z;
                 if ((i & 1) >> 0) x = xCeil; else x = xFloor;
                 if ((i & 2) >> 1) y = yCeil; else y = yFloor;
                 if ((i & 4) >> 2) z = zCeil; else z = zFloor;
-
+                
                 this->insertFluid(*fluidGrid, glm::vec3(x, y, z), currFrac, currVert->velocity * currFrac);
             }
         }
@@ -285,8 +293,8 @@ void* Simulation::calculateFrictionAndRepulsionThread(void *untypedInfoStruct){
             float xPercentage = x - xFloor;
             float yPercentage = y - yFloor;
             float zPercentage = z - zFloor;
-
-//            glm::vec3 currGradient = gradient(*fluidGrid, currVert->position);
+            
+            //            glm::vec3 currGradient = gradient(*fluidGrid, currVert->position);
             
             float XYZ = (1.0 - xPercentage) * (1.0 - yPercentage) * (1.0 - zPercentage);
             float XYz = (1.0 - xPercentage) * (1.0 - yPercentage) * (zPercentage);
@@ -315,7 +323,7 @@ void* Simulation::calculateFrictionAndRepulsionThread(void *untypedInfoStruct){
             // Account for friction;
             currVert->velocity = (1.0f - friction) * currVert->velocity + friction * v;
             
-//            currVert->velocity = currVert->velocity + REPULSION * currGradient / TIMESTEP;
+            //            currVert->velocity = currVert->velocity + REPULSION * currGradient / TIMESTEP;
             
         }
     }

@@ -35,6 +35,8 @@ public slots:
     
     void inputHairsPerPatchText(QString text);
     void setHairsPerPatch(int);
+    void inputHairGroupSpreadText(QString text);
+    void setHairGroupSpread(int);
     void inputSplineVerticesText(QString text);
     void setSplineVertices(int numVertices);
     void inputHairRadiusText(QString text);

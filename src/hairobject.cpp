@@ -8,36 +8,6 @@
 
 #include <glm/gtx/color_space.hpp>
 
-HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
-{
-    
-    m_numGuideHairs = _numGuideHairs;
-    
-    for (int i = 0; i < m_numGuideHairs; i++)
-    {
-        m_guideHairs.append(new Hair(20, 1, glm::vec3(i + 0.25, 1, 0), glm::vec3(1, 0, 0)));
-    }
-    
-    setAttributes();
-
-    m_simulation = _simulation;
-}
-
-HairObject::HairObject(HairObject *_oldObject, Simulation *_simulation)
-{
-    
-    m_numGuideHairs = _oldObject->m_numGuideHairs;
-    
-    for (int i = 0; i < m_numGuideHairs; i++)
-    {
-        m_guideHairs.append(new Hair(20, 1, glm::vec3(i + 0.25, 1, 0), glm::vec3(1, 0, 0)));
-    }
-    
-    setAttributes(_oldObject);
-
-    m_simulation = _simulation;
-}
-
 HairObject::~HairObject()
 {
     for (int i = 0; i < m_guideHairs.size(); ++i)
@@ -46,38 +16,38 @@ HairObject::~HairObject()
 }
 
 HairObject::HairObject(
-        ObjMesh *_mesh,
-        float _hairsPerUnitArea,
-        float _maxHairLength,
-        QImage &_hairGrowthMap,
-        QImage &_hairGroomingMap,
+        ObjMesh *mesh,
+        float hairsPerUnitArea,
+        float maxHairLength,
+        QImage &hairGrowthMap,
+        QImage &hairGroomingMap,
         Simulation *_simulation,
         HairObject *_oldObject)
 {    
-    if (_hairGrowthMap.width() == 0)
+    if (hairGrowthMap.width() == 0)
     {
         std::cout << "Hair growth map does not appear to be a valid image." << std::endl;
         exit(1);
     }
 
-    m_hairGrowthMap = _hairGrowthMap;
-    m_hairGroomingMap = _hairGroomingMap;
+    m_hairGrowthMap = hairGrowthMap;
+    m_hairGroomingMap = hairGroomingMap;
 
     // Initialize blurred hair growth map texture.
     QImage blurredImage;
-    Blurrer::blur(_hairGrowthMap, blurredImage);
+    Blurrer::blur(hairGrowthMap, blurredImage);
     m_blurredHairGrowthMapTexture = new Texture();
     m_blurredHairGrowthMapTexture->createColorTexture(blurredImage, GL_LINEAR, GL_LINEAR);
 
     
     int _failures = 0;
     int _emptyPoints = 0;
-    for (unsigned int i = 0; i < _mesh->triangles.size(); i++)
+    for (unsigned int i = 0; i < mesh->triangles.size(); i++)
     {
-        Triangle t = _mesh->triangles[i];
+        Triangle t = mesh->triangles[i];
 
         // Number of guide hairs to generate on this triangle.
-        int numHairs = (int) (_hairsPerUnitArea * t.area() + rand() / (float)RAND_MAX);
+        int numHairs = (int) (hairsPerUnitArea * t.area() + rand() / (float)RAND_MAX);
         for (int hair = 0; hair < numHairs; hair++)
         {
             // Generate random point on triangle.
@@ -85,14 +55,14 @@ HairObject::HairObject(
             t.randPoint(pos, uv, normal);
             uv = glm::vec2(MIN(uv.x, 0.999), MIN(uv.y, 0.999)); // Make UV in range [0,1) instead of [0,1]
 
-            QPoint p = QPoint(uv.x * _hairGrowthMap.width(), (1 - uv.y) * _hairGrowthMap.height());
-            if (!_hairGrowthMap.valid(p)){
+            QPoint p = QPoint(uv.x * hairGrowthMap.width(), (1 - uv.y) * hairGrowthMap.height());
+            if (!hairGrowthMap.valid(p)){
                 _failures++;
                 continue; // Don't put hair on neck......
             }
 
             // If hair growth map is black, skip this hair.
-            QColor hairGrowth = QColor(_hairGrowthMap.pixel(p));
+            QColor hairGrowth = QColor(hairGrowthMap.pixel(p));
             if (hairGrowth.valueF() < 0.05){
                 _emptyPoints++;
                 continue;
@@ -105,9 +75,9 @@ HairObject::HairObject(
             float b = 10.0 * (groomingColor.green() - 128.0) / 255.0;
             glm::vec3 x = glm::vec3(a, b, 1.0);
             glm::mat3 m = glm::mat3(u, v, normal);
-            glm::vec3 newNormal = glm::normalize(m * x);
+            glm::vec3 dir = glm::normalize(m * x);
             
-            m_guideHairs.append(new Hair(20, _maxHairLength * hairGrowth.valueF(), pos, newNormal));
+            m_guideHairs.append(new Hair(20, maxHairLength * hairGrowth.valueF(), pos, dir, normal));
         }
     }
     

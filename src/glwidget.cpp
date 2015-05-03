@@ -26,6 +26,7 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     : QGLWidget(format, parent),
       m_hairInterface(hairInterface),
       m_hairDensity(100),
+      m_maxHairLength(.45),
       m_timer(this),
       m_increment(0),
       m_targetFPS(60.f)
@@ -374,7 +375,7 @@ void GLWidget::initSimulation()
     QImage initialHairMap(":/images/headHair.jpg");
     QImage initialGroomingMap(initialHairMap.width(), initialHairMap.height(), initialHairMap.format());
     initialGroomingMap.fill(QColor(128, 128, 255));
-    m_hairObject = new HairObject(m_highResMesh, m_hairDensity, initialHairMap, initialGroomingMap, m_testSimulation, m_hairObject);
+    m_hairObject = new HairObject(m_highResMesh, m_hairDensity, m_maxHairLength, initialHairMap, initialGroomingMap, m_testSimulation, m_hairObject);
     
     safeDelete(_oldHairObject);
     
@@ -402,7 +403,7 @@ void GLWidget::applySceneEditor(Texture *_hairGrowthTexture, Texture *_hairGroom
     HairObject *_oldHairObject = m_hairObject;
         
     m_hairObject = new HairObject(
-                m_highResMesh, m_hairDensity, _hairGrowthTexture->m_image, _hairGroomingTexture->m_image, m_testSimulation);
+                m_highResMesh, m_hairDensity, m_maxHairLength, _hairGrowthTexture->m_image, _hairGroomingTexture->m_image, m_testSimulation);
     
     
     safeDelete(_oldHairObject);

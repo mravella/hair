@@ -19,11 +19,12 @@ public:
     
     // Generates hair on the mesh according to the hair growth map.
     HairObject(ObjMesh *_mesh,
-            float _hairsPerUnitArea,
-            QImage &hairGrowthMap,
-            QImage &hairGroomingMap,
-            Simulation *_simulation,
-            HairObject *_oldObject = NULL);
+               float _hairsPerUnitArea,
+               float _maxHairLength,
+               QImage &hairGrowthMap,
+               QImage &hairGroomingMap,
+               Simulation *_simulation,
+               HairObject *_oldObject = NULL);
     
     
     void update(float _time);
@@ -41,9 +42,9 @@ public:
 public:
     
     QList<Hair*> m_guideHairs;
-
+    
     Simulation *m_simulation;
-
+    
     QImage m_hairGrowthMap;
     QImage m_hairGroomingMap;
     Texture *m_blurredHairGrowthMapTexture;
@@ -60,7 +61,7 @@ public:
     int m_numSplineVertices;
     bool m_useHairColorVariation;
     float m_hairColorVariation;
-
+    
     glm::vec3 m_color;
     
     float m_shadowIntensity;

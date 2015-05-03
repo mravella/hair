@@ -48,6 +48,7 @@ HairObject::~HairObject()
 HairObject::HairObject(
         ObjMesh *_mesh,
         float _hairsPerUnitArea,
+        float _maxHairLength,
         QImage &_hairGrowthMap,
         QImage &_hairGroomingMap,
         Simulation *_simulation,
@@ -97,9 +98,6 @@ HairObject::HairObject(
                 continue;
             }
             
-            float maxHairLength = 0.45;
-            
-
             glm::vec3 u = glm::normalize(glm::cross(normal, glm::vec3(0, 1, 0)));
             glm::vec3 v = glm::normalize(glm::cross(u, normal));
             QColor groomingColor = QColor(m_hairGroomingMap.pixel(p));
@@ -109,7 +107,7 @@ HairObject::HairObject(
             glm::mat3 m = glm::mat3(u, v, normal);
             glm::vec3 newNormal = glm::normalize(m * x);
             
-            m_guideHairs.append(new Hair(20, maxHairLength * hairGrowth.valueF(), pos, newNormal));
+            m_guideHairs.append(new Hair(20, _maxHairLength * hairGrowth.valueF(), pos, newNormal));
         }
     }
     

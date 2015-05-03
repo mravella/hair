@@ -25,7 +25,7 @@
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
     : QGLWidget(format, parent),
       m_hairInterface(hairInterface),
-      m_hairDensity(100),
+      m_hairDensity(250),
       m_timer(this),
       m_increment(0),
       m_targetFPS(60.f)
@@ -471,24 +471,44 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
     }
     if (event->buttons() == Qt::MiddleButton)
     {
-        QPoint delta = event->pos() - m_prevRotPos;
-        if (fabs(delta.x()) > fabs(delta.y()))
-        {
-            // Rotate in up
-            glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
-            float angle = delta.x() * 0.001f;
-            m_testSimulation->updateRotation(m_hairObject, angle, glm::vec3(0, 1, 0));
-        }
-        else
-        {
-            // Rotate in right
-//            glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
-//            glm::mat4 inverseView = glm::inverse(m_view);
-//            glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, 0, 1)));
-//            glm::vec3 right = glm::cross(up, look);
-            float angle = delta.y() * 0.001f;
-            m_testSimulation->updateRotation(m_hairObject, angle, glm::vec3(1,0,0));
-        }
+
+        glm::vec3 p0 = glm::vec3(m_prevRotPos.x() / (float)width(), 1.f - m_prevRotPos.y() / (float)height(), 0.f);
+        glm::vec3 p1 = glm::vec3(event->pos().x() / (float)width(), 1.f - event->pos().y() / (float)height(), 0.f);
+
+        p0 = 2.f * p0 - 1.f;
+        p1 = 2.f * p1 - 1.f;
+
+        float angle = 5 * glm::length(p1 - p0);
+
+        glm::mat4 clipToObject = glm::inverse(m_projection * m_view * m_testSimulation->m_xform);
+        p0 = glm::vec3(glm::normalize( clipToObject * glm::vec4(p0, 0.f) ));
+        p1 = glm::vec3(glm::normalize( clipToObject * glm::vec4(p1, 0.f) ));
+
+        glm::vec3 axis = glm::cross(p0, p1);
+
+        m_testSimulation->updateRotation(m_hairObject, angle, axis);
+
+        m_prevRotPos = event->pos();
+
+
+        //        QPoint delta = event->pos() - m_prevRotPos;
+        //        if (fabs(delta.x()) > fabs(delta.y()))
+        //        {
+        //            // Rotate in up
+        //            glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
+        //            float angle = delta.x() * 0.001f;
+        //            m_testSimulation->updateRotation(m_hairObject, angle, glm::vec3(0, 1, 0));
+        //        }
+        //        else
+        //        {
+        //            // Rotate in right
+        ////            glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
+        ////            glm::mat4 inverseView = glm::inverse(m_view);
+        ////            glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, 0, 1)));
+        ////            glm::vec3 right = glm::cross(up, look);
+        //            float angle = delta.y() * 0.001f;
+        //            m_testSimulation->updateRotation(m_hairObject, angle, glm::vec3(1,0,0));
+        //        }
     }
 
     forceUpdate();

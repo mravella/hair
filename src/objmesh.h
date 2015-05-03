@@ -22,7 +22,7 @@ public:
 
     void draw();
 
-    bool contains(glm::vec3 &normal, glm::vec3 ro);
+    bool contains(glm::vec3 &normal, glm::vec3 ro, float &insideDist);
 
     std::vector<Triangle> triangles;
 

@@ -25,30 +25,19 @@ SceneEditor::SceneEditor(GLWidget *parent, ObjMesh *mesh) :
     // connect inputs
     connect(m_ui->showHideGroupMaps, SIGNAL(pressed()), this, SLOT(showHideGroupMaps()));
     connect(m_ui->showHideGroupBrush, SIGNAL(pressed()), this, SLOT(showHideGroupBrush()));    
-            
-    // brush radius
     connect(m_ui->sliderRadius, SIGNAL(valueChanged(int)), this, SLOT(setRadius(int)));
     connect(m_ui->inputRadius, SIGNAL(textChanged(QString)), this, SLOT(inputRadiusText(QString)));
-
-    // color
     connect(m_ui->sliderBrushGrayscale, SIGNAL(valueChanged(int)), this, SLOT(setBrushGrayscale(int)));
     connect(m_ui->inputBrushGrayscale, SIGNAL(textChanged(QString)), this, SLOT(inputBrushGrayscaleText(QString)));
-
-    // opacity
     connect(m_ui->sliderOpacity, SIGNAL(valueChanged(int)), this, SLOT(setOpacity(int)));
     connect(m_ui->inputOpacity, SIGNAL(textChanged(QString)), this, SLOT(inputOpacityText(QString)));
-    
-    
     connect(m_ui->falloffConstant, SIGNAL(clicked()), this, SLOT(setFalloffConstant()));
     connect(m_ui->falloffLinear, SIGNAL(clicked()), this, SLOT(setFalloffLinear()));
     connect(m_ui->falloffQuadratic, SIGNAL(clicked()), this, SLOT(setFalloffQuadratic()));
-    
     connect(m_ui->clearWhiteButton, SIGNAL(pressed()), this, SLOT(clearWhite()));
     connect(m_ui->clearBlackButton, SIGNAL(pressed()), this, SLOT(clearBlack()));
-    
     connect(m_ui->densityMapOption, SIGNAL(clicked()), this, SLOT(setDensityTexture()));
     connect(m_ui->directionMapOption, SIGNAL(clicked()), this, SLOT(setDirectionTexture()));    
-    
     connect(m_ui->brushDirLeft, SIGNAL(clicked()), this, SLOT(setBrushDirLeft()));
     connect(m_ui->brushDirRight, SIGNAL(clicked()), this, SLOT(setBrushDirRight()));
     connect(m_ui->brushDirUp, SIGNAL(clicked()), this, SLOT(setBrushDirUp()));
@@ -59,34 +48,27 @@ SceneEditor::SceneEditor(GLWidget *parent, ObjMesh *mesh) :
     connect(m_ui->applyAndCloseButton, SIGNAL(pressed()), this, SLOT(applyAndCloseEditor()));
     connect(m_ui->cancelButton, SIGNAL(pressed()), this, SLOT(cancelEditor()));
     
-    
-    // init ui values
+    // INIT UI VALUES
     m_ui->sliderRadius->setValue(m_sceneWidget->m_radius);
     m_ui->inputRadius->setText(QString::number(m_sceneWidget->m_radius));
-
-    // Sync brush color slider
     m_ui->sliderBrushGrayscale->setValue(m_sceneWidget->m_grayscale*2550);
     m_ui->inputBrushGrayscale->setText(QString::number(m_sceneWidget->m_grayscale, 'g', 2));
-
-    // Sync opacity slider
     m_ui->sliderOpacity->setValue(m_sceneWidget->m_opacity*2550);
     m_ui->inputOpacity->setText(QString::number(m_sceneWidget->m_opacity, 'g', 2));
-
 
     // open/close groups
 //    m_ui->groupMaps->hide();
     showHideGroupMaps();
     showHideGroupBrush();
     
-    setDensityTexture();
+    setDensityTexture(); // to make sure correct controls are displayed
+//    setDirectionTexture();
 }
 
 SceneEditor::~SceneEditor()
 {
     delete m_ui;
 }
-
-
 
 void SceneEditor::showHideGroupMaps()
 {
@@ -223,7 +205,6 @@ void SceneEditor::setDirectionTexture(){
     
     m_sceneWidget->m_currentTexture = m_sceneWidget->m_directionMapTexture;
 }
-
 void SceneEditor::applyEditor()
 {
     m_sceneWidget->apply();
@@ -239,4 +220,3 @@ void SceneEditor::cancelEditor()
 {
     this->close();
 }
-

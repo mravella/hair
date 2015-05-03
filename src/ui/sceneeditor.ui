@@ -52,9 +52,12 @@
        <widget class="QPushButton" name="showHideGroupMaps">
         <property name="maximumSize">
          <size>
-          <width>190</width>
+          <width>70</width>
           <height>21</height>
          </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: none</string>
         </property>
         <property name="text">
          <string>Maps</string>
@@ -118,9 +121,12 @@
        <widget class="QPushButton" name="showHideGroupBrush">
         <property name="maximumSize">
          <size>
-          <width>190</width>
+          <width>74</width>
           <height>21</height>
          </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: none</string>
         </property>
         <property name="text">
          <string>Brush</string>

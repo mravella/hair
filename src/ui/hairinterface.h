@@ -61,8 +61,11 @@ public slots:
     void setStiffness(int value);
     void inputTransparencyText(QString text);
     void setTransparency(int value);
-    void inputHairColorVariationText(QString text);
     void setHairColorVariation(int value);
+    void inputHairColorVariationText(QString text);
+    void inputWindDirectionXText(QString value);
+    void inputWindDirectionYText(QString value);
+    void inputWindDirectionZText(QString value);
     
     void setShadows(bool);
     void setSupersampling(bool);

@@ -69,6 +69,9 @@ void HairInterface::connectUserInputs()
     connect(m_ui->inputTransparency, SIGNAL(textChanged(QString)), this, SLOT(inputTransparencyText(QString)));    
     connect(m_ui->sliderHairColorVariation, SIGNAL(valueChanged(int)), this, SLOT(setHairColorVariation(int)));
     connect(m_ui->inputHairColorVariation, SIGNAL(textChanged(QString)), this, SLOT(inputHairColorVariationText(QString)));    
+    connect(m_ui->inputWindDirectionX, SIGNAL(textChanged(QString)), this, SLOT(inputWindDirectionXText(QString)));
+    connect(m_ui->inputWindDirectionY, SIGNAL(textChanged(QString)), this, SLOT(inputWindDirectionYText(QString)));
+    connect(m_ui->inputWindDirectionZ, SIGNAL(textChanged(QString)), this, SLOT(inputWindDirectionZText(QString)));
     
     // toggles
     connect(m_ui->frictionSimCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFrictionSim(bool)));
@@ -127,6 +130,9 @@ void HairInterface::setHairObject(HairObject *hairObject)
     m_ui->inputTransparency->setText(QString::number(m_hairObject->m_transparency, 'g', 4));
     m_ui->sliderHairColorVariation->setValue(m_hairObject->m_hairColorVariation*1000);
     m_ui->inputHairColorVariation->setText(QString::number(m_hairObject->m_hairColorVariation, 'g', 4));
+    m_ui->inputWindDirectionX->setText(QString::number(m_glWidget->m_testSimulation->m_windDir.x, 'g', 4));
+    m_ui->inputWindDirectionY->setText(QString::number(m_glWidget->m_testSimulation->m_windDir.y, 'g', 4));
+    m_ui->inputWindDirectionZ->setText(QString::number(m_glWidget->m_testSimulation->m_windDir.z, 'g', 4));
     
     // Sync toggles
     m_ui->frictionSimCheckBox->setChecked(m_glWidget->useFrictionSim);
@@ -387,6 +393,36 @@ void HairInterface::setWindMagnitude(int value)
     m_ui->inputWindMagnitude->setText(QString::number(m_glWidget->m_testSimulation->m_windMagnitude, 'g', 3));
 }
 
+void HairInterface::inputWindDirectionXText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_glWidget->m_testSimulation->m_windDir.x;
+    } else if (value == m_glWidget->m_testSimulation->m_windDir.x) return;
+    m_glWidget->m_testSimulation->m_windDir.x = value;
+}
+void HairInterface::inputWindDirectionYText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_glWidget->m_testSimulation->m_windDir.y;
+    } else if (value == m_glWidget->m_testSimulation->m_windDir.y) return;
+    m_glWidget->m_testSimulation->m_windDir.y = value;
+}
+void HairInterface::inputWindDirectionZText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_glWidget->m_testSimulation->m_windDir.z;
+    } else if (value == m_glWidget->m_testSimulation->m_windDir.z) return;
+    m_glWidget->m_testSimulation->m_windDir.z = value;
+}
 
 
 

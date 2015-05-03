@@ -8,7 +8,7 @@
  */
 
 
-Hair::Hair(int numSegments, double length, glm::vec3 location, glm::vec3 dir)
+Hair::Hair(int numSegments, double length, glm::vec3 location, glm::vec3 dir, glm::vec3 normal)
 {
     if (numSegments < 1)
         cerr << "Number of hair segments should be at least 1" << endl;
@@ -19,8 +19,8 @@ Hair::Hair(int numSegments, double length, glm::vec3 location, glm::vec3 dir)
     dir = glm::normalize(dir);
 
     // Calculate basis vectors for plane orthogonal to dir.
-    m_triangleFace[0] = glm::normalize(glm::vec3(-dir.y, dir.x, 0));
-    m_triangleFace[1] = glm::cross(dir, m_triangleFace[0]);
+    m_triangleFace[0] = glm::normalize(glm::vec3(-normal.y, normal.x, 0));
+    m_triangleFace[1] = glm::cross(normal, m_triangleFace[0]);
 
     m_numSegments = numSegments;
     m_length = length;

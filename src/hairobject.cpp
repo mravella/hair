@@ -8,36 +8,6 @@
 
 #include <glm/gtx/color_space.hpp>
 
-HairObject::HairObject(int _numGuideHairs, Simulation *_simulation)
-{
-    
-    m_numGuideHairs = _numGuideHairs;
-    
-    for (int i = 0; i < m_numGuideHairs; i++)
-    {
-        m_guideHairs.append(new Hair(20, 1, glm::vec3(i + 0.25, 1, 0), glm::vec3(1, 0, 0)));
-    }
-    
-    setAttributes();
-
-    m_simulation = _simulation;
-}
-
-HairObject::HairObject(HairObject *_oldObject, Simulation *_simulation)
-{
-    
-    m_numGuideHairs = _oldObject->m_numGuideHairs;
-    
-    for (int i = 0; i < m_numGuideHairs; i++)
-    {
-        m_guideHairs.append(new Hair(20, 1, glm::vec3(i + 0.25, 1, 0), glm::vec3(1, 0, 0)));
-    }
-    
-    setAttributes(_oldObject);
-
-    m_simulation = _simulation;
-}
-
 HairObject::~HairObject()
 {
     for (int i = 0; i < m_guideHairs.size(); ++i)
@@ -107,9 +77,9 @@ HairObject::HairObject(
             float b = 10.0 * (groomingColor.green() - 128.0) / 255.0;
             glm::vec3 x = glm::vec3(a, b, 1.0);
             glm::mat3 m = glm::mat3(u, v, normal);
-            glm::vec3 newNormal = glm::normalize(m * x);
+            glm::vec3 dir = glm::normalize(m * x);
             
-            m_guideHairs.append(new Hair(20, maxHairLength * hairGrowth.valueF(), pos, newNormal));
+            m_guideHairs.append(new Hair(20, maxHairLength * hairGrowth.valueF(), pos, dir, normal));
         }
     }
     

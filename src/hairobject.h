@@ -13,8 +13,6 @@ class Texture;
 class HairObject
 {
 public:
-    HairObject(int _numGuideHairs, Simulation *_simulation);
-    HairObject(HairObject *_oldObject, Simulation *_simulation);
     ~HairObject();
     
     // Generates hair on the mesh according to the hair growth map.

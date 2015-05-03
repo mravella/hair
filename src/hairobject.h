@@ -21,8 +21,8 @@ public:
                float maxHairLength,
                QImage &hairGrowthMap,
                QImage &hairGroomingMap,
-               Simulation *_simulation,
-               HairObject *_oldObject = NULL);
+               Simulation *simulation,
+               HairObject *oldObject = NULL);
     
     
     void update(float _time);

@@ -41,6 +41,8 @@ void HairInterface::connectUserInputs()
     
     connect(m_ui->sliderHairsPerPatch, SIGNAL(valueChanged(int)), this, SLOT(setHairsPerPatch(int)));
     connect(m_ui->inputHairsPerPatch, SIGNAL(textChanged(QString)), this, SLOT(inputHairsPerPatchText(QString)));
+    connect(m_ui->sliderHairGroupSpread, SIGNAL(valueChanged(int)), this, SLOT(setHairGroupSpread(int)));
+    connect(m_ui->inputHairGroupSpread, SIGNAL(textChanged(QString)), this, SLOT(inputHairGroupSpreadText(QString)));
     connect(m_ui->sliderSplineVertices, SIGNAL(valueChanged(int)), this, SLOT(setSplineVertices(int)));
     connect(m_ui->inputSplineVertices, SIGNAL(textChanged(QString)), this, SLOT(inputSplineVerticesText(QString)));
     connect(m_ui->sliderHairRadius, SIGNAL(valueChanged(int)), this, SLOT(setHairRadius(int)));
@@ -102,6 +104,8 @@ void HairInterface::setHairObject(HairObject *hairObject)
 
     m_ui->sliderHairsPerPatch->setValue(m_hairObject->m_numGroupHairs);
     m_ui->inputHairsPerPatch->setText(QString::number(m_hairObject->m_numGroupHairs));
+    m_ui->sliderHairGroupSpread->setValue(m_hairObject->m_hairGroupSpread*1000);
+    m_ui->inputHairGroupSpread->setText(QString::number(m_hairObject->m_hairGroupSpread));    
     m_ui->sliderSplineVertices->setValue(m_hairObject->m_numSplineVertices);
     m_ui->inputSplineVertices->setText(QString::number(m_hairObject->m_numSplineVertices));
     m_ui->sliderHairRadius->setValue(m_hairObject->m_hairRadius*10000);
@@ -234,6 +238,26 @@ void HairInterface::setHairsPerPatch(int numHairs)
     updateStatsLabel();
     m_glWidget->forceUpdate();
 }
+
+void HairInterface::inputHairGroupSpreadText(QString text)
+{
+    if (text.length() == 0) return;
+    bool ok;
+    double value = text.toDouble(&ok);
+    if (!ok){
+        value = m_hairObject->m_hairGroupSpread;
+    } else if (value == m_hairObject->m_hairGroupSpread) return;
+    if (value == 0) return;
+    setHairGroupSpread(1000*value);
+    m_ui->sliderHairGroupSpread->setValue(1000*value);
+}
+void HairInterface::setHairGroupSpread(int value)
+{
+    m_hairObject->m_hairGroupSpread = value/1000.;
+    m_ui->inputHairGroupSpread->setText(QString::number(m_hairObject->m_hairGroupSpread, 'g', 4));
+    m_glWidget->forceUpdate();
+}
+
 
 void HairInterface::inputSplineVerticesText(QString text)
 {

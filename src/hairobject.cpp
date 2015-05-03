@@ -21,8 +21,8 @@ HairObject::HairObject(
         float maxHairLength,
         QImage &hairGrowthMap,
         QImage &hairGroomingMap,
-        Simulation *_simulation,
-        HairObject *_oldObject)
+        Simulation *simulation,
+        HairObject *oldObject)
 {    
     if (hairGrowthMap.width() == 0)
     {
@@ -81,9 +81,9 @@ HairObject::HairObject(
         }
     }
     
-    setAttributes(_oldObject);
+    setAttributes(oldObject);
 
-    m_simulation = _simulation;    
+    m_simulation = simulation;    
 }
 
 void HairObject::setAttributes(HairObject *_oldObject){

@@ -68,17 +68,26 @@ void ObjMesh::draw()
  * If it intersects an odd number of triangles it is inside
  * TODO: Generate a random vector more elegantly
  */
-bool ObjMesh::contains(glm::vec3 &normal, glm::vec3 ro)
+bool ObjMesh::contains(glm::vec3 &normal, glm::vec3 ro, float &insideDist)
 {
 #if _ELLIPSOID_COLISIONS_
-#define SQV(v) glm::pow(v, glm::vec3(2.f))
-#define SUM(v) glm::dot(v, glm::vec3(1.f))
+#define _SQV_(v) glm::pow(v, glm::vec3(2.f))
+#define _SUM_(v) glm::dot(v, glm::vec3(1.f))
 
-    normal = glm::normalize(ro / SQV(m_max));
-    return SUM(SQV(ro/m_max)) < 1;
 
-#undef SUM
-#undef SQV
+    normal = glm::normalize(ro / _SQV_(m_max));
+
+    float phi = acos( glm::dot(normal, glm::vec3(0, 0, 1)) );
+    float theta = acos( glm::dot( glm::vec3(normal.x, normal.y, 0), glm::vec3(1, 0, 0) ) );
+
+    glm::vec3 v = glm::vec3(cos(theta) * sin(phi), sin(theta) * cos(phi), cos(phi));
+    float r = 1.f / glm::sqrt(_SUM_(_SQV_( v / m_max )));
+    insideDist = r - glm::length(ro);
+
+    return _SUM_(_SQV_(ro/m_max)) < 1;
+
+#undef _SUM_
+#undef _SQV_
 #else
     // Return false if point is outside bounding cube.
     if (glm::any(glm::lessThan(ro, m_min)) || glm::any(glm::greaterThan(ro, m_max)))

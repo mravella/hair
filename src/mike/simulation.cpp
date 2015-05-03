@@ -25,7 +25,7 @@
 
 #define EULER false
 #define __BMONTELL_MODE__ false
-#define TIMESTEP 0.02f
+#define TIMESTEP 0.04f
 
 
 
@@ -141,7 +141,12 @@ void Simulation::calculateExternalForces(HairObject *_object)
             force += glm::vec3(glm::inverse(m_xform) * glm::vec4(glm::normalize(m_windDir) * m_windMagnitude, 0.0));
             
             glm::vec3 normal;
-            if (m_mesh->contains(normal, currVert->position)) force = 5.0f * normal;
+            float insideDist;
+            if (m_mesh->contains(normal, currVert->position, insideDist))
+            {
+                force = 5.0f * normal;
+            }
+
             currVert->forces = force;
             
         }

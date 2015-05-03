@@ -417,10 +417,22 @@ void GLWidget::applySceneEditor(Texture *_hairGrowthTexture, Texture *_hairGroom
     
 }
 
-void GLWidget::resetSimulation()
+void GLWidget::resetSimulation(bool hardReset)
 {    
+    Simulation *oldSim = NULL;
+    HairObject *oldHairObject = NULL;
+    if (hardReset){
+        oldSim = m_testSimulation;
+        oldHairObject = m_hairObject;
+        m_testSimulation = NULL;
+        m_hairObject = NULL;
+    }
     initSimulation();
     initCamera();
+
+
+    delete oldHairObject;
+    delete oldSim;
 }
 
 

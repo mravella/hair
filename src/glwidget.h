@@ -25,7 +25,7 @@ public:
     GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent = 0);
     ~GLWidget();
 
-    void resetSimulation();
+    void resetSimulation(bool hardReset = false);
     void applySceneEditor(Texture *_hairGrowthTexture, Texture *_hairGroomingTexture);
 
     void pause();

@@ -32,7 +32,8 @@ public slots:
     void showHideGroupRender();
     
     void resetSimulation();
-    
+    void resetAllValues();
+
     void inputHairsPerPatchText(QString text);
     void setHairsPerPatch(int);
     void inputHairGroupSpreadText(QString text);

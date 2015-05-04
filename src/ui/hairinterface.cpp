@@ -183,6 +183,7 @@ void HairInterface::updateStatsLabel()
 void HairInterface::resetSimulation()
 {
     m_glWidget->resetSimulation();
+    m_glWidget->forceUpdate();
     updateStatsLabel();
 }
 

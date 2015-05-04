@@ -13,6 +13,7 @@ class ShaderProgram;
 class HairInterface;
 class Texture;
 class Framebuffer;
+class SceneEditor;
 
 class GLWidget : public QGLWidget
 {
@@ -64,6 +65,7 @@ private:
     bool m_pausedLastFrame = true;
 
     HairInterface *m_hairInterface;
+    SceneEditor *m_sceneEditor;
 
     ObjMesh *m_highResMesh, *m_lowResMesh;
     HairObject *m_hairObject;

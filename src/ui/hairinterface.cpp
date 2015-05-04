@@ -21,11 +21,11 @@ HairInterface::HairInterface(Ui::MainWindow *ui)
     m_ui->testHolder->setAlignment(Qt::AlignTop);
     m_ui->scrollArea->setWidget(m_ui->controlsBox);
     m_ui->scrollArea->setFrameShape(QFrame::NoFrame);
-        
+    
     // to start with a group shown, use one of these:
-//    showHideGroupSim();
-//    showHideGroupTess();
-//    showHideGroupRender();
+    //    showHideGroupSim();
+    //    showHideGroupTess();
+    //    showHideGroupRender();
     
     // to start with a group hidden, use one of these:
     m_ui->groupTess->hide();
@@ -102,7 +102,7 @@ void HairInterface::setMesh(ObjMesh *mesh)
 void HairInterface::setHairObject(HairObject *hairObject)
 {
     m_hairObject = hairObject;
-
+    
     m_ui->sliderHairsPerPatch->setValue(m_hairObject->m_numGroupHairs);
     m_ui->inputHairsPerPatch->setText(QString::number(m_hairObject->m_numGroupHairs));
     m_ui->sliderHairGroupSpread->setValue(m_hairObject->m_hairGroupSpread*1000);
@@ -145,7 +145,7 @@ void HairInterface::setHairObject(HairObject *hairObject)
     m_ui->supersampleCheckBox->setChecked(m_glWidget->useSupersampling);
     m_ui->transparencyCheckBox->setChecked(m_glWidget->useTransparency);
     m_ui->hairColorVariationCheckBox->setChecked(m_hairObject->m_useHairColorVariation);
-
+    
     updateStatsLabel();
 }
 
@@ -182,8 +182,10 @@ void HairInterface::updateStatsLabel()
 
 void HairInterface::resetSimulation()
 {
-    m_glWidget->resetSimulation();
-    updateStatsLabel();
+    if (m_glWidget->m_sceneEditor == NULL){
+        m_glWidget->resetSimulation();
+        updateStatsLabel();
+    }
 }
 
 
@@ -272,7 +274,7 @@ void HairInterface::inputSplineVerticesText(QString text)
 }
 void HairInterface::setSplineVertices(int numVertices)
 {
-//    if (value <= 0) return;
+    //    if (value <= 0) return;
     m_hairObject->m_numSplineVertices = numVertices;
     m_ui->inputSplineVertices->setText(QString::number(numVertices));
     m_ui->sliderSplineVertices->setValue(numVertices);
@@ -591,7 +593,7 @@ void HairInterface::togglePaused()
         m_glWidget->unpause();
         m_ui->pauseButton->setText("Pause");
     }
-
+    
     else
     {
         m_glWidget->pause();
@@ -600,15 +602,17 @@ void HairInterface::togglePaused()
 }
 
 void HairInterface::startEditScene(){
-    if (!m_glWidget->isPaused()){
-        togglePaused();
+    if (m_glWidget->m_sceneEditor == NULL){
+        if (!m_glWidget->isPaused()){
+            togglePaused();
+        }
+        
+        m_glWidget->m_sceneEditor = new SceneEditor(m_glWidget, m_mesh);
+        
+        m_glWidget->m_sceneEditor->show();
+        m_glWidget->m_sceneEditor->raise();
+        m_glWidget->m_sceneEditor->activateWindow();
     }
-    
-    SceneEditor *newSceneEditor = new SceneEditor(m_glWidget, m_mesh);
-    
-    newSceneEditor->show();
-    newSceneEditor->raise();
-    newSceneEditor->activateWindow();
 }
 
 void HairInterface::resetAllValues(){

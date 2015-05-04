@@ -18,7 +18,7 @@ SceneWidget::SceneWidget(GLWidget *parent, ObjMesh *mesh) :
     setMouseTracking(true);
     
     m_grayscale = 1;
-    m_radius = 50;
+    m_radius = 30;
     m_opacity = 1;
     m_mask = NULL;
     m_blendBuffer = NULL;

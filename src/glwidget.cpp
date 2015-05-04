@@ -20,6 +20,8 @@
 #include "texture.h"
 #include "framebuffer.h"
 
+#include "sceneeditor.h"
+
 #include <glm/gtx/color_space.hpp>
 
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
@@ -35,6 +37,7 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     m_lowResMesh = NULL;
     m_hairObject = NULL;
     m_testSimulation = NULL;
+    m_sceneEditor = NULL;
     
     resetFromSceneEditorGrowthTexture = NULL;
     resetFromSceneEditorGroomingTexture = NULL;
@@ -391,8 +394,8 @@ void GLWidget::initSimulation()
 void GLWidget::initCamera(){
     
     m_angleX = 0;
-    m_angleY = .33;
-    m_zoom = 3;
+    m_angleY = .23;
+    m_zoom = 3.5;
     
     // Initialize global view and projection matrices.
     m_view = glm::translate(glm::vec3(0, 0, -m_zoom)) *
@@ -418,7 +421,8 @@ void GLWidget::applySceneEditor(Texture *_hairGrowthTexture, Texture *_hairGroom
 }
 
 void GLWidget::resetSimulation(bool hardReset)
-{    
+{   
+    
     Simulation *oldSim = NULL;
     HairObject *oldHairObject = NULL;
     if (hardReset){

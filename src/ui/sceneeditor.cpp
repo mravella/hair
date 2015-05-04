@@ -82,6 +82,11 @@ SceneEditor::~SceneEditor()
     delete m_ui;
 }
 
+void SceneEditor::closeEvent(QCloseEvent *event)
+{
+    m_sceneWidget->mainWidget->m_sceneEditor = NULL;
+}
+
 void SceneEditor::showHideGroupMaps()
 {
     if (m_ui->groupMaps->isVisible()){
@@ -270,9 +275,11 @@ void SceneEditor::applyAndCloseEditor()
 {
     m_sceneWidget->apply();
     this->close();
+    m_sceneWidget->mainWidget->m_sceneEditor = NULL;
 }
 void SceneEditor::cancelEditor()
 {
     m_sceneWidget->mainWidget->unpause();
     this->close();
+    m_sceneWidget->mainWidget->m_sceneEditor = NULL;
 }

@@ -18,6 +18,7 @@ class SceneEditor : public QMainWindow
 public:
     explicit SceneEditor(GLWidget *parent, ObjMesh *mesh);
     ~SceneEditor();
+    void closeEvent(QCloseEvent *event);
     
 public slots:
     void showHideGroupMaps();

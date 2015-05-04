@@ -2,17 +2,28 @@
 
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 tangent;
-layout(location = 2) in float tessx;
+layout(location = 2) in float colorVariation;
+layout(location = 3) in float offset;
 
-out vec3 tangent_te;
-out float tessx_te;
+out vec4 position_g;
+out vec3 tangent_g;
+out float colorVariation_g;
 
-uniform mat4 view;
+uniform mat4 projection, view;
 
 void main()
 {
-    gl_Position = view * vec4(position, 1.0);
-    tangent_te = (view * vec4(tangent, 0.0)).xyz;
+    // Convert from world to eye space.
+    vec4 position_ES = view * vec4(position, 1.0);
+    vec3 tangent_ES = (view * vec4(tangent, 0.0)).xyz;
 
-    tessx_te = tessx; // TODO pass this through transform feedback
+    // Offset position.
+    vec3 offsetDir = cross(normalize(tangent_ES), normalize(position_ES.xyz));
+    position_ES.xyz += offset * offsetDir;
+    gl_Position = projection * position_ES;
+
+    // Send outputs to frag shader.
+    position_g = position_ES;
+    tangent_g = tangent_ES;
+    colorVariation_g = colorVariation;
 }

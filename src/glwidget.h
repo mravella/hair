@@ -14,6 +14,7 @@ class HairInterface;
 class Texture;
 class Framebuffer;
 class SceneEditor;
+class Tessellator;
 
 class GLWidget : public QGLWidget
 {
@@ -56,8 +57,10 @@ protected slots:
     void updateCanvas();
 
 private:
-    void _drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+    void _drawHair(ShaderProgram *program, glm::mat4 model, glm::mat4 view, glm::mat4 projection, bool bindProgram = true);
     void _drawMesh(ShaderProgram *program, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+
+    void _drawHairFromFeedback(ShaderProgram *program, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
 
     void _resizeDepthPeelFramebuffers();
 
@@ -71,6 +74,8 @@ private:
     HairObject *m_hairObject;
     Simulation *m_testSimulation;
 
+    Tessellator *m_tessellator;
+
     Texture *m_noiseTexture;
 
     std::vector<ShaderProgram*> m_programs;
@@ -80,7 +85,14 @@ private:
                   *m_whiteMeshProgram,
                   *m_whiteHairProgram,
                   *m_hairDepthPeelProgram,
-                  *m_meshDepthPeelProgram;
+                  *m_meshDepthPeelProgram,
+
+                  // TRANSFORM FEEDBACK
+                  *m_hairFeedbackProgram,
+                  *m_TFwhiteHairProgram,
+                  *m_TFhairDepthPeelProgram,
+                  *m_TFhairOpacityProgram,
+                  *m_TFhairProgram;
 
     std::vector<Framebuffer*> m_framebuffers;
     Framebuffer *m_hairShadowFramebuffer,

@@ -184,6 +184,7 @@ void HairInterface::resetSimulation()
 {
     if (m_glWidget->m_sceneEditor == NULL){
         m_glWidget->resetSimulation();
+        m_glWidget->forceUpdate();
         updateStatsLabel();
     }
 }

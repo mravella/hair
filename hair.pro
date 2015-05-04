@@ -119,7 +119,9 @@ OTHER_FILES += \
     shaders/hairDepthPeel.frag \
     shaders/hairlighting.glsl \
     shaders/meshlighting.glsl \
-    shaders/meshdepthpeel.frag
+    shaders/meshdepthpeel.frag \
+    shaders/hairFeedback.geom \
+    shaders/hairFeedback.tes
 
 
 RESOURCES += \

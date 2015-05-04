@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>650</height>
+    <width>808</width>
+    <height>661</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Hair - Scene Editor</string>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="controlsBox">
@@ -20,7 +23,7 @@
       <x>30</x>
       <y>10</y>
       <width>182</width>
-      <height>550</height>
+      <height>670</height>
      </rect>
     </property>
     <property name="minimumSize">
@@ -32,7 +35,7 @@
     <property name="maximumSize">
      <size>
       <width>182</width>
-      <height>550</height>
+      <height>800</height>
      </size>
     </property>
     <property name="title">
@@ -48,19 +51,6 @@
       </rect>
      </property>
      <layout class="QVBoxLayout" name="testHolder">
-      <item>
-       <spacer name="horizontalSpacer_6">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>10</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item>
        <widget class="QPushButton" name="showHideGroupMaps">
         <property name="maximumSize">
@@ -79,6 +69,12 @@
          <iconset resource="../../images/images.qrc">
           <normaloff>:/images/chevron_up.png</normaloff>
           <normalon>:/images/chevron_down.png</normalon>:/images/chevron_up.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -162,6 +158,12 @@
           <normaloff>:/images/chevron_up.png</normaloff>
           <normalon>:/images/chevron_down.png</normalon>:/images/chevron_up.png</iconset>
         </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
        </widget>
       </item>
       <item>
@@ -216,7 +218,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Density</string>
+          <string>Hair Density</string>
          </property>
         </widget>
         <widget class="QSlider" name="sliderGlobalDensity">
@@ -292,7 +294,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Length</string>
+          <string>Hair Length</string>
          </property>
         </widget>
         <widget class="QPushButton" name="clearWhiteButton_2">
@@ -366,6 +368,12 @@
          <iconset resource="../../images/images.qrc">
           <normaloff>:/images/chevron_up.png</normaloff>
           <normalon>:/images/chevron_down.png</normalon>:/images/chevron_up.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -697,8 +705,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>22</height>
+     <width>808</width>
+     <height>29</height>
     </rect>
    </property>
   </widget>
@@ -723,10 +731,10 @@
     <widget class="QScrollArea" name="scrollArea">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>10</x>
        <y>0</y>
-       <width>211</width>
-       <height>471</height>
+       <width>182</width>
+       <height>461</height>
       </rect>
      </property>
      <property name="minimumSize">
@@ -764,44 +772,12 @@
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>500</y>
-       <width>196</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QPushButton" name="cancelButton">
-        <property name="text">
-         <string>Cancel</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="applyButton">
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Apply</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
     <widget class="QPushButton" name="applyAndCloseButton">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>540</y>
-       <width>171</width>
+       <width>181</width>
        <height>32</height>
       </rect>
      </property>
@@ -819,7 +795,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>470</y>
+       <y>460</y>
        <width>181</width>
        <height>32</height>
       </rect>
@@ -832,6 +808,38 @@
      </property>
      <property name="text">
       <string>Clear</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="applyButton">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>505</y>
+       <width>81</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Apply</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="cancelButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>505</y>
+       <width>91</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Cancel</string>
      </property>
     </widget>
    </widget>

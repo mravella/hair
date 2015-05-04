@@ -74,6 +74,7 @@ void HairInterface::connectUserInputs()
     connect(m_ui->inputWindDirectionX, SIGNAL(textChanged(QString)), this, SLOT(inputWindDirectionXText(QString)));
     connect(m_ui->inputWindDirectionY, SIGNAL(textChanged(QString)), this, SLOT(inputWindDirectionYText(QString)));
     connect(m_ui->inputWindDirectionZ, SIGNAL(textChanged(QString)), this, SLOT(inputWindDirectionZText(QString)));
+    connect(m_ui->actionReset_All_Values, SIGNAL(triggered()), this, SLOT(resetAllValues()));
     
     // toggles
     connect(m_ui->frictionSimCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFrictionSim(bool)));
@@ -608,4 +609,9 @@ void HairInterface::startEditScene(){
     newSceneEditor->show();
     newSceneEditor->raise();
     newSceneEditor->activateWindow();
+}
+
+void HairInterface::resetAllValues(){
+    m_glWidget->resetSimulation(true);
+    updateStatsLabel();
 }

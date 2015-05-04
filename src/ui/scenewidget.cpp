@@ -274,7 +274,7 @@ void SceneWidget::makeQuadraticMask()
 
 void SceneWidget::clearTexture(int r, int g, int b, Texture *texture){
     if (texture == NULL) texture = m_currentTexture;
-    cout << r << ", " << g << ", " << b << endl;
+//    cout << r << ", " << g << ", " << b << endl;
     texture->m_image.fill(QColor(r, g, b));
 //    QRgb test = texture->m_image.pixel(0, 0);
 //    cout << qRed(test) << ", " <<qGreen(test) << ", " << qBlue(test)<< endl;

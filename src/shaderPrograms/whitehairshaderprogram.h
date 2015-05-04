@@ -7,7 +7,7 @@
 class WhiteHairShaderProgram : public HairShaderProgram
 {
 protected:
-    GLuint createShaderProgram() override
+    virtual GLuint createShaderProgram() override
     {
         return ResourceLoader::createFullShaderProgram(
                     ":/shaders/hair.vert", ":/shaders/white.frag", ":/shaders/hair.geom",

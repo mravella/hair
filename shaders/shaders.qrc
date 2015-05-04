@@ -19,5 +19,8 @@
         <file>texturedquad.vert</file>
         <file>white.frag</file>
         <file>hairrender.vert</file>
+        <file>hairFeedback.geom</file>
+        <file>hairFeedback.tes</file>
+        <file>hairrender.vert</file>
     </qresource>
 </RCC>

@@ -12,9 +12,9 @@ public:
 
     virtual ~Tessellator();
 
-    void init(int numLines);
+    void init(int numTriangles);
 
-    bool setNumLines(int numLines);
+    bool setNumTriangles(int numTriangles);
 
     void beginTessellation();
 
@@ -25,7 +25,7 @@ public:
     ShaderProgram *program;
 
 private:
-    int m_numLines = 0;
+    int m_numTriangles = 0;
     GLuint m_primitivesQuery;
     GLuint m_vaoID = 0;
     GLuint m_bufferID = 0;

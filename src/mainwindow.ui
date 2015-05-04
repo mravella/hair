@@ -169,12 +169,12 @@
           <rect>
            <x>10</x>
            <y>150</y>
-           <width>101</width>
+           <width>163</width>
            <height>21</height>
           </rect>
          </property>
          <property name="text">
-          <string>Friction Sim</string>
+          <string>Hair-Hair Interaction</string>
          </property>
         </widget>
         <widget class="QSlider" name="sliderStiffness">
@@ -1292,7 +1292,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>29</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1307,7 +1307,7 @@
   <widget class="QDockWidget" name="settingsDock">
    <property name="minimumSize">
     <size>
-     <width>218</width>
+     <width>224</width>
      <height>700</height>
     </size>
    </property>

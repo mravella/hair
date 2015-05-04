@@ -36,7 +36,7 @@ public:
             float _noiseAmplitude = 0.15f,
             float _noiseFrequency = 0.2f,
             int _numSplineVertices = 20,
-            float _shadowIntensity = 40,
+            float _shadowIntensity = 20,
             float _diffuseIntensity = 1,
             float _specularIntensity = .5,
             float _transparency = .25,

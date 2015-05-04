@@ -27,6 +27,8 @@
 
 #include <glm/gtx/color_space.hpp>
 
+#define SHIFT_CLICK true
+
 #define FEEDBACK false
 
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
@@ -571,8 +573,14 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
                 glm::rotate(m_angleX, glm::vec3(0, 1, 0));
         m_prevMousePos = event->pos();
     }
+
+#if SHIFT_CLICK
+    if (event->buttons() == Qt::LeftButton && !(event->modifiers() & Qt::ShiftModifier))
+    {
+#else
     if (event->buttons() == Qt::LeftButton)
     {
+#endif
         glm::vec3 up = glm::normalize(glm::vec3(m_view[2][1], m_view[2][2], m_view[2][3]));
         glm::mat4 inverseView = glm::inverse(m_view);
         glm::vec3 look = glm::normalize(glm::vec3(inverseView * glm::vec4(0, 0, -1.0, 1)));
@@ -587,8 +595,14 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
         m_testSimulation->updatePosition(m_hairObject, xform);
         m_prevXformPos = event->pos();
     }
+
+#if SHIFT_CLICK
+    if (event->buttons() == Qt::LeftButton && (event->modifiers() & Qt::ShiftModifier))
+    {
+#else
     if (event->buttons() == Qt::MiddleButton)
     {
+#endif
 
         glm::vec3 p0 = glm::vec3(m_prevRotPos.x() / (float)width(), 1.f - m_prevRotPos.y() / (float)height(), 0.f);
         glm::vec3 p1 = glm::vec3(event->pos().x() / (float)width(), 1.f - event->pos().y() / (float)height(), 0.f);

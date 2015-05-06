@@ -4,7 +4,7 @@
 
 GLuint HairFeedbackShaderProgram::createShaderProgram()
 {
-    const GLchar* varyings[] = {"position_g", "tangent_g", "colorVariation_g", "offset_g"};
+    const GLchar* varyings[] = {"position_g", "tangent_g", "colorVariation_g", "tessx_g"};
     return ResourceLoader::createFullFeedbackShaderProgram(
                 ":/shaders/hair.vert",
                 ":/shaders/hairFeedback.geom",

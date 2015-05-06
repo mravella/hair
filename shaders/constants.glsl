@@ -6,6 +6,15 @@
 
 const vec4 BACKGROUND_COLOR = vec4(0.5, 0.5, 0.5, 1.0);
 
+// Hair gradient
+const float MIN_COLOR = 0.5;
+const float MIN_COLOR_END = 0.0;
+const float MAX_COLOR_START = 0.3;
+
+//         MIN_COLOR       mix(MIN_COLOR, 1.0, ...)           1.0
+// root------------------|--------------------------|--------------------tip
+//                 MIN_COLOR_END     MAX_COLOR_START
+
 // Hair material properties
 const float HAIR_SHININESS = 50.0;
 

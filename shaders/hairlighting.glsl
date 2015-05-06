@@ -1,6 +1,8 @@
 #include "constants.glsl"
 #include "opacitymapping.glsl"
 
+in float tessx_g;
+
 uniform vec3 color;
 uniform float specIntensity, diffuseIntensity;
 uniform mat4 view, eyeToLight;
@@ -19,7 +21,11 @@ vec3 colorContribution(
     float diffuse = sqrt(1. - abs(dot(tangent_N, toLight_N.xyz)));
     float specular = pow(sqrt(1. - abs(dot(tangent_N, h_N))), HAIR_SHININESS);
 
+    // Add color variation
     vec3 colorMultiplier = vec3(1.0 + maxColorVariation * (2.0 * colorVariation - 1.0));
+
+    // Add color gradient
+    colorMultiplier *= mix(MIN_COLOR, 1.0, smoothstep(MIN_COLOR_END, MAX_COLOR_START, tessx_g));
 
     return (diffuseIntensity * diffuse + specIntensity * specular) * color * colorMultiplier;
 }

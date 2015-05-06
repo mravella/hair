@@ -17,7 +17,7 @@ vec3 colorContribution(in vec4 position_WS, in vec4 normal_WS, in vec4 lightPosi
 }
 
 vec4 meshLighting(in vec4 position_WS, in vec4 normal_WS, in vec2 uv) {
-    meshColor = mix(MESH_COLOR, hairColor, texture(hairGrowthMap, uv).r);
+    meshColor = mix(MESH_COLOR, MIN_COLOR*hairColor, texture(hairGrowthMap, uv).r);
 
     vec4 position_lightSpace = eyeToLight * view * position_WS;
 

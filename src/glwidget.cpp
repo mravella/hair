@@ -85,7 +85,6 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateCanvas()));
     m_timer.start(1000.0f / m_targetFPS);
 
-    m_hairInterface->togglePaused();
 }
 
 GLWidget::~GLWidget()
@@ -412,6 +411,7 @@ void GLWidget::_drawHairFromFeedback(ShaderProgram *program, glm::mat4 model, gl
     program->uniforms.specIntensity = m_hairObject->m_specularIntensity;
     program->uniforms.diffuseIntensity = m_hairObject->m_diffuseIntensity;
     program->uniforms.opacity = 1.f - m_hairObject->m_transparency;
+    program->uniforms.hairRadius = m_hairObject->m_hairRadius;
     if (m_hairObject->m_useHairColorVariation){
         program->uniforms.maxColorVariation = m_hairObject->m_hairColorVariation;
     } else {

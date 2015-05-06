@@ -10,6 +10,7 @@ in float colorVariation_te[];
 out vec4 position_g;
 out vec3 tangent_g;
 out float colorVariation_g;
+out float tessx_g;
 
 uniform mat4 projection;
 uniform float hairRadius;
@@ -30,6 +31,7 @@ void main() {
 
         tangent_g = tangent_te[i];
         colorVariation_g = colorVariation_te[i];
+        tessx_g = tessx_te[i];
         
         position_g = (position + offset);
         gl_Position = projection * position_g;

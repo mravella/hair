@@ -11,11 +11,9 @@ in float colorVariation_te[];
 out vec3 position_g;
 out vec3 tangent_g;
 out float colorVariation_g;
-out float offset_g;
+out float tessx_g;
 
 uniform mat4 projection;
-uniform float hairRadius;
-uniform float taperExponent;
 
 void main() {
     for(int i = 0; i < gl_in.length(); i++)
@@ -23,10 +21,10 @@ void main() {
         position_g = gl_in[i].gl_Position.xyz;
         tangent_g = tangent_te[i];
         colorVariation_g = colorVariation_te[i];
-        offset_g = hairRadius * (1 - pow(tessx_te[i], taperExponent)); // Taper hair so it is thinner at end.
+        tessx_g = tessx_te[i];
         EmitVertex();
 
-        offset_g *= -1.0;
+        tessx_g *= -1.0;
         EmitVertex();
     }
 }

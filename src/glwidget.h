@@ -88,7 +88,6 @@ private:
                   *m_meshDepthPeelProgram,
 
                   // TRANSFORM FEEDBACK
-                  *m_hairFeedbackProgram,
                   *m_TFwhiteHairProgram,
                   *m_TFhairDepthPeelProgram,
                   *m_TFhairOpacityProgram,
@@ -120,6 +119,8 @@ private:
     QTimer m_timer; /** Timer calls tick() 60 times per second. */
     int m_increment; /** Incremented on every call to paintGL. */
     float m_targetFPS;
+
+    int msec;
     
     Texture *resetFromSceneEditorGrowthTexture, *resetFromSceneEditorGroomingTexture;
 };

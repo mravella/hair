@@ -20,7 +20,6 @@
 #include "texture.h"
 #include "framebuffer.h"
 #include "tessellator.h"
-#include "hairfeedbackshaderprogram.h"
 #include "hairrendershaderprogram.h"
 
 #include "sceneeditor.h"
@@ -29,12 +28,12 @@
 
 #define SHIFT_CLICK true
 
-#define FEEDBACK false
+#define FEEDBACK true
 
 GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *parent)
     : QGLWidget(format, parent),
       m_hairInterface(hairInterface),
-      m_hairDensity(250),
+      m_hairDensity(150),
       m_maxHairLength(.45),
       m_timer(this),
       m_increment(0),
@@ -45,7 +44,7 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     m_hairObject = NULL;
     m_testSimulation = NULL;
     m_sceneEditor = NULL;
-    
+
     resetFromSceneEditorGrowthTexture = NULL;
     resetFromSceneEditorGroomingTexture = NULL;
     
@@ -62,7 +61,6 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
         m_meshDepthPeelProgram = new MeshDepthPeelShaderProgram(),
 
         // TRANSFORM FEEDBACK
-        m_hairFeedbackProgram = new HairFeedbackShaderProgram(),
         m_TFhairProgram = new HairRenderShaderProgram(),
         m_TFwhiteHairProgram = new WhiteHairFeedbackShaderProgram(),
         m_TFhairDepthPeelProgram = new HairFeedbackDepthPeelShaderProgram(),
@@ -86,6 +84,8 @@ GLWidget::GLWidget(QGLFormat format, HairInterface *hairInterface, QWidget *pare
     // Set up 60 FPS draw loop.
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(updateCanvas()));
     m_timer.start(1000.0f / m_targetFPS);
+
+    m_hairInterface->togglePaused();
 }
 
 GLWidget::~GLWidget()
@@ -136,22 +136,22 @@ void GLWidget::initializeGL()
     initSimulation();
     
     initCamera();
-    
+
     ErrorChecker::printGLErrors("end of initializeGL");
 }
 
 void GLWidget::paintGL()
 {
     ErrorChecker::printGLErrors("start of paintGL");
-    
+
     if (resetFromSceneEditorGroomingTexture != NULL && resetFromSceneEditorGrowthTexture != NULL){
         applySceneEditor(resetFromSceneEditorGrowthTexture, resetFromSceneEditorGroomingTexture);
         resetFromSceneEditorGroomingTexture = NULL;
         resetFromSceneEditorGrowthTexture = NULL;
     }
-    
+
     m_clock.restart();
-    
+
     _resizeDepthPeelFramebuffers();
     
     // Update simulation if not paused.
@@ -183,11 +183,16 @@ void GLWidget::paintGL()
     m_depthPeel1Framebuffer->colorTexture->bind(GL_TEXTURE8);
     
 #if FEEDBACK
-    m_hairFeedbackProgram->bind();
+    int numTriangles =
+            m_hairObject->m_guideHairs.size()       // # guide hairs
+            * m_hairObject->m_numGroupHairs         // # hairs per guide hair
+            * (m_hairObject->m_numSplineVertices-1) // # segments per hair
+            * 2;                                    // # triangles per segment
+    m_tessellator->setNumTriangles(numTriangles);
+
     m_tessellator->beginTessellation();
-    _drawHair(m_hairFeedbackProgram, model, m_view, m_projection, false);
+    _drawHair(m_tessellator->program, model, m_view, m_projection, false);
     m_tessellator->endTessellation();
-    m_hairFeedbackProgram->unbind();
 #endif
 
 
@@ -467,17 +472,19 @@ void GLWidget::initSimulation()
     } else {
         m_hairObject = new HairObject(m_highResMesh, m_hairDensity, m_maxHairLength, _oldHairObject->m_hairGrowthMap, _oldHairObject->m_hairGroomingMap, m_testSimulation, _oldHairObject);
     }
+    
+    safeDelete(_oldSim);
+    safeDelete(_oldHairObject);
 
+    safeDelete(m_tessellator);
+    m_tessellator = new Tessellator();
     int numTriangles =
             m_hairObject->m_guideHairs.size()       // # guide hairs
             * m_hairObject->m_numGroupHairs         // # hairs per guide hair
             * (m_hairObject->m_numSplineVertices-1) // # segments per hair
             * 2;                                    // # triangles per segment
     m_tessellator->init(numTriangles);
-    
-    safeDelete(_oldSim);
-    safeDelete(_oldHairObject);
-    
+
     m_hairInterface->setHairObject(m_hairObject);
 
     
@@ -504,13 +511,6 @@ void GLWidget::applySceneEditor(Texture *_hairGrowthTexture, Texture *_hairGroom
     
     m_hairObject = new HairObject(
                 m_highResMesh, m_hairDensity, m_maxHairLength, _hairGrowthTexture->m_image, _hairGroomingTexture->m_image, m_testSimulation, _oldHairObject);
-    
-    int numTriangles =
-            m_hairObject->m_guideHairs.size()       // # guide hairs
-            * m_hairObject->m_numGroupHairs         // # hairs per guide hair
-            * (m_hairObject->m_numSplineVertices-1) // # segments per hair
-            * 2;                                    // # triangles per segment
-    m_tessellator->init(numTriangles);
     
     safeDelete(_oldHairObject);
     

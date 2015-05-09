@@ -1,13 +1,28 @@
 # hair
+By Mike Ravella, Brandon Montell, and Andrew DiMarco
 
-this code currently renders a cyan triangle. it sets up two shader programs that you can use:
-- m_basicProgram: just has a vertex and frag shader
-- m_fullProgram: has vertex, tessellation, geometry, and frag shaders
+[Github Repo](https://github.com/mravella/hair)
+[Presentation](https://docs.google.com/presentation/d/1gfVZSzJfieSUaOHV9Q5lMgny7vGcaSve-XR9sljlIDI/edit?usp=sharing)
 
-it's currently running with the basic program. if you want to use the full one, switch the bound program in paintGL and change the drawing mode from GL_TRIANGLES to GL_PATCHES
+For our project we simulated and rendered hair in real-time. Features are listed below:
 
-## classes
-- GLWidget: main OpenGL class containing initializeGL and paintGL
-- OpenGLShape: wrapper for a vertex buffer and a VAO. See m_triangle in GLWidget for an example of how to use it.
-- ErrorChecker: has static function printGLErrors that prints all OpenGL errors that have accumulated since the last call to printGLErrors
-- ResourceLoader: has methods for initializing GLEW and setting up shader programs
+### Simulation
+- Wind and gravitational forces
+- Hair collisions with mesh
+- Collisions and friction between hair
+
+### Generating geometry
+- Hairs are generated on the GPU from a small number of simulated guide hairs
+- Hairs are turned into billboarded triangle strips
+- Many OpenGL techniques used, including tessellation shader, geometry shader, and transform feedback
+
+### Rendering
+- Shadows using shadow mapping with percentage-closer filtering
+- Shadows using deep opacity mapping
+- Transparency using depth peeling
+- Anti-aliasing using 4-sample supersampling-antialiasing
+- Color variation between hairs
+
+### User interface
+- Interactive adjustment of many parameters
+- Scene editor that allows user to draw custom hair placement and combing direction
